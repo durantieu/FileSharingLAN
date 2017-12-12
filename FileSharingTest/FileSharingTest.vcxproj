@@ -104,6 +104,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>mswsock.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -140,9 +141,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Connessione.h" />
+    <ClInclude Include="Dipendenze.h" />
+    <ClInclude Include="Porta.h" />
+    <ClInclude Include="Sync_Mappa.h" />
+    <ClInclude Include="TCP_Client.h" />
+    <ClInclude Include="TCP_Listener.h" />
+    <ClInclude Include="TCP_Server.h" />
+    <ClInclude Include="Utente.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connessione.cpp" />
+    <ClCompile Include="Sync_mappa.cpp" />
+    <ClCompile Include="TCP_Client.cpp" />
+    <ClCompile Include="TCP_Listener.cpp" />
+    <ClCompile Include="TCP_Server.cpp" />
+    <ClCompile Include="Utente.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
