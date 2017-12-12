@@ -152,6 +152,7 @@ void Sync_mappa::blocco_utente(string MAC) {
 	f.close();
 }
 
+//Funzione inutilizzata (credo) vedere se si può eliminare
 void Sync_mappa::blocco(string utente) {
 
 	string MAC;
@@ -199,6 +200,9 @@ void Sync_mappa::blocco(string utente) {
 	return;
 }
 
+/*
+* metodo di eliminazione di un utente dalla black list
+*/
 void Sync_mappa::sblocco_utente(string MAC) {
 
 	lock_guard<mutex> lk(m_blacklist);
@@ -223,16 +227,15 @@ bool Sync_mappa::check_identity(string MAC) {
 	fstream f;
 	lock_guard<mutex> lk(m_blacklist);
 	f.open("black_list.txt");
-
-	char* temp = new char[MAC.size()];
-	while (f.good()) {
-		f.getline(temp, 20);
-		if (!MAC.compare(temp)) { // MAC bloccato
-			return true;
-			break;
+	if (f.is_open()) {
+		char* temp = new char[MAC.size()];
+		while (f.good()) {
+			f.getline(temp, 20);
+			if (!MAC.compare(temp)) // MAC bloccato
+				return true;
 		}
-
 	}
+	
 	return false;
 }
 
@@ -246,10 +249,18 @@ list<string> Sync_mappa::getUtenti() {
 
 	for (it = this->utenti.begin(); it != this->utenti.end(); ++it) {
 		string tmp;
+		string bloccato;
+
+		bool blocked = this->check_identity(it->first);
+		if (blocked == false)
+			bloccato = "libero";
+		else
+			bloccato = "bloccato";
 
 		tmp.assign(it->first).append("-").append(it->second.get_nome()).append("-").
 			append(it->second.get_cognome()).append("-").
-			append(*(it->second.get_fotopathPointer())).append("-");
+			append(*(it->second.get_fotopathPointer())).append("-").
+			append(bloccato).append("-");
 
 		listaUtenti.push_back(tmp);
 	}

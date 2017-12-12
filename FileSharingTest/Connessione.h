@@ -39,8 +39,7 @@ namespace connNmSpace {
 		void change_visibility(bool vs);
 		void change_filepath(string path);
 		void change_immagine_profilo(string foto_path);
-		void blocca_utente(string utente);
-		void sblocco_utente(string utente);
+		void blocco_utente(string MAC);
 		bool getVisibilityUtenteAttivo();
 		list<string> getUtentiConnessi();
 	};
@@ -52,5 +51,7 @@ namespace connNmSpace {
 		static __declspec(dllexport) list<string> getUtentiConnessi(Connessione* conn);
 		static __declspec(dllexport) void putInBlackList(Connessione* conn, string MAC);
 		static __declspec(dllexport) void inviaFile(Connessione* conn, string file, string MAC);
+		static __declspec(dllexport) void cambiaFilePath(Connessione* conn, string path);
+		static __declspec(dllexport) void cambiaImmagine(Connessione* conn, string path);
 	};
 }

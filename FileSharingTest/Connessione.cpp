@@ -480,16 +480,15 @@ namespace connNmSpace {
 
 	}
 
-	//classi wrapper per il blocco-sblocco utente
-	void Connessione::blocca_utente(string utente) {
-		this->sync_utenti->blocco(utente);
-		return;
+	//classe per il blocco-sblocco utente
+	void Connessione::blocco_utente(string MAC) {
+		//se la funzione check_identity torna false significa che il MAC non è presente in black list
+		if (this->sync_utenti->check_identity(MAC) == false)
+			this->sync_utenti->blocco_utente(MAC);
+		else
+			this->sync_utenti->sblocco_utente(MAC);
 	}
 
-	void Connessione::sblocco_utente(string utente) {
-		this->sync_utenti->blocco(utente);
-		return;
-	}
 
 	//getter della visibilità dell'utente attivo
 	bool Connessione::getVisibilityUtenteAttivo() {
@@ -524,11 +523,21 @@ namespace connNmSpace {
 	}
 
 	void ConnWrapper::putInBlackList(Connessione* conn, string MAC) {
-		conn->blocca_utente(MAC);
+		conn->blocco_utente(MAC);
 	}
 
 	void ConnWrapper::inviaFile(Connessione* conn, string file, string MAC) {
 		Utente* user = conn->choose_user(MAC);
 		conn->file_transfer(file, user->get_ip());
 	}
+
+	void ConnWrapper::cambiaFilePath(Connessione* conn, string path) {
+		conn->change_filepath(path);
+	}
+
+	void ConnWrapper::cambiaImmagine(Connessione* conn, string path) {
+		conn->change_immagine_profilo(path);
+	}
+
+
 }
