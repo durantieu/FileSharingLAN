@@ -50,18 +50,6 @@ namespace connNmSpace {
 		static __declspec(dllexport) Connessione* creaConnessione();
 		static __declspec(dllexport) void modPrivata(Connessione* conn);
 		static __declspec(dllexport) list<string> getUtentiConnessi(Connessione* conn);
+		static __declspec(dllexport) void putInBlackList(Connessione* conn, string MAC);
 	};
 }
-
-/*
-Per fare il login dell'utente si potrebbe fare che il codice in C# effettua
-login ed eventuale registrazione, e poi manda i dati al codice in C++
-La gestione sarebbe semplificata e non ci sarebbe bisogno di comunicazione
-strana tra i due linguaggi
-*/
-
-/*
-*Non ho utilizzato una struct di stringhe per semplificare il 
-marshalling dei dati; la stringa nella lista degli utenti avrà
-la forma nome-cognome-path (o sostituendo - con $ o altre porcate)
-*/

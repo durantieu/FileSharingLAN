@@ -237,9 +237,9 @@ list<string> Sync_mappa::getUtenti() {
 	for (it = this->utenti.begin(); it != this->utenti.end(); ++it) {
 		string tmp;
 
-		tmp.assign(it->second.get_nome()).append("-")
-			.append(it->second.get_cognome()).append("-").
-			append(*(it->second.get_fotopathPointer()));
+		tmp.assign(it->first).append("-").append(it->second.get_nome()).append("-").
+			append(it->second.get_cognome()).append("-").
+			append(*(it->second.get_fotopathPointer())).append("-");
 
 		listaUtenti.push_back(tmp);
 	}

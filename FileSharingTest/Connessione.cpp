@@ -550,4 +550,8 @@ namespace connNmSpace {
 	list<string> ConnWrapper::getUtentiConnessi(Connessione* conn) {
 		return conn->getUtentiConnessi();
 	}
+
+	void ConnWrapper::putInBlackList(Connessione* conn, string MAC) {
+		conn->blocca_utente(MAC);
+	}
 }
