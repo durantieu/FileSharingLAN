@@ -21,6 +21,7 @@ public:
 	void stampa_utenti();
 	vector<Utente*> estrai_utente(string utente);
 	string get_nome(string MAC);
+	Utente get_utente(string MAC);
 	void blocco_utente(string MAC); //funzioni per la black list
 	void blocco(string utente); //funzioni per la black list
 	void sblocco_utente(string MAC); //funzione black list

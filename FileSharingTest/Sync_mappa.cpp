@@ -104,6 +104,8 @@ string Sync_mappa::get_nome(string MAC) {
 	return nome;
 }
 
+
+
 vector<Utente*> Sync_mappa::estrai_utente(string utente) {
 	vector<Utente*> v;
 	m.lock();

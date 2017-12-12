@@ -554,4 +554,9 @@ namespace connNmSpace {
 	void ConnWrapper::putInBlackList(Connessione* conn, string MAC) {
 		conn->blocca_utente(MAC);
 	}
+
+	void ConnWrapper::inviaFile(Connessione* conn, string file, string MAC) {
+		Utente user = conn->choose_user(MAC);
+		conn->file_transfer(user.get_ip());
+	}
 }

@@ -51,5 +51,6 @@ namespace connNmSpace {
 		static __declspec(dllexport) void modPrivata(Connessione* conn);
 		static __declspec(dllexport) list<string> getUtentiConnessi(Connessione* conn);
 		static __declspec(dllexport) void putInBlackList(Connessione* conn, string MAC);
+		static __declspec(dllexport) void inviaFile(Connessione* conn, string file, string MAC);
 	};
 }
