@@ -318,37 +318,10 @@ namespace connNmSpace {
 		newThread->detach();
 	}
 
-	Utente* Connessione::choose_user() {
-		string utente;
-		vector<Utente*> scelta;
-		cout << "Scegli un Utente (nome e cognome separati da spazio): " << endl;
-
-		this->sync_utenti->stampa_utenti();
-		string tmp;
-		cin >> utente;
-		cin >> tmp;
-		utente.append(" ").append(tmp);
-		scelta = this->sync_utenti->estrai_utente(utente);
-
-		if (scelta.size() == 0) {
-			cout << "Nessun utente presente in rete" << endl;
-			return NULL;
-		}
-		else {
-			if (scelta.size() == 1) {
-				return scelta.back();
-			}
-			else {
-				cout << "Multiple occurrences found: choose which one" << endl;
-
-				for (auto it = scelta.begin(); it != scelta.end(); it++) {
-					cout << (*it)->get_nome() << endl;
-				}
-				int i;
-				cin >> i;
-				return scelta.at(i);
-			}
-		}
+	//funzione per recuperare un utente dalla mappa dato il MAC address
+	Utente* Connessione::choose_user(string MAC) {
+		Utente* utente = this->sync_utenti->get_utente(MAC);
+		return utente;
 	}
 
 	//killa il thread discoverer rendendo invisibili sulla rete
@@ -535,7 +508,6 @@ namespace connNmSpace {
 	*Funzioni della classe wrapper di Connessione
 	*
 	*/
-
 	Connessione* ConnWrapper::creaConnessione() {
 		return new Connessione();
 	}
@@ -556,7 +528,7 @@ namespace connNmSpace {
 	}
 
 	void ConnWrapper::inviaFile(Connessione* conn, string file, string MAC) {
-		Utente user = conn->choose_user(MAC);
-		conn->file_transfer(user.get_ip());
+		Utente* user = conn->choose_user(MAC);
+		conn->file_transfer(file, user->get_ip());
 	}
 }

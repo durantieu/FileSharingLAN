@@ -32,7 +32,7 @@ namespace connNmSpace {
 		static void updater_function(Sync_mappa *m1);
 		static string getMACaddress(void);
 		static void printMAC();
-		Utente* choose_user();
+		Utente* choose_user(string MAC);
 		void file_transfer(string path, SOCKADDR_IN ip_utente);
 		void be_invisible();
 		void be_visible();

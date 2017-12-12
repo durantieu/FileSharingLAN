@@ -95,6 +95,7 @@ void Sync_mappa::stampa_utenti() {
 	m.unlock();
 }
 
+//ritorna il nome di un utente dato un MAC address
 string Sync_mappa::get_nome(string MAC) {
 	m.lock();
 	auto user = utenti.find(MAC);
@@ -104,6 +105,13 @@ string Sync_mappa::get_nome(string MAC) {
 	return nome;
 }
 
+//ritorna un utente dato un MAC address
+Utente* Sync_mappa::get_utente(string MAC) {
+	m.lock();
+	auto user = utenti.find(MAC);
+	m.unlock();
+	return &(user->second);
+}
 
 
 vector<Utente*> Sync_mappa::estrai_utente(string utente) {
