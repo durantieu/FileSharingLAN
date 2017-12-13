@@ -13,7 +13,7 @@ namespace PDSProjectGUI
 {
     public partial class Form1 : Form
     {
-        private IntPtr connessione= creaConnessione();
+        private IntPtr connessione;
 
         [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione();
@@ -34,8 +34,6 @@ namespace PDSProjectGUI
             
            
         }
-
-       
 
         private void roundButton1_Click(object sender, EventArgs e)
         {
