@@ -8,18 +8,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Drawing.Drawing2D;
 
+public class RoundButton : Button
+{
+    protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
+    {
+        GraphicsPath grPath = new GraphicsPath();
+        grPath.AddEllipse(0, 0, ClientSize.Width, ClientSize.Height);
+        this.Region = new System.Drawing.Region(grPath);
+        base.OnPaint(e);
+    }
+}
+public class RoundPic : PictureBox
+{
+    protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
+    {
+        GraphicsPath grPath = new GraphicsPath();
+        grPath.AddEllipse(0, 0, ClientSize.Width, ClientSize.Height);
+        this.Region = new System.Drawing.Region(grPath);
+        base.OnPaint(e);
+    }
+
+
+}
 namespace PDSProjectGUI
 {
+  
     public partial class Form1 : Form
     {
         private IntPtr connessione;
 
-        [DllImport("C:\\Users\\Mattia\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione(string dati);
 
         public Form1()
         {
+            
             //in questa stringa di dati devono esserci i seguenti dati
             //(presi dal file credenziali):
             //nome-cognome-fotopath-filepath-visibility
@@ -54,6 +79,9 @@ namespace PDSProjectGUI
            
         }
 
-       
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

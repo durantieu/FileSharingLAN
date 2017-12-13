@@ -1,4 +1,7 @@
-﻿namespace PDSProjectGUI
+﻿using System;
+using System.Windows.Forms;
+
+namespace PDSProjectGUI
 {
     partial class Form1
     {
@@ -143,17 +146,22 @@
 
         }
 
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel2;
-        private WindowsFormsApplication1.RoundButton roundButton1;
+        private RoundButton roundButton1;
         private System.Windows.Forms.Label label1;
-        private WindowsFormsApplication1.RoundPic roundPic1;
+        private RoundPic roundPic1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolTip toolTip2;
-        private WindowsFormsApplication1.RoundPic roundPic2;
+        private RoundPic roundPic2;
     }
 }
 
