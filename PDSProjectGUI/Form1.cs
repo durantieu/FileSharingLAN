@@ -13,26 +13,25 @@ namespace PDSProjectGUI
 {
     public partial class Form1 : Form
     {
-        private IntPtr connessione;
+        private IntPtr connessione= creaConnessione();
 
-        [DllImport("C:\\Users\\Mattia\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione();
 
         public Form1()
         {
             InitializeComponent();
-            connessione = creaConnessione();
+           
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            
+           
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+       
 
         private void roundButton1_Click(object sender, EventArgs e)
         {
@@ -44,7 +43,7 @@ namespace PDSProjectGUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Settings set = new Settings();
+            Settings set = new Settings(connessione);
             set.Show();
         }
 
@@ -52,5 +51,7 @@ namespace PDSProjectGUI
         {
            
         }
+
+       
     }
 }

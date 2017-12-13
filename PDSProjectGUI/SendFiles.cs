@@ -66,8 +66,8 @@ namespace PDSProjectGUI
             newPicBox.Location = new Point(riga+70, colonna+70);
             newPicBox.Size = new Size(120, 100);
 
-            Image im = Image.FromFile("C:\\Users\\Mattia\\Desktop\\a.jpg");
-            newPicBox.ImageLocation = "C:\\Users\\Mattia\\Desktop\\a.jpg";
+            Image im = Image.FromFile("C:\\Users\\duran\\Desktop\\immagine_vuota.jpeg");
+            newPicBox.ImageLocation = "C:\\Users\\duran\\Desktop\\immagine_vuota.jpeg";
 
             newPicBox.InitialImage = im;
             newPicBox.Image = im;

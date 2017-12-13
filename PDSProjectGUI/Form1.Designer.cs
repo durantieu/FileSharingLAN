@@ -106,7 +106,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(477, 370);
             this.panel2.TabIndex = 1;
-            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
             // roundPic2
             // 
@@ -148,6 +147,7 @@
             this.toolTip1.SetToolTip(this.roundButton1, "Cliccare qui per iniziare a condividere uno o più file");
             this.roundButton1.UseVisualStyleBackColor = false;
             this.roundButton1.Click += new System.EventHandler(this.roundButton1_Click);
+
             // 
             // toolTip1
             // 
