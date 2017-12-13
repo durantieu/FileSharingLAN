@@ -40,7 +40,7 @@ namespace PDSProjectGUI
 
             Credenziali cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
 
-            Form1 f1 = new Form1();
+            Share f1 = new Share();
             f1.Show();
             this.Hide();
         }

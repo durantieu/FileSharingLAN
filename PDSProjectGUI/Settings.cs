@@ -92,11 +92,19 @@ namespace PDSProjectGUI
 
         private void button4_Click(object sender, EventArgs e)
         {
+           // salvare i dati di impostazioni scrivendo nel file credenziali con i metodi di login
             this.Close();
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+               //annulla
+              this.Close();
 
         }
     }
