@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace PDSProjectGUI
 {
     public partial class Login : Form
@@ -17,6 +18,7 @@ namespace PDSProjectGUI
         string path_file_trans;
         string path_imm_profilo;
         bool visibility;
+        FolderBrowserDialog fbd = new FolderBrowserDialog();
 
         public Login()
         {
@@ -38,7 +40,7 @@ namespace PDSProjectGUI
 
             Credenziali cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
 
-            Form1 f1 = new Form1();
+            Share f1 = new Share();
             f1.Show();
             this.Hide();
         }
@@ -46,6 +48,25 @@ namespace PDSProjectGUI
         private void button4_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
+            if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            {
+                textBox3.Text = fbd.SelectedPath;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                textBox4.Text = ofd.FileName;
+
+            }
         }
     }
 }
