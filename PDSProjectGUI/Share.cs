@@ -14,14 +14,16 @@ namespace PDSProjectGUI
 {
     public partial class Share : Form
     {
-
+        Login log;
         IntPtr connessione;
         [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
-        public static extern void creaConnessione();
-        public Share()
+        public static extern IntPtr creaConnessione();
+
+        public Share(Login l)
         {
 
             InitializeComponent();
+            log = l;
             
         }
 
@@ -36,6 +38,11 @@ namespace PDSProjectGUI
             Settings set = new Settings(connessione);
             set.Show();
 
+        }
+
+        private void Share_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            log.Close();
         }
     }
 }
