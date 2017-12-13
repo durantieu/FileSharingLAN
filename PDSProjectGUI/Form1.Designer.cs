@@ -31,25 +31,19 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.roundPic1 = new WindowsFormsApplication1.RoundPic();
             this.button1 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.roundPic2 = new WindowsFormsApplication1.RoundPic();
             this.label1 = new System.Windows.Forms.Label();
-            this.roundButton1 = new WindowsFormsApplication1.RoundButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip2 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.roundPic1)).BeginInit();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.roundPic2)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(233)))), ((int)(((byte)(235)))), ((int)(((byte)(238)))));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.roundPic1);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.ForeColor = System.Drawing.Color.Black;
@@ -58,18 +52,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(169, 370);
             this.panel1.TabIndex = 0;
-            // 
-            // roundPic1
-            // 
-            this.roundPic1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.roundPic1.Image = ((System.Drawing.Image)(resources.GetObject("roundPic1.Image")));
-            this.roundPic1.Location = new System.Drawing.Point(0, 75);
-            this.roundPic1.Margin = new System.Windows.Forms.Padding(0);
-            this.roundPic1.Name = "roundPic1";
-            this.roundPic1.Size = new System.Drawing.Size(164, 124);
-            this.roundPic1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.roundPic1.TabIndex = 1;
-            this.roundPic1.TabStop = false;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // button1
             // 
@@ -97,25 +80,13 @@
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(122)))), ((int)(((byte)(5)))));
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel2.Controls.Add(this.roundPic2);
             this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.roundButton1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(169, 0);
             this.panel2.Margin = new System.Windows.Forms.Padding(0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(477, 370);
             this.panel2.TabIndex = 1;
-            // 
-            // roundPic2
-            // 
-            this.roundPic2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("roundPic2.BackgroundImage")));
-            this.roundPic2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.roundPic2.Location = new System.Drawing.Point(175, 12);
-            this.roundPic2.Name = "roundPic2";
-            this.roundPic2.Size = new System.Drawing.Size(99, 76);
-            this.roundPic2.TabIndex = 2;
-            this.roundPic2.TabStop = false;
             // 
             // label1
             // 
@@ -147,7 +118,6 @@
             this.toolTip1.SetToolTip(this.roundButton1, "Cliccare qui per iniziare a condividere uno o più file");
             this.roundButton1.UseVisualStyleBackColor = false;
             this.roundButton1.Click += new System.EventHandler(this.roundButton1_Click);
-
             // 
             // toolTip1
             // 
@@ -167,10 +137,8 @@
             this.Text = "ShareApp";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.roundPic1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.roundPic2)).EndInit();
             this.ResumeLayout(false);
 
         }
