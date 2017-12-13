@@ -61,6 +61,7 @@ namespace PDSProjectGUI
 
         private void button3_Click(object sender, EventArgs e)
         {
+            browse_immagineProfilo.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF";
             if (browse_immagineProfilo.ShowDialog() == DialogResult.OK)
             {
                 path_immagineProfilo = browse_immagineProfilo.FileName;

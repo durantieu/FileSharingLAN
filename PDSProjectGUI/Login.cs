@@ -66,6 +66,7 @@ namespace PDSProjectGUI
         private void button2_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 textBox4.Text = ofd.FileName;
