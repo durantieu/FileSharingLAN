@@ -93,6 +93,7 @@ namespace connNmSpace {
 		ipRet.append(buf).append(".");
 		ipRet.append("255");
 
+		//elimina il primo spazio della stringa
 		ipRet.erase(0, 1);
 
 		return ipRet;

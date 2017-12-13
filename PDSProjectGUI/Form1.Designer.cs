@@ -86,6 +86,7 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(477, 370);
             this.panel2.TabIndex = 1;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
             // label1
             // 
@@ -96,28 +97,6 @@
             this.label1.Size = new System.Drawing.Size(83, 40);
             this.label1.TabIndex = 1;
             this.label1.Text = "Start";
-            // 
-            // roundButton1
-            // 
-            /*this.roundButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(103)))), ((int)(((byte)(178)))));
-            this.roundButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("roundButton1.BackgroundImage")));
-            this.roundButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.roundButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.roundButton1.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.roundButton1.FlatAppearance.BorderSize = 0;
-            this.roundButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.roundButton1.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.roundButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(5)))), ((int)(((byte)(10)))));
-            this.roundButton1.Location = new System.Drawing.Point(121, 147);
-            this.roundButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.roundButton1.Name = "roundButton1";
-            this.roundButton1.Size = new System.Drawing.Size(194, 166);
-            this.roundButton1.TabIndex = 0;
-            this.roundButton1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.toolTip1.SetToolTip(this.roundButton1, "Cliccare qui per iniziare a condividere uno o più file");
-            this.roundButton1.UseVisualStyleBackColor = false;
-            this.roundButton1.Click += new System.EventHandler(this.roundButton1_Click);
-            */
             // 
             // toolTip1
             // 
