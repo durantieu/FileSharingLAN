@@ -94,6 +94,13 @@ namespace PDSProjectGUI
         private void button4_Click(object sender, EventArgs e)
         {
            // salvare i dati di impostazioni scrivendo nel file credenziali con i metodi di login
+           
+
+
+
+
+
+
             this.Close();
         }
 
