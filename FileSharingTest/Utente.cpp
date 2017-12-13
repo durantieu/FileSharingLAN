@@ -78,9 +78,10 @@ Utente* Utente::apri_utente(string dati) {
 	stringstream Str(dati);
 	string dato;
 	int i = 0;
+		
 	
-	utente->sign_in();
-	/*while (getline(Str, dato, '-')) {
+
+	while (getline(Str, dato, '-')) {
 		switch (i) {
 		case 0: {
 			utente->set_nome(dato);
@@ -109,7 +110,9 @@ Utente* Utente::apri_utente(string dati) {
 		}
 
 		i++;
-	}*/
+	}
+
+	utente->set_time_stamp(0);
 	
 	return utente;
 }

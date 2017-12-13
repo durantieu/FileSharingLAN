@@ -16,17 +16,17 @@ namespace PDSProjectGUI
         private IntPtr connessione;
 
         [DllImport("C:\\Users\\Mattia\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
-        public static extern IntPtr creaConnessione(/*string dati*/);
+        public static extern IntPtr creaConnessione(string dati);
 
         public Form1()
         {
             //in questa stringa di dati devono esserci i seguenti dati
             //(presi dal file credenziali):
             //nome-cognome-fotopath-filepath-visibility
-            string dati = "mattia-lavacca-a-b-true";
+            string dati = "mattia-lavacca-C:\\Users\\Mattia\\Desktop\\a.jpg-C:\\Users\\Mattia\\Desktop-true";
 
             InitializeComponent();
-            connessione = creaConnessione(/*dati*/);
+            connessione = creaConnessione(dati);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -56,6 +56,11 @@ namespace PDSProjectGUI
         private void toolTip1_Popup(object sender, PopupEventArgs e)
         {
            
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

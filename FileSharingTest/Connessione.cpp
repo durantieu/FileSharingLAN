@@ -541,8 +541,8 @@ namespace connNmSpace {
 }
 
 
-connNmSpace::Connessione* creaConnessione(/*string dati*/) {
-	string dati = "mattia-lavacca-a-b-true";
+connNmSpace::Connessione* creaConnessione(char* info) {
+	string dati(info);
 	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
 
