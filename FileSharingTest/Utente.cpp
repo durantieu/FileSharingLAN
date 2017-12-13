@@ -73,15 +73,44 @@ bool Utente::get_visibility() {
 *Dopo aver trovato il file "credenziali.txt" (o averlo creato), si caricano i dati
 *nell'oggetto Utente
 */
-Utente* Utente::apri_utente() {
+Utente* Utente::apri_utente(string dati) {
 	Utente* utente = new Utente();
+	stringstream Str(dati);
+	string dato;
+	int i = 0;
+	
+	utente->sign_in();
+	/*while (getline(Str, dato, '-')) {
+		switch (i) {
+		case 0: {
+			utente->set_nome(dato);
+			break;
+		}
+		case 1: {
+			utente->set_cognome(dato);
+			break;
+		}
+		case 2: {
+			utente->set_percorso_foto(dato);
+			break;
+		}
+		case 3: {
+			utente->set_filepath(dato);
+			break;
+		}
+		case 4: {
+			if (dato == "true")
+				utente->set_visibility(true);
+			else
+				utente->set_visibility(false);
+		}
+		default:
+			break;
+		}
 
-	if (!utente->sign_in())
-		if (!utente->sign_up())
-			return NULL;
-		else
-			if (!utente->sign_in())
-				return NULL;
+		i++;
+	}*/
+	
 	return utente;
 }
 

@@ -20,9 +20,13 @@ namespace PDSProjectGUI
 
         public Form1()
         {
+            //in questa stringa di dati devono esserci i seguenti dati
+            //(presi dal file credenziali):
+            //nome-cognome-fotopath-filepath-visibility
+            string dati = "mattia-lavacca-a-b-true";
+
             InitializeComponent();
-           
-            
+            connessione = creaConnessione(/*dati*/);
         }
 
         private void Form1_Load(object sender, EventArgs e)

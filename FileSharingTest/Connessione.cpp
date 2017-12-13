@@ -6,12 +6,12 @@ namespace connNmSpace {
 	condition_variable Connessione::cvar;
 	mutex Connessione::mut;
 
-	Connessione::Connessione() {
+	Connessione::Connessione(string dati) {
 		printMAC();
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
 		mutSharedPath = new mutex();
 
-		this->start();
+		this->start(dati);
 		this->connect();
 	}
 
@@ -274,8 +274,8 @@ namespace connNmSpace {
 	/*
 	*modulo di apertura dell'utente con login o registrazione
 	*/
-	bool Connessione::start() {
-		Utente *rawUser = static_cast<Utente*> (Utente::apri_utente());
+	bool Connessione::start(string dati) {
+		Utente *rawUser = static_cast<Utente*> (Utente::apri_utente(dati));
 
 		if (rawUser == NULL) {
 			cout << "Impossibile aprire nuovo utente...uscita" << endl;
@@ -287,8 +287,6 @@ namespace connNmSpace {
 
 		this->sharedpath = this->utente_attivo->get_filepathPointer();
 		this->sharedFotoPath = this->utente_attivo->get_fotopathPointer();
-		this->TCPList = new TCP_Listener(this->sync_utenti, getMACaddress(), this->sharedpath, this->mutSharedPath, this->sharedFotoPath);
-
 		this->TCPList = new TCP_Listener(this->sync_utenti, getMACaddress(), this->sharedpath, this->mutSharedPath, this->sharedFotoPath);
 
 		return TRUE;
@@ -507,8 +505,8 @@ namespace connNmSpace {
 	*Funzioni della classe wrapper di Connessione
 	*
 	*/
-	Connessione* ConnWrapper::creaConnessione() {
-		return new Connessione();
+	Connessione* ConnWrapper::creaConnessione(string dati) {
+		return new Connessione(dati);
 	}
 
 	void ConnWrapper::modPrivata(Connessione* conn) {
@@ -543,8 +541,9 @@ namespace connNmSpace {
 }
 
 
-connNmSpace::Connessione* creaConnessione() {
-	return connNmSpace::ConnWrapper::creaConnessione();
+connNmSpace::Connessione* creaConnessione(/*string dati*/) {
+	string dati = "mattia-lavacca-a-b-true";
+	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
 
 list<string>* getUtentiConnessi(connNmSpace::Connessione* conn) {
