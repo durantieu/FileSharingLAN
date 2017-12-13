@@ -35,8 +35,6 @@ namespace PDSProjectGUI
            
         }
 
-       
-
         private void roundButton1_Click(object sender, EventArgs e)
         {
             //vado ad aprire l'esplora risorse per scegliere un path
