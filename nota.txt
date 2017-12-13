@@ -23,3 +23,4 @@ Cambiare i percorsi statici di credenzali in tutto il foglio Utente.cpp
 Struttura dei dati all'atto della creazione dell'utente corrente:
 nome-cognome-fotoPath-filePath-visible
 */
+
