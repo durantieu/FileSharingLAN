@@ -31,13 +31,11 @@ namespace PDSProjectGUI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            
+           
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+       
 
         private void roundButton1_Click(object sender, EventArgs e)
         {
@@ -49,7 +47,7 @@ namespace PDSProjectGUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Settings set = new Settings();
+            Settings set = new Settings(connessione);
             set.Show();
         }
 
@@ -58,9 +56,6 @@ namespace PDSProjectGUI
            
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+       
     }
 }
