@@ -32,17 +32,21 @@ namespace PDSProjectGUI
 
         private void button3_Click(object sender, EventArgs e)
         {
-            nome = textBox1.Text;
-            cognome = textBox2.Text;
-            path_file_trans = textBox3.Text;
-            path_imm_profilo = textBox4.Text;
-            visibility = checkBox1.Checked;
 
-            Credenziali cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
+            if (textBox1.Text != "" && textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "")
+            {
+                nome = textBox1.Text;
+                cognome = textBox2.Text;
+                path_file_trans = textBox3.Text;
+                path_imm_profilo = textBox4.Text;
+                visibility = !checkBox1.Checked;
 
-            Share f1 = new Share(this);
-            f1.Show();
-            this.Hide();
+                Credenziali cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
+
+                Share f1 = new Share(this);
+                f1.Show();
+                this.Hide();
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
