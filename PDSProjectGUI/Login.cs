@@ -19,7 +19,8 @@ namespace PDSProjectGUI
         string path_imm_profilo;
         bool visibility;
         FolderBrowserDialog fbd = new FolderBrowserDialog();
-        Credenziali cred;
+        private Credenziali cred;
+
         public Login()
         {
             InitializeComponent();
@@ -43,12 +44,15 @@ namespace PDSProjectGUI
 
                 cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
 
-                Share f1 = new Share(cred);
+                Share f1 = new Share(this);
                 f1.Show();
                 this.Hide();
             }
         }
-
+        public Credenziali get_credentials()
+        {
+            return cred;
+        }
         private void button4_Click(object sender, EventArgs e)
         {
             this.Close();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 namespace PDSProjectGUI
 {
-    class Credenziali
+    public class Credenziali
     {
         
         private string visibility;
