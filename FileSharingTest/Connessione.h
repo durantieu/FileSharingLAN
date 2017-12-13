@@ -56,7 +56,7 @@ namespace connNmSpace {
 }
 
 
-extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(/*string dati*/);
+extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(char* dati);
 extern "C" __declspec(dllexport) list<string>* getUtentiConnessi(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void modPrivata(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, string MAC);
