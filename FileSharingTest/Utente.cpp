@@ -92,7 +92,7 @@ bool Utente::sign_in() {
 
 	ifstream readFile;
 	string input, first, second;
-	readFile.open("credenziali.txt");
+	readFile.open("C:\\Users\\Mattia\\Desktop\\credenziali.txt");
 
 	if (readFile.is_open()) {
 		while (!readFile.eof()) {

@@ -46,12 +46,21 @@ namespace connNmSpace {
 	
 	class ConnWrapper {
 	public:
-		static __declspec(dllexport) Connessione* creaConnessione();
-		static __declspec(dllexport) void modPrivata(Connessione* conn);
-		static __declspec(dllexport) list<string> getUtentiConnessi(Connessione* conn);
-		static __declspec(dllexport) void putInBlackList(Connessione* conn, string MAC);
-		static __declspec(dllexport) void inviaFile(Connessione* conn, string file, string MAC);
-		static __declspec(dllexport) void cambiaFilePath(Connessione* conn, string path);
-		static __declspec(dllexport) void cambiaImmagine(Connessione* conn, string path);
+		static Connessione* creaConnessione();
+		static void modPrivata(Connessione* conn);
+		static list<string> getUtentiConnessi(Connessione* conn);
+		static void putInBlackList(Connessione* conn, string MAC);
+		static void inviaFile(Connessione* conn, string file, string MAC);
+		static void cambiaFilePath(Connessione* conn, string path);
+		static void cambiaImmagine(Connessione* conn, string path);
 	};
 }
+
+
+extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione();
+extern "C" __declspec(dllexport) list<string>* getUtentiConnessi(connNmSpace::Connessione* conn);
+extern "C" __declspec(dllexport) void modPrivata(connNmSpace::Connessione* conn);
+extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, string MAC);
+extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, string file, string MAC);
+extern "C" __declspec(dllexport) void cambiaFilePath(connNmSpace::Connessione* conn, string path);
+extern "C" __declspec(dllexport) void cambiaImmagine(connNmSpace::Connessione* conn, string path);

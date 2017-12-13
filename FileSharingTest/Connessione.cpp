@@ -541,3 +541,33 @@ namespace connNmSpace {
 
 
 }
+
+
+connNmSpace::Connessione* creaConnessione() {
+	return connNmSpace::ConnWrapper::creaConnessione();
+}
+
+list<string>* getUtentiConnessi(connNmSpace::Connessione* conn) {
+	return  &(connNmSpace::ConnWrapper::getUtentiConnessi(conn));
+}
+
+void modPrivata(connNmSpace::Connessione* conn) {
+	connNmSpace::ConnWrapper::modPrivata(conn);
+}
+
+void putInBlackList(connNmSpace::Connessione* conn, string MAC) {
+	connNmSpace::ConnWrapper::putInBlackList(conn, MAC);
+}
+
+void inviaFile(connNmSpace::Connessione* conn, string file, string MAC) {
+	connNmSpace::ConnWrapper::inviaFile(conn, file, MAC);
+}
+
+void cambiaFilePath(connNmSpace::Connessione* conn, string path) {
+	connNmSpace::ConnWrapper::cambiaFilePath(conn, path);
+}
+
+void cambiaImmagine(connNmSpace::Connessione* conn, string path) {
+	connNmSpace::ConnWrapper::cambiaImmagine(conn, path);
+}
+
