@@ -16,12 +16,17 @@ namespace PDSProjectGUI
         private IntPtr connessione;
 
         [DllImport("C:\\Users\\Mattia\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
-        public static extern IntPtr creaConnessione();
+        public static extern IntPtr creaConnessione(/*string dati*/);
 
         public Form1()
         {
+            //in questa stringa di dati devono esserci i seguenti dati
+            //(presi dal file credenziali):
+            //nome-cognome-fotopath-filepath-visibility
+            string dati = "mattia-lavacca-a-b-true";
+
             InitializeComponent();
-            connessione = creaConnessione();
+            connessione = creaConnessione(/*dati*/);
         }
 
         private void Form1_Load(object sender, EventArgs e)

@@ -1,6 +1,5 @@
 #pragma once
 #include "Sync_mappa.h"
-//#include "Sync_Utente.h"
 #include "TCP_Listener.h"
 #include "TCP_Client.h"
 
@@ -24,8 +23,8 @@ namespace connNmSpace {
 		static condition_variable cvar;
 		static mutex mut;
 	public:
-		Connessione();
-		bool start();
+		Connessione(string dati);
+		bool start(string dati);
 		void connect();
 		static void discoverer_function(Connessione *conn);
 		static void listener_function(Sync_mappa *m1);
@@ -46,7 +45,7 @@ namespace connNmSpace {
 	
 	class ConnWrapper {
 	public:
-		static Connessione* creaConnessione();
+		static Connessione* creaConnessione(string dati);
 		static void modPrivata(Connessione* conn);
 		static list<string> getUtentiConnessi(Connessione* conn);
 		static void putInBlackList(Connessione* conn, string MAC);
@@ -57,7 +56,7 @@ namespace connNmSpace {
 }
 
 
-extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione();
+extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(/*string dati*/);
 extern "C" __declspec(dllexport) list<string>* getUtentiConnessi(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void modPrivata(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, string MAC);
