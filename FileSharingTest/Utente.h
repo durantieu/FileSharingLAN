@@ -28,7 +28,7 @@ public:
 	void set_ip(SOCKADDR_IN ip_addr);
 	void set_visibility(bool vis);
 	bool get_visibility();
-	virtual void set_percorso_foto(string percorso);
+	void set_percorso_foto(string percorso);
 	static Utente* apri_utente(string dati);
 	bool sign_in();
 	bool sign_up();

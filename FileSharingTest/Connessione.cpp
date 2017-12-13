@@ -54,6 +54,50 @@ namespace connNmSpace {
 		return "";
 	}
 
+	//ritorna il proprio indirizzo IP
+	string Connessione::getOwnIP() {
+		system("ipconfig > ip.txt");
+
+		ifstream readFile;
+		string buf, first, second;
+		string mask("IPv4");
+
+		readFile.open("ip.txt");
+		while (getline(readFile, buf)) {
+			stringstream str(buf);
+			getline(str, first, ':');
+			getline(str, second);
+
+			if (first.find(mask) != string::npos) {
+				readFile.close();
+				system("del ip.txt");
+				return second;
+			}	
+		}
+		readFile.close();
+		system("del ip.txt");
+		return "";
+	}
+
+	//dato l'indirizzo IP dell'host ritorna l'indirizzo IP broadcast della rete
+	string Connessione::getBroadcastIP(string ip) {
+		stringstream str(ip);
+		string buf, ipRet;
+
+		cout << ip << endl;
+		getline(str, buf, '.');
+		ipRet.assign(buf).append(".");
+		getline(str, buf, '.');
+		ipRet.append(buf).append(".");
+		getline(str, buf, '.');
+		ipRet.append(buf).append(".");
+		ipRet.append("255");
+
+		ipRet.erase(0, 1);
+
+		return ipRet;
+	}
+
 	/*
 	*Discoverer, thread sganciato dal metodo connessione::start()
 	*si occupa di inviare pacchetti UDP in braodcast ogni n secondi;
@@ -98,12 +142,22 @@ namespace connNmSpace {
 			closesocket(sock);
 			return;
 		}
+		 //funzioni per recuperare l'indirizzo IP broadcast dal proprio IP
+		string ownIP, broadcastIP;
+		ownIP = getOwnIP();
+		if (ownIP == "") {
+			cout << "Host non connesso alla rete";
+			return;
+		}	
+
+		broadcastIP = getBroadcastIP(ownIP);
+		
 
 		//Struttura del sender
 		struct sockaddr_in Sender_addr;
 		Sender_addr.sin_family = AF_INET;
 		Sender_addr.sin_port = htons(PORTA_IN_ASCOLTO);
-		Sender_addr.sin_addr.s_addr = inet_addr("192.168.43.255");
+		Sender_addr.sin_addr.s_addr = inet_addr(broadcastIP.c_str());
 
 		int i = 0;
 

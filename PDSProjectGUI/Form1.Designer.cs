@@ -55,7 +55,6 @@ namespace PDSProjectGUI
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(169, 370);
             this.panel1.TabIndex = 0;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // button1
             // 
@@ -103,7 +102,7 @@ namespace PDSProjectGUI
             // 
             // roundButton1
             // 
-            this.roundButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(103)))), ((int)(((byte)(178)))));
+            /*this.roundButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(103)))), ((int)(((byte)(178)))));
             this.roundButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("roundButton1.BackgroundImage")));
             this.roundButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.roundButton1.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -121,6 +120,7 @@ namespace PDSProjectGUI
             this.toolTip1.SetToolTip(this.roundButton1, "Cliccare qui per iniziare a condividere uno o più file");
             this.roundButton1.UseVisualStyleBackColor = false;
             this.roundButton1.Click += new System.EventHandler(this.roundButton1_Click);
+            */
             // 
             // toolTip1
             // 

@@ -41,6 +41,8 @@ namespace connNmSpace {
 		void blocco_utente(string MAC);
 		bool getVisibilityUtenteAttivo();
 		list<string> getUtentiConnessi();
+		static string getOwnIP();
+		static string getBroadcastIP(string ip);
 	};
 	
 	class ConnWrapper {
