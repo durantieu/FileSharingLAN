@@ -45,6 +45,7 @@ namespace PDSProjectGUI
         }
         public void change_nome(string newNome)
         {
+            nome = newNome;
             using (StreamReader sr = new StreamReader("Credenziali.txt"))
             {
                 string temp;
@@ -79,6 +80,7 @@ namespace PDSProjectGUI
 
         public void change_cognome(string newCognome)
         {
+            cognome = newCognome;
             using (StreamReader sr = new StreamReader("Credenziali.txt"))
             {
                 string temp;
@@ -114,6 +116,8 @@ namespace PDSProjectGUI
 
         public void change_path_file_transfer(string newPathFileTransfer)
         {
+            path_file_transfer = newPathFileTransfer;
+
             using (StreamReader sr = new StreamReader("Credenziali.txt"))
             {
                 string temp;
@@ -150,6 +154,7 @@ namespace PDSProjectGUI
 
         public void change_path_immagine_profilo(string newPathImmagineProfilo)
         {
+            path_immagine_profilo = newPathImmagineProfilo;
             using (StreamReader sr = new StreamReader("Credenziali.txt"))
             {
                 string temp;
@@ -185,6 +190,7 @@ namespace PDSProjectGUI
 
         public void change_visibility(string newVisibility)
         {
+            visibility = newVisibility;
             using (StreamReader sr = new StreamReader("Credenziali.txt"))
             {
                 string temp;

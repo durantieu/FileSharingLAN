@@ -14,16 +14,16 @@ namespace PDSProjectGUI
 {
     public partial class Share : Form
     {
-        Login log;
+        Credenziali log;
         IntPtr connessione;
         [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione();
 
-        public Share(Login l)
+        public Share(Credenziali credentials)
         {
 
             InitializeComponent();
-            log = l;
+            log = credentials;
             
         }
 
