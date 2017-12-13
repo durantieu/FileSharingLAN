@@ -93,6 +93,8 @@ namespace connNmSpace {
 		ipRet.append(buf).append(".");
 		ipRet.append("255");
 
+		ipRet.erase(0, 1);
+
 		return ipRet;
 	}
 
