@@ -17,7 +17,7 @@ namespace PDSProjectGUI
         Credenziali cred;
         Login l;
         IntPtr connessione;
-        [DllImport("C:\\Users\\Mattia\\Desktop\\FileSharingTest.dll")]
+        [DllImport("C:\\Users\\Mattia\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione(string dati);
 
         public Share(Login l)

@@ -61,7 +61,7 @@ namespace connNmSpace {
 		ifstream readFile;
 		string buf, first, second;
 		string mask("IPv4");
-		string mask2("LAN");
+		string mask2("LAN"), mask3("Ethernet"), mask4("Wi-Fi");
 		bool LANFound = false;
 
 		readFile.open("ip.txt");
@@ -70,7 +70,9 @@ namespace connNmSpace {
 			getline(str, first, ':');
 			getline(str, second);
 
-			if (first.find(mask2) != string::npos)
+			if (first.find(mask2) != string::npos ||
+				first.find(mask3) != string::npos ||
+				first.find(mask4) != string::npos)
 				LANFound = true;
 			if (first.find(mask)!= string::npos && LANFound == true) {
 				readFile.close();
@@ -99,12 +101,6 @@ namespace connNmSpace {
 
 		//elimina il primo spazio della stringa
 		ipRet.erase(0, 1);
-
-		ofstream f; 
-		f.open("C:\\Users\\duran\\Desktop\\ciao.txt");
-		f << ipRet;
-		f.close();
-
 
 		return ipRet;
 	}
@@ -156,13 +152,13 @@ namespace connNmSpace {
 		 //funzioni per recuperare l'indirizzo IP broadcast dal proprio IP
 		string ownIP, broadcastIP;
 		ownIP = getOwnIP();
+
 		if (ownIP == "") {
 			cout << "Host non connesso alla rete";
 			return;
 		}	
 
 		broadcastIP = getBroadcastIP(ownIP);
-		
 
 		//Struttura del sender
 		struct sockaddr_in Sender_addr;
@@ -608,10 +604,6 @@ namespace connNmSpace {
 
 connNmSpace::Connessione* creaConnessione(char* info) {
 	string dati(info);
-	ofstream f;
-	f.open("C:\\Users\\duran\\Desktop\\l.txt");
-	f<<dati;
-	f.close();
 	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
 
