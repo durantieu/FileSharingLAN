@@ -25,6 +25,7 @@ namespace PDSProjectGUI
 
             InitializeComponent();
             cred = l.get_credentials();
+            connessione = creaConnessione(l.ToString());
             
         }
 
