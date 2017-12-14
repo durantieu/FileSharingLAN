@@ -81,7 +81,7 @@ Utente* Utente::apri_utente(string dati) {
 		
 	
 
-	while (getline(Str, dato, '-')) {
+	while (getline(Str, dato, '|')) {
 		switch (i) {
 		case 0: {
 			utente->set_nome(dato);

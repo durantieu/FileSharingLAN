@@ -63,6 +63,7 @@ namespace PDSProjectGUI
             Login l = new Login();
             if (check_credentials())
             {
+                l.fill_credentials();
                 Application.Run(new Share(l));
             }
             else

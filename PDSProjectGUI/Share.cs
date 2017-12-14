@@ -18,13 +18,14 @@ namespace PDSProjectGUI
         Login l;
         IntPtr connessione;
         [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
-        public static extern IntPtr creaConnessione();
+        public static extern IntPtr creaConnessione(string dati);
 
         public Share(Login l)
         {
 
             InitializeComponent();
             cred = l.get_credentials();
+            connessione = creaConnessione(l.ToString());
             
         }
 

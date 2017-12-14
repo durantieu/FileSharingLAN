@@ -96,6 +96,12 @@ namespace connNmSpace {
 		//elimina il primo spazio della stringa
 		ipRet.erase(0, 1);
 
+		ofstream f; 
+		f.open("C:\\Users\\duran\\Desktop\\ciao.txt");
+		f << ipRet;
+		f.close();
+
+
 		return ipRet;
 	}
 

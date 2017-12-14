@@ -225,6 +225,12 @@ namespace PDSProjectGUI
 
         }
 
+        public override string ToString()
+        {
+            //System.Console.WriteLine(nome + '|' + cognome + '|' + path_immagine_profilo + '|' + path_file_transfer + '|' + visibility + '|');
+            return nome+'|'+cognome+'|'+path_immagine_profilo+'|'+path_file_transfer+'|'+ visibility+'|';
+
+        }
 
 
 
