@@ -609,8 +609,8 @@ namespace connNmSpace {
 connNmSpace::Connessione* creaConnessione(char* info) {
 	string dati(info);
 	ofstream f;
-	f.open("C:\\Users\\Mattia\\Desktop\\DATI.txt");
-	f << dati;
+	f.open("C:\\Users\\duran\\Desktop\\l.txt");
+	f<<dati;
 	f.close();
 	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
