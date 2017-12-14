@@ -24,6 +24,7 @@ namespace PDSProjectGUI
 
         public Login()
         {
+            this.fill_credentials();
             InitializeComponent();
         }
 
@@ -38,7 +39,7 @@ namespace PDSProjectGUI
             StreamReader sr = new StreamReader("Credenziali.txt");
             while ((temp = sr.ReadLine() )!= null)
             {
-                temp2 = temp.Split();
+                temp2 = temp.Split('|');
                 if(temp2[0] == "Nome")
                 {
                     nome = temp2[1];
@@ -123,6 +124,10 @@ namespace PDSProjectGUI
         private void Login_Load(object sender, EventArgs e)
         {
 
+        }
+        public override string ToString()
+        {
+            return nome + '|' + cognome + '|' + path_imm_profilo + '|' + path_file_trans + '|' + visibility + '|';
         }
     }
 }

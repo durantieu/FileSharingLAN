@@ -17,7 +17,7 @@ namespace PDSProjectGUI
         Credenziali cred;
         Login l;
         IntPtr connessione;
-        [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        [DllImport("C:\\Users\\Mattia\\Desktop\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione(string dati);
 
         public Share(Login l)
@@ -25,7 +25,8 @@ namespace PDSProjectGUI
 
             InitializeComponent();
             cred = l.get_credentials();
-            connessione = creaConnessione(l.ToString());
+            string tmp = l.ToString();
+            connessione = creaConnessione(tmp);
             
         }
 

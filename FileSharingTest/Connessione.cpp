@@ -61,6 +61,8 @@ namespace connNmSpace {
 		ifstream readFile;
 		string buf, first, second;
 		string mask("IPv4");
+		string mask2("LAN");
+		bool LANFound = false;
 
 		readFile.open("ip.txt");
 		while (getline(readFile, buf)) {
@@ -68,7 +70,9 @@ namespace connNmSpace {
 			getline(str, first, ':');
 			getline(str, second);
 
-			if (first.find(mask) != string::npos) {
+			if (first.find(mask2) != string::npos)
+				LANFound = true;
+			if (first.find(mask)!= string::npos && LANFound == true) {
 				readFile.close();
 				system("del ip.txt");
 				return second;
