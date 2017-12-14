@@ -38,7 +38,7 @@ namespace PDSProjectGUI
             StreamReader sr = new StreamReader("Credenziali.txt");
             while ((temp = sr.ReadLine() )!= null)
             {
-                temp2 = temp.Split();
+                temp2 = temp.Split('|');
                 if(temp2[0] == "Nome")
                 {
                     nome = temp2[1];
