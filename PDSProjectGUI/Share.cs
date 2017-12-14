@@ -18,7 +18,7 @@ namespace PDSProjectGUI
         Login l;
         IntPtr connessione;
         [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
-        public static extern IntPtr creaConnessione();
+        public static extern IntPtr creaConnessione(string dati);
 
         public Share(Login l)
         {
@@ -53,6 +53,11 @@ namespace PDSProjectGUI
                 
             }
             
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
