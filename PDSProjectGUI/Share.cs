@@ -19,7 +19,7 @@ namespace PDSProjectGUI
         IntPtr connessione;
         bool cred_changed = false;
         //Copiare la dll nella cartella di sistema windows\\system32
-        [DllImport("C:\\Users\\Mattia\\Documents\\Visual Studio 2017\\Projects\\FileSharingTest\\Debug\\FileSharingTest.dll")]
+        [DllImport("FileSharingTest.dll")]
         public static extern IntPtr creaConnessione(string dati);
 
         public bool cred_change
@@ -38,12 +38,17 @@ namespace PDSProjectGUI
             label4.Text = cred.get_nome();
             label5.Text = cred.get_cognome();
             pictureBox2.ImageLocation = cred.get_immagine_profilo();
-            
+
+            System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
+            gp.AddEllipse(0, 0, pictureBox2.Width - 3, pictureBox2.Height - 3);
+            Region rg = new Region(gp);
+            pictureBox2.Region = rg;
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            FileDialog fd = new FileDialog();
+            FileDialog fd = new FileDialog(connessione);
             fd.Show();
         }
 
@@ -89,6 +94,6 @@ namespace PDSProjectGUI
 
         }
 
-
+        
     }
 }

@@ -7,21 +7,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Runtime.InteropServices;
 
 namespace PDSProjectGUI
 {
     public partial class SendFiles : Form
     {
+       [DllImport("FileSharingTest.dll")]
+       public static extern IntPtr getUtentiConnessi(IntPtr conn);
+
         string path;
         int numero_utenti_in_rete=0;
         int counter_button = 0;
         int counter_picBox = 0;
-        public SendFiles(string pt)
+        IntPtr utenti_attivi;
+
+        public SendFiles(string pt, IntPtr connection)
         {
             path = pt;
             InitializeComponent();
-           
+            //utenti_attivi = getUtentiConnessi(connection);
+            
             //acchiappo il numero di utenti in rete  e lo assegno a numero_utenti_in_rete
 
         }
@@ -29,7 +35,7 @@ namespace PDSProjectGUI
         {
             Button btn = (Button)sender;
 
-            for (int i = 0; i < counter_button; i++)
+            for (int i = 0; i < 8; i++)
             {
                 if (btn.Name == ("Butt" + i))
                 {
@@ -46,10 +52,18 @@ namespace PDSProjectGUI
             
             // Posiziono il bottone
             button.Name = "Butt" + counter_button;
-            button.Text = "Invia a "; //aggiungere nome e cognome utente
-            button.Location = new Point(i+70, j+170);
-            button.Size = new Size(120, 20);
-            button.BackColor = SystemColors.Control;
+            // button.Text = "Invia a "; //aggiungere nome e cognome utente
+            button.BackgroundImage = System.Drawing.Image.FromFile("C:\\Users\\duran\\Desktop\\Immagini interfaccia progetto PDS\\Invia50x40.png");
+            button.ForeColor = Color.Black;
+            button.BackColor = Color.White;
+            button.BackgroundImageLayout = ImageLayout.Center;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 1;
+
+            
+            button.Location = new Point(i+80, j+170);
+            button.Size = new Size(100, 40);
+           
            
             // incremento l'identificatore.
             counter_button++;
@@ -60,19 +74,27 @@ namespace PDSProjectGUI
         }
         private PictureBox create_picBox(int riga, int colonna)
         {
+           
 
             PictureBox newPicBox = new PictureBox();
             newPicBox.Name = "PicBox"+counter_picBox;
             newPicBox.Location = new Point(riga+70, colonna+70);
             newPicBox.Size = new Size(120, 100);
 
-            Image im = Image.FromFile("C:\\Users\\duran\\Desktop\\immagine_vuota.jpeg");
-            newPicBox.ImageLocation = "C:\\Users\\duran\\Desktop\\immagine_vuota.jpeg";
-
+            Image im = Image.FromFile("C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg");
+            newPicBox.ImageLocation = "C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg";
+            newPicBox.BorderStyle = BorderStyle.FixedSingle;
+            
             newPicBox.InitialImage = im;
             newPicBox.Image = im;
             newPicBox.SizeMode = PictureBoxSizeMode.StretchImage;
-           // newPicBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            // newPicBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
+            gp.AddEllipse(0, 0, newPicBox.Width - 3, newPicBox.Height - 3);
+            Region rg = new Region(gp);
+            newPicBox.Region = rg;
+
+
 
             counter_picBox++;
             newPicBox.Show();
@@ -92,9 +114,9 @@ namespace PDSProjectGUI
                 if(pos_riga >= 500)
                 {
                     pos_riga = 0;
-                    pos_colonna = 140;
+                    pos_colonna = 180;
                     pos_riga_picBox = 0;
-                    pos_colonna_picBox = 140;
+                    pos_colonna_picBox = 180;
                 }
 
                 Button newButton =CreateButton_Click(pos_riga, pos_colonna);
