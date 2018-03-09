@@ -1,6 +1,5 @@
 #include "TCP_Client.h"
 
-using namespace std::tr2::sys;
 #define BUF_LEN 1024
 
 
@@ -11,6 +10,7 @@ struct info {
 	string size;
 };
 
+using namespace std::tr2::sys;
 
 TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mutex* mt, string* percorso_foto) {
 	this->cammino = path;
@@ -201,6 +201,7 @@ void TCP_Client::operator()() {
 		data_to_send.append("|");
 
 		//invio delle info
+
 		send(sock, data_to_send.c_str(), (size_t)strlen(data_to_send.c_str()), 0);
 		//cout << "(Client) Info inviate al tcp server" << endl;
 		i++;
@@ -277,6 +278,8 @@ void TCP_Client::operator()() {
 	closesocket(sock);
 }
 
+//navigazione file system
+//pusha dentro vector<struct info> tutti i percorsi relativi a partire dalla root dei file da inviare
 deque<struct info> TCP_Client::navigazione_fs(string root, int& flag_is_file) {
 
 	deque<struct info> v;
@@ -289,6 +292,8 @@ deque<struct info> TCP_Client::navigazione_fs(string root, int& flag_is_file) {
 		struct stat stat_buf;
 		struct info inf;
 		inf.nome_file = folder.filename().string();
+		inf.nome_file = inf.nome_file.substr(0, inf.nome_file.find_last_of("."));
+
 		inf.percorso = "";
 		inf.estensione = folder.extension().string();
 		int rc = stat(root.c_str(), &stat_buf);

@@ -1,13 +1,13 @@
 #include "TCP_Server.h"
 
 //Costruttore dell'oggetto TCPserver
-TCP_Server::TCP_Server(Porta* port, int tipo, mutex* mutPorts, HomePrinter* hp, string *sharedpath, mutex* mutSharedPath, string nome_sender) {
+TCP_Server::TCP_Server(Porta* port, int tipo, mutex* mutPorts, HomePrinter* hp, string* path, mutex* mutSharedPath, string nome_sender) {
 	this->port = port;
 	this->tipo_file = tipo;
 	this->mutPorts = mutPorts;
 	this->hp = hp;
 	this->mutSharedPath = mutSharedPath;
-	this->sharedPath = sharedPath;
+	this->sharedPath = path;
 	this->nome_sender = nome_sender;
 }
 
@@ -128,16 +128,16 @@ void TCP_Server::operator()() {
 
 			}
 			if (tipo_file != 3 && accettato == false) {
-				string risposta;
+				/*string risposta;
 				cout << "L'utente " << nome_sender << " vuole inviarti dei file: " << nomefile << "accettare? S/N" << endl;
 				cin >> risposta;
 
 				if (!risposta.compare("N")) {
-					string ack;
-					ack.assign("0"); //ack negativo -> dico al client chiudi la connessione
-					send(ClientSocket, ack.c_str(), 1, 0);
-					return;
-				}
+				string ack;
+				ack.assign("0"); //ack negativo -> dico al client chiudi la connessione
+				send(ClientSocket, ack.c_str(), 1, 0);
+				return;
+				}*/
 				accettato = true;
 			}
 			//
@@ -153,8 +153,12 @@ void TCP_Server::operator()() {
 
 			if (tipo_file == 3) {
 
+				string path_tmp("C:\\Users\\duran\\Documents\\Immagini_utenti\\");
+				string comando = "del ";
+				comando.append(path_tmp).append(nomeFoto);
+				comando.append(" >nul 2>&1");
+				system(comando.c_str());
 
-				string path_tmp("C:\\Users\\Mattia\\Documents\\Immagini_utenti\\");
 				path_tmp.append(nomeFoto).append(ext);
 				FILE* fp = fopen(path_tmp.c_str(), "wb");
 				if (fp == NULL) {
@@ -270,7 +274,7 @@ bool TCP_Server::creaPath(string camminoTot, string& camm) {
 		{
 			lock_guard<mutex> lg(*mutSharedPath);
 			if (*this->sharedPath == "")
-				camminoParz.assign(pth).append("\\Documents\\file transfer");
+				camminoParz.assign(pth).append("\\Documents\\fileTransfer");
 			else
 				camminoParz = *this->sharedPath;
 		}
