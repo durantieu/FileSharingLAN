@@ -241,8 +241,8 @@ bool Sync_mappa::check_identity(string MAC) {
 
 
 //Funzione che ritorna la lista di utenti connessi in lista di stringhe
-list<string> Sync_mappa::getUtenti() {
-	list<string> listaUtenti;
+vector<char*>* Sync_mappa::getUtenti() {
+	vector<char*>* listaUtenti = new vector<char*>();
 	map<string, Utente>::iterator it;
 
 	m.lock();
@@ -262,7 +262,11 @@ list<string> Sync_mappa::getUtenti() {
 			append(*(it->second.get_fotopathPointer())).append("-").
 			append(bloccato).append("-");
 
-		listaUtenti.push_back(tmp);
+		char *cstr = new char[tmp.length() + 1];
+		strcpy(cstr, tmp.c_str());
+
+		listaUtenti->push_back(cstr);
+
 	}
 
 	m.unlock();

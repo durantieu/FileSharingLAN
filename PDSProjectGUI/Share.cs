@@ -19,7 +19,7 @@ namespace PDSProjectGUI
         IntPtr connessione;
         bool cred_changed = false;
         //Copiare la dll nella cartella di sistema windows\\system32
-        [DllImport("FileSharingTest.dll")]
+        [DllImport("C:\\Users\\Mattia\\Documents\\Visual Studio 2017\\Projects\\FileSharingTest\\Debug\\FileSharingTest.dll")]
         public static extern IntPtr creaConnessione(string dati);
 
         public bool cred_change

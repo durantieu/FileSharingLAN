@@ -40,7 +40,7 @@ namespace connNmSpace {
 		void change_immagine_profilo(string foto_path);
 		void blocco_utente(string MAC);
 		bool getVisibilityUtenteAttivo();
-		list<string> getUtentiConnessi();
+		vector<char*>* getUtentiConnessi();
 		static string getOwnIP();
 		static string getBroadcastIP(string ip);
 	};
@@ -49,7 +49,7 @@ namespace connNmSpace {
 	public:
 		static Connessione* creaConnessione(string dati);
 		static void modPrivata(Connessione* conn);
-		static list<string> getUtentiConnessi(Connessione* conn);
+		static vector<char*>* getUtentiConnessi(Connessione* conn);
 		static void putInBlackList(Connessione* conn, char* MAC);
 		static void inviaFile(Connessione* conn, char* file, char* MAC);
 		static void cambiaFilePath(Connessione* conn, char* path);
@@ -59,7 +59,7 @@ namespace connNmSpace {
 
 
 extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(char* dati);
-extern "C" __declspec(dllexport) list<string>* getUtentiConnessi(connNmSpace::Connessione* conn);
+extern "C" __declspec(dllexport) vector<char*>* getUtentiConnessi(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void modPrivata(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, char* MAC);
 extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC);

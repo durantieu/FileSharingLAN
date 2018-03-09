@@ -559,7 +559,7 @@ namespace connNmSpace {
 	}
 
 	//getter della lista degli utenti presenti attualmente in mappa
-	list<string> Connessione::getUtentiConnessi() {
+	vector<char*>* Connessione::getUtentiConnessi() {
 		return this->sync_utenti->getUtenti();
 	}
 
@@ -581,7 +581,7 @@ namespace connNmSpace {
 			conn->change_visibility(true);
 	}
 
-	list<string> ConnWrapper::getUtentiConnessi(Connessione* conn) {
+	vector<char*>* ConnWrapper::getUtentiConnessi(Connessione* conn) {
 		return conn->getUtentiConnessi();
 	}
 
@@ -616,8 +616,8 @@ connNmSpace::Connessione* creaConnessione(char* info) {
 	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
 
-list<string>* getUtentiConnessi(connNmSpace::Connessione* conn) {
-	return  &(connNmSpace::ConnWrapper::getUtentiConnessi(conn));
+vector<char*>* getUtentiConnessi(connNmSpace::Connessione* conn) {
+	return  connNmSpace::ConnWrapper::getUtentiConnessi(conn);
 }
 
 void modPrivata(connNmSpace::Connessione* conn) {

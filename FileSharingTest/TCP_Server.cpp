@@ -153,7 +153,7 @@ void TCP_Server::operator()() {
 
 			if (tipo_file == 3) {
 
-				string path_tmp("C:\\Users\\duran\\Documents\\Immagini_utenti\\");
+				string path_tmp("C:\\Users\\Mattia\\Documenti\\Immagini_utenti\\");
 				string comando = "del ";
 				comando.append(path_tmp).append(nomeFoto);
 				comando.append(" >nul 2>&1");

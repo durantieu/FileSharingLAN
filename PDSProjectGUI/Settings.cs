@@ -15,10 +15,10 @@ namespace PDSProjectGUI
     {
         //la funzione C++ modPrivata non accetta nessun parametro, 
         //si occupa di invertire il valore booleano in struttura dat
-        [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        [DllImport("FileSharingTest.dll")]
         public static extern void modPrivata(IntPtr conn);
 
-        [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        [DllImport("FileSharingTest.dll")]
         public static extern void cambiaFilePath(IntPtr conn, string path);
 
         //[DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]

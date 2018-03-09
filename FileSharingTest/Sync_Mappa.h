@@ -26,5 +26,5 @@ public:
 	void blocco(string utente); //funzioni per la black list
 	void sblocco_utente(string MAC); //funzione black list
 	bool check_identity(string MAC); //funzione black list
-	list<string> getUtenti();
+	vector<char*>* getUtenti();
 };
