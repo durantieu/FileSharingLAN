@@ -231,8 +231,18 @@ namespace PDSProjectGUI
             return nome+'|'+cognome+'|'+path_immagine_profilo+'|'+path_file_transfer+'|'+ visibility+'|';
 
         }
-
-
+        public string get_nome()
+        {
+            return nome;
+        }
+        public string get_cognome()
+        {
+            return cognome;
+        }
+        public string get_immagine_profilo()
+        {
+            return path_immagine_profilo;
+        }
 
     }
 }

@@ -50,10 +50,10 @@ namespace connNmSpace {
 		static Connessione* creaConnessione(string dati);
 		static void modPrivata(Connessione* conn);
 		static list<string> getUtentiConnessi(Connessione* conn);
-		static void putInBlackList(Connessione* conn, string MAC);
-		static void inviaFile(Connessione* conn, string file, string MAC);
-		static void cambiaFilePath(Connessione* conn, string path);
-		static void cambiaImmagine(Connessione* conn, string path);
+		static void putInBlackList(Connessione* conn, char* MAC);
+		static void inviaFile(Connessione* conn, char* file, char* MAC);
+		static void cambiaFilePath(Connessione* conn, char* path);
+		static void cambiaImmagine(Connessione* conn, char* path);
 	};
 }
 
@@ -61,7 +61,7 @@ namespace connNmSpace {
 extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(char* dati);
 extern "C" __declspec(dllexport) list<string>* getUtentiConnessi(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void modPrivata(connNmSpace::Connessione* conn);
-extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, string MAC);
-extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, string file, string MAC);
-extern "C" __declspec(dllexport) void cambiaFilePath(connNmSpace::Connessione* conn, string path);
-extern "C" __declspec(dllexport) void cambiaImmagine(connNmSpace::Connessione* conn, string path);
+extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, char* MAC);
+extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC);
+extern "C" __declspec(dllexport) void cambiaFilePath(connNmSpace::Connessione* conn, char* path);
+extern "C" __declspec(dllexport) void cambiaImmagine(connNmSpace::Connessione* conn, char* path);

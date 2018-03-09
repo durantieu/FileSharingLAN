@@ -15,18 +15,29 @@ namespace PDSProjectGUI
     public partial class Share : Form
     {
         Credenziali cred;
-        Login l;
+        Login log;
         IntPtr connessione;
+        bool cred_changed = false;
         //Copiare la dll nella cartella di sistema windows\\system32
         [DllImport("FileSharingTest.dll")]
         public static extern IntPtr creaConnessione(string dati);
+
+        public bool cred_change
+        {
+            get;
+            set;
+        }
 
         public Share(Login l)
         {
 
             InitializeComponent();
+            log = l;
             cred = l.get_credentials();
             connessione = creaConnessione(cred.ToString());
+            label4.Text = cred.get_nome();
+            label5.Text = cred.get_cognome();
+            pictureBox2.ImageLocation = cred.get_immagine_profilo();
             
         }
 
@@ -38,16 +49,32 @@ namespace PDSProjectGUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Settings set = new Settings(connessione);
+            Settings set = new Settings(connessione, this);
             set.Show();
 
-        }
 
+
+        }
+        public void update_credentials(Settings form)
+        {
+            log.fill_credentials();
+            cred = log.get_credentials();
+            label4.Text = cred.get_nome();
+            label5.Text = cred.get_cognome();
+            pictureBox2.Image = System.Drawing.Image.FromFile(cred.get_immagine_profilo());
+ 
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox2.Refresh();
+            pictureBox2.Update();
+            
+            form.Close();
+
+        }
         private void Share_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
-                l.Close();
+                log.Close();
 
             }
             catch (NullReferenceException)
@@ -61,5 +88,7 @@ namespace PDSProjectGUI
         {
 
         }
+
+
     }
 }

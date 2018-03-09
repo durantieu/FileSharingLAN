@@ -21,22 +21,24 @@ namespace PDSProjectGUI
         [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
         public static extern void cambiaFilePath(IntPtr conn, string path);
 
-        [DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        //[DllImport("C:\\Users\\duran\\Source\\Repos\\FileSharingTest2\\x64\\Debug\\FileSharingTest.dll")]
+        [DllImport("FileSharingTest.dll")]
         public static extern void cambiaImmagine(IntPtr conn, string path);
 
         string path_fileTransfer;
         string path_immagineProfilo;
-        bool visible = true;
-
+        bool visible = false;
+        bool button2_changed = false;
+        bool button3_changed = false;
         FolderBrowserDialog browse_fileTransfer = new FolderBrowserDialog();
         OpenFileDialog browse_immagineProfilo = new OpenFileDialog();
         IntPtr connessione;
-        
-        public Settings(IntPtr Connection)
+        private Share s = null;
+        public Settings(IntPtr Connection, Share callingForm)
         {
             InitializeComponent();
             //prelevare e inizializzare il valore di Visible dal file credenziali
-
+            s = callingForm;
             connessione = Connection;
             set_private(visible);
         }
@@ -56,6 +58,7 @@ namespace PDSProjectGUI
             if (browse_fileTransfer.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(browse_fileTransfer.SelectedPath))
             {
                 path_fileTransfer = browse_fileTransfer.SelectedPath;
+                button2_changed = true;
             }
         }
 
@@ -65,12 +68,11 @@ namespace PDSProjectGUI
             if (browse_immagineProfilo.ShowDialog() == DialogResult.OK)
             {
                 path_immagineProfilo = browse_immagineProfilo.FileName;
+                button3_changed = true;
                
             }
         }
 
-       
-        
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
@@ -86,22 +88,31 @@ namespace PDSProjectGUI
 
         private void button5_Click(object sender, EventArgs e)
         {
-            //operazioni per scrivere sul file Credenziali tutti i cambiamenti
+            //tasto annulla... esci senza salvare
 
             this.Close();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-           // salvare i dati di impostazioni scrivendo nel file credenziali con i metodi di login
-           
+            // salvare i dati di impostazioni scrivendo nel file credenziali con i metodi della DLL
+           /* if (button2_changed) {
+                cambiaFilePath(connessione, path_fileTransfer);
+                button2_changed = false;
+            }
+            if (button3_changed)
+            {
+                cambiaImmagine(connessione, path_immagineProfilo);
+                button3_changed = false;
+            }
+
+            //cambiaNome();
+            //cambiaCognome();
 
 
+            s.update_credentials();
 
-
-
-
-            this.Close();
+            this.Close();*/
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -109,11 +120,41 @@ namespace PDSProjectGUI
 
         }
 
+       
+
+        public void credential_changed()
+        {
+            
+
+        }
+
         private void button5_Click_1(object sender, EventArgs e)
         {
-               //annulla
-              this.Close();
+            this.Close();
+        }
 
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            // salvare i dati di impostazioni scrivendo nel file credenziali con i metodi della DLL
+            if (button2_changed)
+            {
+                cambiaFilePath(connessione, path_fileTransfer);
+                button2_changed = false;
+            }
+            if (button3_changed)
+            {
+
+                cambiaImmagine(connessione, path_immagineProfilo);
+                button3_changed = false;
+            }
+
+            //cambiaNome();
+            //cambiaCognome();
+
+
+            s.update_credentials(this);
+
+            
         }
     }
 }

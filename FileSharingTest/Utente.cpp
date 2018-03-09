@@ -124,7 +124,7 @@ bool Utente::sign_in() {
 
 	ifstream readFile;
 	string input, first, second;
-	readFile.open("C:\\Users\\Mattia\\Desktop\\credenziali.txt");
+	readFile.open("Credenziali.txt");
 
 	if (readFile.is_open()) {
 		while (!readFile.eof()) {
@@ -172,7 +172,7 @@ bool Utente::sign_up() {
 	ofstream writeFile;
 	bool ok = FALSE;
 
-	writeFile.open("credenziali.txt");
+	writeFile.open("Credenziali.txt");
 
 	if (!writeFile.is_open())
 		return FALSE;

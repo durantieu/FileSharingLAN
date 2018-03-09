@@ -128,6 +128,7 @@
             this.button4.TabIndex = 9;
             this.button4.Text = "Salva";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
             // 
             // button1
             // 
@@ -156,7 +157,7 @@
             this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(103)))), ((int)(((byte)(178)))));
             this.label3.Location = new System.Drawing.Point(12, 116);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(291, 25);
+            this.label3.Size = new System.Drawing.Size(291, 26);
             this.label3.TabIndex = 6;
             this.label3.Text = "Scegli Cartella dove salvare i files";
             // 

@@ -401,20 +401,20 @@ namespace connNmSpace {
 				ifstream readFile;
 				ofstream tmpFile;
 				string input, first, second;
-				readFile.open("credenziali.txt");
+				readFile.open("Credenziali.txt");
 				tmpFile.open("tmpCred.txt");
 
 				if (readFile.is_open() && tmpFile.is_open()) {
 					while (!readFile.eof()) {
 						readFile >> input;
 						stringstream input_stringstream(input);
-						if (getline(input_stringstream, first, ':')) {
+						if (getline(input_stringstream, first, '|')) {
 							getline(input_stringstream, second);
-							if (first == "visible") {
+							if (first == "Visible") {
 								second = "false";
 							}
-							tmpFile << first << ":" << second;
-							if (first != "visible")
+							tmpFile << first << "|" << second;
+							if (first != "Visible")
 								tmpFile << endl;
 						}
 					}
@@ -422,8 +422,8 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-				system("del credenziali.txt");
-				system("rename tmpCred.txt credenziali.txt");
+				system("del Credenziali.txt");
+				system("rename tmpCred.txt Credenziali.txt");
 				this->utente_attivo->set_visibility(true);
 			}
 		}
@@ -433,20 +433,20 @@ namespace connNmSpace {
 				ifstream readFile;
 				ofstream tmpFile;
 				string input, first, second;
-				readFile.open("credenziali.txt");
+				readFile.open("Credenziali.txt");
 				tmpFile.open("tmpCred.txt");
 
 				if (readFile.is_open() && tmpFile.is_open()) {
 					while (!readFile.eof()) {
 						readFile >> input;
 						stringstream input_stringstream(input);
-						if (getline(input_stringstream, first, ':')) {
+						if (getline(input_stringstream, first, '|')) {
 							getline(input_stringstream, second);
-							if (first == "visible") {
+							if (first == "Visible") {
 								second = "false";
 							}
-							tmpFile << first << ":" << second;
-							if (first != "visible")
+							tmpFile << first << "|" << second;
+							if (first != "Visible")
 								tmpFile << endl;
 						}
 					}
@@ -454,8 +454,8 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-				system("del credenziali.txt");
-				system("rename tmpCred.txt credenziali.txt");
+				system("del Credenziali.txt");
+				system("rename tmpCred.txt Credenziali.txt");
 				this->utente_attivo->set_visibility(false);
 			}
 		}
@@ -472,23 +472,23 @@ namespace connNmSpace {
 		ifstream readFile;
 		ofstream tmpFile;
 		string input, first, second;
-		readFile.open("credenziali.txt");
+		readFile.open("Credenziali.txt");
 		tmpFile.open("tmpCred.txt");
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 			while (!readFile.eof()) {
 				readFile >> input;
 				stringstream input_stringstream(input);
-				if (getline(input_stringstream, first, ':')) {
+				if (getline(input_stringstream, first, '|')) {
 					getline(input_stringstream, second);
-					if (first == "filepath") {
+					if (first == "Path_file_transfer") {
 						second = path;
 					}
-					if (first != "visible") {
-						tmpFile << first << ":" << second << endl;
+					if (first != "Visible") {
+						tmpFile << first << "|" << second << endl;
 					}
 					else {
-						tmpFile << first << ":" << second;
+						tmpFile << first << "|" << second;
 					}
 				}
 			}
@@ -496,8 +496,8 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		system("del credenziali.txt");
-		system("rename tmpCred.txt credenziali.txt");
+		system("del Credenziali.txt");
+		system("rename tmpCred.txt Credenziali.txt");
 	}
 
 	void Connessione::change_immagine_profilo(string foto_path) {
@@ -510,23 +510,27 @@ namespace connNmSpace {
 		ifstream readFile;
 		ofstream tmpFile;
 		string input, first, second;
-		readFile.open("credenziali.txt");
+		
+		readFile.open("Credenziali.txt");
 		tmpFile.open("tmpCred.txt");
 
 		if (readFile.is_open() && tmpFile.is_open()) {
+
+			
+			
 			while (!readFile.eof()) {
 				readFile >> input;
 				stringstream input_stringstream(input);
-				if (getline(input_stringstream, first, ':')) {
+				if (getline(input_stringstream, first, '|')) {
 					getline(input_stringstream, second);
-					if (first == "path") {
+					if (first == "Path_immagine_profilo") {
 						second = foto_path;
 					}
-					if (first != "visible") {
-						tmpFile << first << ":" << second << endl;
+					if (first != "Visible") {
+						tmpFile << first << "|" << second << endl;
 					}
 					else {
-						tmpFile << first << ":" << second;
+						tmpFile << first << "|" << second;
 					}
 				}
 			}
@@ -534,8 +538,8 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		system("del credenziali.txt");
-		system("rename credenziali.txt tmpCred.txt");
+		system("del Credenziali.txt");
+		system("rename tmpCred.txt Credenziali.txt");
 
 	}
 
@@ -581,21 +585,26 @@ namespace connNmSpace {
 		return conn->getUtentiConnessi();
 	}
 
-	void ConnWrapper::putInBlackList(Connessione* conn, string MAC) {
-		conn->blocco_utente(MAC);
+	void ConnWrapper::putInBlackList(Connessione* conn, char* MAC) {
+		string mc(MAC);
+		conn->blocco_utente(mc);
 	}
 
-	void ConnWrapper::inviaFile(Connessione* conn, string file, string MAC) {
-		Utente* user = conn->choose_user(MAC);
-		conn->file_transfer(file, user->get_ip());
+	void ConnWrapper::inviaFile(Connessione* conn, char* file, char* MAC) {
+		string mc(MAC);
+		string fle(file);
+		Utente* user = conn->choose_user(mc);
+		conn->file_transfer(fle, user->get_ip());
 	}
 
-	void ConnWrapper::cambiaFilePath(Connessione* conn, string path) {
-		conn->change_filepath(path);
+	void ConnWrapper::cambiaFilePath(Connessione* conn, char* path) {
+		string pth(path);
+		conn->change_filepath(pth);
 	}
 
-	void ConnWrapper::cambiaImmagine(Connessione* conn, string path) {
-		conn->change_immagine_profilo(path);
+	void ConnWrapper::cambiaImmagine(Connessione* conn, char* path) {
+		string pth(path);
+		conn->change_immagine_profilo(pth);
 	}
 
 
@@ -615,19 +624,21 @@ void modPrivata(connNmSpace::Connessione* conn) {
 	connNmSpace::ConnWrapper::modPrivata(conn);
 }
 
-void putInBlackList(connNmSpace::Connessione* conn, string MAC) {
+void putInBlackList(connNmSpace::Connessione* conn, char* MAC) {
+	
 	connNmSpace::ConnWrapper::putInBlackList(conn, MAC);
 }
 
-void inviaFile(connNmSpace::Connessione* conn, string file, string MAC) {
+void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC) {
 	connNmSpace::ConnWrapper::inviaFile(conn, file, MAC);
 }
 
-void cambiaFilePath(connNmSpace::Connessione* conn, string path) {
+void cambiaFilePath(connNmSpace::Connessione* conn, char* path) {
 	connNmSpace::ConnWrapper::cambiaFilePath(conn, path);
 }
 
-void cambiaImmagine(connNmSpace::Connessione* conn, string path) {
+void cambiaImmagine(connNmSpace::Connessione* conn, char* path) {
+	
 	connNmSpace::ConnWrapper::cambiaImmagine(conn, path);
 }
 
