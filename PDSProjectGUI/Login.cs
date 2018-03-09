@@ -24,7 +24,6 @@ namespace PDSProjectGUI
 
         public Login()
         {
-            this.fill_credentials();
             InitializeComponent();
         }
 

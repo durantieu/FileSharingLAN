@@ -91,6 +91,9 @@ void TCP_Listener::operator()() {
 		getline(stream, identity, ' ');
 
 		nome.assign(m1->get_nome(identity));
+		if (!nome.compare(""))
+			nome.assign("Utente sconosciuto");
+
 
 		if (iResult > 0) {
 			//cout << "Bytes ricevuti: " << iResult << endl;
@@ -99,19 +102,11 @@ void TCP_Listener::operator()() {
 			string str(recvbuf);
 			if (!value.compare("2")) { //quando str == 2 L'host che ci ha contattato vuole la foto-> entra qui dentro quindi invio l'ack al Client che mi ha contattato e lancio un nuovo Client 
 									   //ack per notifica richiesta foto accettata
-									   /*if (m1->check_identity(identity)) {
-									   cout << "Errore: Utente bloccato" << endl;
-									   string ack;
-									   ack.assign("2"); // Ack negato! -> chiusura di connessione!
-									   send(ClientSocket, ack.c_str(), 1, 0);
-									   closesocket(ClientSocket);
-									   continue;
-									   }
-									   else {*/
+
 				string ack;
 				ack.assign("1");
 				send(ClientSocket, ack.c_str(), 1, 0);
-				//}
+
 
 				//cout << "Sgancio client per accontentare richiesta foto" << endl;
 				TCP_Client* newClient = new TCP_Client("", *Client_IP, 3, MAC, mutShared, sharedFotoPath); //La task di questo Client è inviare una foto...prima contatterà il Listener dall'altra parte con valore=3 -> poi contatterà il server creato dal listener dall'altra parte
@@ -232,3 +227,5 @@ bool TCP_Listener::TCP_throw_thread(string port, int tipo_file, string nome) {
 		return false;
 	}
 }
+
+
