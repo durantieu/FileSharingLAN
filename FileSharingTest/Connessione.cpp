@@ -642,3 +642,24 @@ void cambiaImmagine(connNmSpace::Connessione* conn, char* path) {
 	connNmSpace::ConnWrapper::cambiaImmagine(conn, path);
 }
 
+/*MARSHALING COLLECTION VECTOR TO EXPORT IT IN C#*/
+
+
+bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter ){
+
+	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
+	hItems = reinterpret_cast<ItemListHandle>(online_users);
+	*ItemsData = online_users->data();
+	*ItemsCounter = online_users->size();
+
+	return true;
+}
+
+bool deleteVector(ItemListHandle item) {
+
+	auto it = reinterpret_cast<vector<char*>*>(item);
+	delete it;
+
+	return true;
+
+}

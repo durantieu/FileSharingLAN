@@ -8,25 +8,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace PDSProjectGUI
 {
+    
+
     public partial class SendFiles : Form
-    {
-       [DllImport("FileSharingTest.dll")]
-       public static extern IntPtr getUtentiConnessi(IntPtr conn);
+    {   
 
         string path;
         int numero_utenti_in_rete=0;
         int counter_button = 0;
         int counter_picBox = 0;
-        IntPtr utenti_attivi;
 
-        public SendFiles(string pt, IntPtr connection)
+        unsafe char** utenti;
+        unsafe int size;
+
+        public unsafe SendFiles(string pt, IntPtr connection)
         {
             path = pt;
             InitializeComponent();
-            //utenti_attivi = getUtentiConnessi(connection);
+           
+            MarshalVectorWrapper(connection, out utenti, out size); 
             
             //acchiappo il numero di utenti in rete  e lo assegno a numero_utenti_in_rete
 
@@ -139,5 +143,60 @@ namespace PDSProjectGUI
 
 
 
+
+
+
+        //---------------------------------------------------------------------------------------//
+
+        //---------------------------------------------------------------//
+
+        //------------------------------------------------------------------//
+
+#region wrapper
+        [DllImport("FileSharingTest.dll")]
+        public static unsafe extern bool MarshalVector(IntPtr conn, out  ItemsSafeHandle hItems, out char** ItemsData, out int ItemsCounter);
+
+        [DllImport("FileSharingTest.dll")]
+        public static extern bool deleteVector(IntPtr item);
+
+        public class ItemsSafeHandle : SafeHandleZeroOrMinusOneIsInvalid
+        {
+                public ItemsSafeHandle() : base(true)
+                {
+
+                }
+
+                protected override bool ReleaseHandle()
+                {
+                    return deleteVector(handle);
+                }
+
+
+        }
+        static unsafe ItemsSafeHandle MarshalVectorWrapper( IntPtr conn, out  char** items, out  int itemsCount){
+
+                    ItemsSafeHandle itemsHandle;
+
+                    if (!MarshalVector(conn, out itemsHandle, out  items, out  itemsCount))
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    return itemsHandle;
+
+        }
+
+
+#endregion 
+
+
+
+
+
     }
+
+
 }
+
+
+
