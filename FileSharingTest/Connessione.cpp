@@ -562,9 +562,6 @@ namespace connNmSpace {
 	vector<char*>* Connessione::getUtentiConnessi() {
 		return this->sync_utenti->getUtenti();
 	}
-
-
-
 	/*
 	*
 	*Funzioni della classe wrapper di Connessione
@@ -641,6 +638,11 @@ void cambiaImmagine(connNmSpace::Connessione* conn, char* path) {
 	
 	connNmSpace::ConnWrapper::cambiaImmagine(conn, path);
 }
+
+
+
+
+//Aggiunto per gestire il Marshalling di vector (informazioni sugli utenti connessi)
 
 /*MARSHALING COLLECTION VECTOR TO EXPORT IT IN C#*/
 
