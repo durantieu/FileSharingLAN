@@ -62,6 +62,7 @@ namespace connNmSpace {
 	};
 }
 
+typedef intptr_t ItemListHandle;
 
 extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(char* dati);
 extern "C" __declspec(dllexport) vector<char*>* getUtentiConnessi(connNmSpace::Connessione* conn);
@@ -72,3 +73,5 @@ extern "C" __declspec(dllexport) void cambiaFilePath(connNmSpace::Connessione* c
 extern "C" __declspec(dllexport) void cambiaImmagine(connNmSpace::Connessione* conn, char* path);
 extern "C" __declspec(dllexport) void cambiaNome(connNmSpace::Connessione* conn, char* nome);
 extern "C" __declspec(dllexport) void cambiaCognome(connNmSpace::Connessione* conn, char* cognome);
+extern "C" __declspec(dllexport) bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter);
+extern "C" __declspec(dllexport) bool deleteVector(ItemListHandle item);

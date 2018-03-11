@@ -16,9 +16,10 @@ namespace PDSProjectGUI
        
         string path = "";
         bool checkBox;
-
-        public FileDialog()
+        IntPtr Conn;
+        public FileDialog(IntPtr conn)
         {
+            Conn = conn;
             InitializeComponent();
         }
         private void FileDialog_Load(object sender, EventArgs e)
@@ -56,7 +57,7 @@ namespace PDSProjectGUI
         {
             if (path.CompareTo("") != 0) {
                 this.Hide();
-                SendFiles sf = new SendFiles(path);
+                SendFiles sf = new SendFiles(path, Conn);
                 sf.Show();
             }
             

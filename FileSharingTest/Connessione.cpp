@@ -702,9 +702,6 @@ namespace connNmSpace {
 	vector<char*>* Connessione::getUtentiConnessi() {
 		return this->sync_utenti->getUtenti();
 	}
-
-
-
 	/*
 	*
 	*Funzioni della classe wrapper di Connessione
@@ -800,3 +797,29 @@ void cambiaCognome(connNmSpace::Connessione* conn, char* cognome) {
 	connNmSpace::ConnWrapper::cambiaCognome(conn, cognome);
 }
 
+
+
+
+//Aggiunto per gestire il Marshalling di vector (informazioni sugli utenti connessi)
+
+/*MARSHALING COLLECTION VECTOR TO EXPORT IT IN C#*/
+
+
+bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter ){
+
+	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
+	hItems = reinterpret_cast<ItemListHandle>(online_users);
+	*ItemsData = online_users->data();
+	*ItemsCounter = online_users->size();
+
+	return true;
+}
+
+bool deleteVector(ItemListHandle item) {
+
+	auto it = reinterpret_cast<vector<char*>*>(item);
+	delete it;
+
+	return true;
+
+}
