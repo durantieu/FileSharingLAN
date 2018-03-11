@@ -1,5 +1,13 @@
 #include "TCP_Server.h"
 
+/*
+*Check if file exists on filesystem
+*/
+bool exists_test(std::string name) {
+	ifstream f(name.c_str());
+	return f.good();
+}
+
 //Costruttore dell'oggetto TCPserver
 TCP_Server::TCP_Server(Porta* port, int tipo, mutex* mutPorts, HomePrinter* hp, string* path, mutex* mutSharedPath, string nome_sender) {
 	this->port = port;
@@ -153,10 +161,17 @@ void TCP_Server::operator()() {
 
 			if (tipo_file == 3) {
 
-				string path_tmp("C:\\Users\\Mattia\\Documenti\\Immagini_utenti\\");
+				system("echo %USERPROFILE% >> homedir.txt");
+				ifstream fpp;
+				string path_tmp;
+				fpp.open("homedir.txt");
+				getline(fpp, path_tmp, ' ');
+				fpp.close();
+				system("del homedir.txt");
+
+				path_tmp.append("\\FileSharing\\Immagini_utenti\\");
 				string comando = "del ";
 				comando.append(path_tmp).append(nomeFoto);
-				comando.append(" >nul 2>&1");
 				system(comando.c_str());
 
 				path_tmp.append(nomeFoto).append(ext);
@@ -202,7 +217,26 @@ void TCP_Server::operator()() {
 				//il percorso è stato creato e verificato, procedere all'acquisizione del file
 				//cout << "Preparazione all'acquisizione del file" << endl;
 
-				//verificare la coerenza di non avere estensioni duplicate
+				//Codice per assegnare nome diverso agli oggetti con lo stesso nome
+				string tmpNome;
+
+				int index = 1;
+
+				while (true) {
+					tmpNome = nomefile;
+					tmpNome.append(ext);
+
+					if (exists_test(tmpNome)) {
+						nomefile = nomefile.substr(0, nomefile.find_last_of("."));
+						if (index > 1)
+							nomefile = nomefile.substr(0, nomefile.find_last_of("("));
+						nomefile.append("(").append(to_string(index)).append(")");
+					}
+					else {
+						break;
+					}
+					index++;
+				}
 
 				camm.append("\\").append(nomefile).append(ext);
 				/*
@@ -243,13 +277,7 @@ void TCP_Server::operator()() {
 		}
 	}
 }
-/*
-*Check if file exists on filesystem
-*/
-bool exists_test(std::string name) {
-	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0);
-}
+
 
 /*
 *Metodo di verifica e creazione del path locale

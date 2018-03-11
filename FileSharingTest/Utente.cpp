@@ -71,15 +71,15 @@ bool Utente::get_visibility() {
 *acquisire i dati dell'utente tramite la funzione acquisisci dati
 *e salvarli all'interno del file "credenziali.txt".
 *Dopo aver trovato il file "credenziali.txt" (o averlo creato), si caricano i dati
-*nell'oggetto Utente
+*nell'oggetto 
 */
-Utente* Utente::apri_utente(string dati) {
+Utente* Utente::apri_utente(string dati, string path) {
 	Utente* utente = new Utente();
 	stringstream Str(dati);
 	string dato;
 	int i = 0;
 		
-	
+	utente->credPath = path;
 
 	while (getline(Str, dato, '|')) {
 		switch (i) {
@@ -124,7 +124,7 @@ bool Utente::sign_in() {
 
 	ifstream readFile;
 	string input, first, second;
-	readFile.open("Credenziali.txt");
+	readFile.open(credPath);
 
 	if (readFile.is_open()) {
 		while (!readFile.eof()) {
@@ -172,7 +172,7 @@ bool Utente::sign_up() {
 	ofstream writeFile;
 	bool ok = FALSE;
 
-	writeFile.open("Credenziali.txt");
+	writeFile.open(credPath);
 
 	if (!writeFile.is_open())
 		return FALSE;

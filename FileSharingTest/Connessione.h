@@ -22,6 +22,7 @@ namespace connNmSpace {
 		mutex *mutSharedPath;
 		static condition_variable cvar;
 		static mutex mut;
+		string homePath;
 	public:
 		Connessione(string dati);
 		bool start(string dati);
@@ -36,6 +37,8 @@ namespace connNmSpace {
 		void be_invisible();
 		void be_visible();
 		void change_visibility(bool vs);
+		void change_name(string name);
+		void change_surname(string surname);
 		void change_filepath(string path);
 		void change_immagine_profilo(string foto_path);
 		void blocco_utente(string MAC);
@@ -54,6 +57,8 @@ namespace connNmSpace {
 		static void inviaFile(Connessione* conn, char* file, char* MAC);
 		static void cambiaFilePath(Connessione* conn, char* path);
 		static void cambiaImmagine(Connessione* conn, char* path);
+		static void cambiaNome(Connessione* conn, char* nome);
+		static void cambiaCognome(Connessione* conn, char* cognome);
 	};
 }
 
@@ -65,3 +70,5 @@ extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* c
 extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC);
 extern "C" __declspec(dllexport) void cambiaFilePath(connNmSpace::Connessione* conn, char* path);
 extern "C" __declspec(dllexport) void cambiaImmagine(connNmSpace::Connessione* conn, char* path);
+extern "C" __declspec(dllexport) void cambiaNome(connNmSpace::Connessione* conn, char* nome);
+extern "C" __declspec(dllexport) void cambiaCognome(connNmSpace::Connessione* conn, char* cognome);

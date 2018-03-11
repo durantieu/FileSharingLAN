@@ -269,6 +269,7 @@ vector<char*>* Sync_mappa::getUtenti() {
 
 	}
 
+
 	m.unlock();
 
 	return listaUtenti;

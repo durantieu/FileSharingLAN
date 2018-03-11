@@ -6,6 +6,19 @@ namespace connNmSpace {
 	condition_variable Connessione::cvar;
 	mutex Connessione::mut;
 
+	//check whether a directory exists
+	bool dirExists(const std::string& dirName_in)
+	{
+		DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+		if (ftyp == INVALID_FILE_ATTRIBUTES)
+			return false;  //something is wrong with your path!
+
+		if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+			return true;   // this is a directory!
+
+		return false;    // this is not a directory!
+	}
+
 	Connessione::Connessione(string dati) {
 		printMAC();
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
@@ -62,6 +75,7 @@ namespace connNmSpace {
 		string buf, first, second;
 		string mask("IPv4");
 		string mask2("LAN"), mask3("Ethernet"), mask4("Wi-Fi");
+		string prefix("192.168");
 		bool LANFound = false;
 
 		readFile.open("ip.txt");
@@ -74,11 +88,11 @@ namespace connNmSpace {
 				first.find(mask3) != string::npos ||
 				first.find(mask4) != string::npos)
 				LANFound = true;
-			if (first.find(mask)!= string::npos && LANFound == true) {
+			if (first.find(mask) != string::npos && LANFound == true && second.find(prefix) != string::npos) {
 				readFile.close();
 				system("del ip.txt");
 				return second;
-			}	
+			}
 		}
 		readFile.close();
 		system("del ip.txt");
@@ -90,7 +104,6 @@ namespace connNmSpace {
 		stringstream str(ip);
 		string buf, ipRet;
 
-		cout << ip << endl;
 		getline(str, buf, '.');
 		ipRet.assign(buf).append(".");
 		getline(str, buf, '.');
@@ -336,7 +349,36 @@ namespace connNmSpace {
 	*modulo di apertura dell'utente con login o registrazione
 	*/
 	bool Connessione::start(string dati) {
-		Utente *rawUser = static_cast<Utente*> (Utente::apri_utente(dati));
+
+		system("echo %USERPROFILE% >> homedir.txt");
+		ifstream fpp;
+		string path_tmp;
+		fpp.open("homedir.txt");
+		getline(fpp, path_tmp, ' ');
+		path_tmp.append("\\");
+		fpp.close();
+		system("del homedir.txt");
+
+		path_tmp.append("FileSharing");
+
+		this->homePath.assign(path_tmp);
+
+		if (!dirExists(path_tmp)) {
+			string com("mkdir ");
+			com.append(path_tmp);
+			system(com.c_str());
+		}
+		path_tmp.append("\\Immagini_utenti");
+		if (!dirExists(path_tmp)) {
+			string com("mkdir ");
+			com.append(path_tmp);
+			system(com.c_str());
+		}
+
+		string fileSharingPath;
+		fileSharingPath.assign(path_tmp).append("\\Credenziali.txt");
+
+		Utente *rawUser = static_cast<Utente*> (Utente::apri_utente(dati, fileSharingPath));
 
 		if (rawUser == NULL) {
 			cout << "Impossibile aprire nuovo utente...uscita" << endl;
@@ -400,9 +442,12 @@ namespace connNmSpace {
 				this->be_visible();
 				ifstream readFile;
 				ofstream tmpFile;
-				string input, first, second;
-				readFile.open("Credenziali.txt");
-				tmpFile.open("tmpCred.txt");
+				string input, first, second, credPath(homePath), tmpCredPath(homePath);
+				credPath.append("\\Credenziali.txt");
+				tmpCredPath.append("\\tmpCred.txt");
+
+				readFile.open(credPath);
+				tmpFile.open(tmpCredPath);
 
 				if (readFile.is_open() && tmpFile.is_open()) {
 					while (!readFile.eof()) {
@@ -422,8 +467,11 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-				system("del Credenziali.txt");
-				system("rename tmpCred.txt Credenziali.txt");
+				string com("del ");
+				com.append(credPath);
+				system(com.c_str());
+				com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+				system(com.c_str());
 				this->utente_attivo->set_visibility(true);
 			}
 		}
@@ -432,9 +480,9 @@ namespace connNmSpace {
 				this->be_invisible();
 				ifstream readFile;
 				ofstream tmpFile;
-				string input, first, second;
-				readFile.open("Credenziali.txt");
-				tmpFile.open("tmpCred.txt");
+				string input, first, second, credPath(homePath), tmpCredPath(homePath);
+				credPath.append("\\Credenziali.txt");
+				tmpCredPath.append("\\tmpCred.txt");
 
 				if (readFile.is_open() && tmpFile.is_open()) {
 					while (!readFile.eof()) {
@@ -454,14 +502,17 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-				system("del Credenziali.txt");
-				system("rename tmpCred.txt Credenziali.txt");
+				string com("del ");
+				com.append(credPath);
+				system(com.c_str());
+				com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+				system(com.c_str());
 				this->utente_attivo->set_visibility(false);
 			}
 		}
 	}
 
-	//classe per cambiare la default path dei files
+	//metodo per cambiare la default path dei files
 	void Connessione::change_filepath(string path) {
 
 		{
@@ -471,9 +522,9 @@ namespace connNmSpace {
 
 		ifstream readFile;
 		ofstream tmpFile;
-		string input, first, second;
-		readFile.open("Credenziali.txt");
-		tmpFile.open("tmpCred.txt");
+		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		credPath.append("\\Credenziali.txt");
+		tmpCredPath.append("\\tmpCred.txt");
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 			while (!readFile.eof()) {
@@ -496,10 +547,14 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		system("del Credenziali.txt");
-		system("rename tmpCred.txt Credenziali.txt");
+		string com("del ");
+		com.append(credPath);
+		system(com.c_str());
+		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		system(com.c_str());
 	}
 
+	//metodo per cambiare l'immagine profilo
 	void Connessione::change_immagine_profilo(string foto_path) {
 
 		{
@@ -509,10 +564,9 @@ namespace connNmSpace {
 
 		ifstream readFile;
 		ofstream tmpFile;
-		string input, first, second;
-		
-		readFile.open("Credenziali.txt");
-		tmpFile.open("tmpCred.txt");
+		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		credPath.append("\\Credenziali.txt");
+		tmpCredPath.append("\\tmpCred.txt");
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 
@@ -538,9 +592,95 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		system("del Credenziali.txt");
-		system("rename tmpCred.txt Credenziali.txt");
+		string com("del ");
+		com.append(credPath);
+		system(com.c_str());
+		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		system(com.c_str());
 
+	}
+
+	//metodo per cambiare il nome
+	void Connessione::change_name(string name) {
+		{
+			lock_guard<mutex> lg(*mutSharedPath);
+			this->utente_attivo->set_nome(name);
+		}
+
+		ifstream readFile;
+		ofstream tmpFile;
+		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		credPath.append("\\Credenziali.txt");
+		tmpCredPath.append("\\tmpCred.txt");
+
+		if (readFile.is_open() && tmpFile.is_open()) {
+			while (!readFile.eof()) {
+				readFile >> input;
+				stringstream input_stringstream(input);
+				if (getline(input_stringstream, first, '|')) {
+					getline(input_stringstream, second);
+					if (first == "Nome") {
+						second = name;
+					}
+					if (first != "Visible") {
+						tmpFile << first << "|" << second << endl;
+					}
+					else {
+						tmpFile << first << "|" << second;
+					}
+				}
+			}
+		}
+
+		readFile.close();
+		tmpFile.close();
+		string com("del ");
+		com.append(credPath);
+		system(com.c_str());
+		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		system(com.c_str());
+	}
+
+	//metodo per cambiare il cognome
+	void Connessione::change_surname(string surname)
+	{
+		{
+			lock_guard<mutex> lg(*mutSharedPath);
+			this->utente_attivo->set_nome(surname);
+		}
+
+		ifstream readFile;
+		ofstream tmpFile;
+		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		credPath.append("\\Credenziali.txt");
+		tmpCredPath.append("\\tmpCred.txt");
+
+		if (readFile.is_open() && tmpFile.is_open()) {
+			while (!readFile.eof()) {
+				readFile >> input;
+				stringstream input_stringstream(input);
+				if (getline(input_stringstream, first, '|')) {
+					getline(input_stringstream, second);
+					if (first == "Cognome") {
+						second = surname;
+					}
+					if (first != "Visible") {
+						tmpFile << first << "|" << second << endl;
+					}
+					else {
+						tmpFile << first << "|" << second;
+					}
+				}
+			}
+		}
+
+		readFile.close();
+		tmpFile.close();
+		string com("del ");
+		com.append(credPath);
+		system(com.c_str());
+		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		system(com.c_str());
 	}
 
 	//classe per il blocco-sblocco utente
@@ -607,6 +747,16 @@ namespace connNmSpace {
 		conn->change_immagine_profilo(pth);
 	}
 
+	void ConnWrapper::cambiaNome(Connessione* conn, char* nome) {
+		string nme(nome);
+		conn->change_name(nme);
+	}
+
+	void ConnWrapper::cambiaCognome(Connessione* conn, char* cognome) {
+		string cgnme(cognome);
+		conn->change_surname(cgnme);
+	}
+
 
 }
 
@@ -615,6 +765,7 @@ connNmSpace::Connessione* creaConnessione(char* info) {
 	string dati(info);
 	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
+
 
 vector<char*>* getUtentiConnessi(connNmSpace::Connessione* conn) {
 	return  connNmSpace::ConnWrapper::getUtentiConnessi(conn);
@@ -638,7 +789,14 @@ void cambiaFilePath(connNmSpace::Connessione* conn, char* path) {
 }
 
 void cambiaImmagine(connNmSpace::Connessione* conn, char* path) {
-	
 	connNmSpace::ConnWrapper::cambiaImmagine(conn, path);
+}
+
+void cambiaNome(connNmSpace::Connessione* conn, char* nome) {
+	connNmSpace::ConnWrapper::cambiaNome(conn, nome);
+}
+
+void cambiaCognome(connNmSpace::Connessione* conn, char* cognome) {
+	connNmSpace::ConnWrapper::cambiaCognome(conn, cognome);
 }
 

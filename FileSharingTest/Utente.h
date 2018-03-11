@@ -5,6 +5,7 @@ class Utente {
 private:
 	string nome;
 	string cognome;
+	string credPath;
 	time_t timestamp;
 	SOCKADDR_IN ip;
 protected:
@@ -29,7 +30,7 @@ public:
 	void set_visibility(bool vis);
 	bool get_visibility();
 	void set_percorso_foto(string percorso);
-	static Utente* apri_utente(string dati);
+	static Utente* apri_utente(string dati, string path);
 	bool sign_in();
 	bool sign_up();
 };
