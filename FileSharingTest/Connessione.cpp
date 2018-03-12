@@ -830,12 +830,6 @@ bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char**
 	
 	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
 
-	for each(auto u in *online_users) {
-		fp << u << endl; 
-
-	}
-	
-
 	hItems = reinterpret_cast<ItemListHandle>(online_users);
 	*ItemsData = online_users->data();
 	*ItemsCounter = online_users->size();
