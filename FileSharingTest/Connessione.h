@@ -23,8 +23,10 @@ namespace connNmSpace {
 		static condition_variable cvar;
 		static mutex mut;
 		string homePath;
+		int pipeNum;
 	public:
 		Connessione(string dati);
+		const char* getHomeDir();
 		bool start(string dati);
 		void connect();
 		static void discoverer_function(Connessione *conn);
@@ -46,6 +48,7 @@ namespace connNmSpace {
 		vector<char*>* getUtentiConnessi();
 		static string getOwnIP();
 		static string getBroadcastIP(string ip);
+
 	};
 	
 	class ConnWrapper {
@@ -59,6 +62,7 @@ namespace connNmSpace {
 		static void cambiaImmagine(Connessione* conn, char* path);
 		static void cambiaNome(Connessione* conn, char* nome);
 		static void cambiaCognome(Connessione* conn, char* cognome);
+		static const char* getHomeDir(connNmSpace::Connessione* conn);
 	};
 }
 
@@ -75,3 +79,4 @@ extern "C" __declspec(dllexport) void cambiaNome(connNmSpace::Connessione* conn,
 extern "C" __declspec(dllexport) void cambiaCognome(connNmSpace::Connessione* conn, char* cognome);
 extern "C" __declspec(dllexport) bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter);
 extern "C" __declspec(dllexport) bool deleteVector(ItemListHandle item);
+extern "C" __declspec(dllexport) const char* getHomeDir(connNmSpace::Connessione* conn);

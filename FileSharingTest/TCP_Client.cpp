@@ -12,13 +12,14 @@ struct info {
 
 using namespace std::tr2::sys;
 
-TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mutex* mt, string* percorso_foto) {
+TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mutex* mt, string* percorso_foto, string pipe) {
 	this->cammino = path;
 	this->ip = ip;
 	this->is_foto = is_foto;
 	this->MAC = MAC;
 	this->path_foto = percorso_foto;
 	this->mt_path_foto = mt;
+	this->pipeID.assign("\\\\.\\pipe\\").append(pipe);
 }
 
 void TCP_Client::operator()() {

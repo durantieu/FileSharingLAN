@@ -21,6 +21,7 @@ namespace connNmSpace {
 
 	Connessione::Connessione(string dati) {
 		printMAC();
+		this->pipeNum = 0;
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
 		mutSharedPath = new mutex();
 
@@ -359,7 +360,7 @@ namespace connNmSpace {
 		fpp.close();
 		system("del homedir.txt");
 
-		path_tmp.append("FileSharing");
+		path_tmp.append("FileSharing\\");
 
 		this->homePath.assign(path_tmp);
 
@@ -413,10 +414,15 @@ namespace connNmSpace {
 	*Funzione per trasferire un file ad un utente
 	*/
 	void Connessione::file_transfer(string path, SOCKADDR_IN ip_utente) {
-		TCP_Client* newClient = new TCP_Client(path, ip_utente, 1, getMACaddress(), NULL, NULL);
+		string pipeID("pipe");
+		pipeID.append(to_string(pipeNum));
+		pipeNum++;
+		TCP_Client* newClient = new TCP_Client(path, ip_utente, 1, getMACaddress(), NULL, NULL, pipeID);
 		thread *newThread = new thread(*newClient);
 
 		newThread->detach();
+
+		////ritornare pipeID!!
 	}
 
 	//funzione per recuperare un utente dalla mappa dato il MAC address
@@ -702,6 +708,11 @@ namespace connNmSpace {
 	vector<char*>* Connessione::getUtentiConnessi() {
 		return this->sync_utenti->getUtenti();
 	}
+
+	const char* Connessione::getHomeDir() {
+		return this->homePath.c_str();
+	}
+
 	/*
 	*
 	*Funzioni della classe wrapper di Connessione
@@ -754,6 +765,9 @@ namespace connNmSpace {
 		conn->change_surname(cgnme);
 	}
 
+	const char* ConnWrapper::getHomeDir(Connessione* conn) {
+		return conn->getHomeDir();
+	}
 
 }
 
@@ -797,6 +811,10 @@ void cambiaCognome(connNmSpace::Connessione* conn, char* cognome) {
 	connNmSpace::ConnWrapper::cambiaCognome(conn, cognome);
 }
 
+const char* getHomeDir(connNmSpace::Connessione* conn) {
+	return connNmSpace::ConnWrapper::getHomeDir(conn);
+}
+
 
 
 
@@ -807,7 +825,16 @@ void cambiaCognome(connNmSpace::Connessione* conn, char* cognome) {
 
 bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter ){
 
+	ofstream fp("C:Users\\Mattia\\output.txt");
+	
 	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
+
+	for each(auto u in *online_users) {
+		fp << u << endl; 
+
+	}
+	
+
 	hItems = reinterpret_cast<ItemListHandle>(online_users);
 	*ItemsData = online_users->data();
 	*ItemsCounter = online_users->size();

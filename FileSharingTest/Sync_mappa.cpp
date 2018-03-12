@@ -80,7 +80,7 @@ int Sync_mappa::scorri_e_aggiorna() {
 *Funzione per inviare la foto
 */
 void Sync_mappa::scarica_foto(SOCKADDR_IN ip) {
-	TCP_Client* newClient = new TCP_Client("", ip, 2, MAC, NULL, NULL);
+	TCP_Client* newClient = new TCP_Client("", ip, 2, MAC, NULL, NULL, "");
 	thread* newThread = new thread(*newClient);
 
 	newThread->detach();
@@ -95,24 +95,20 @@ void Sync_mappa::stampa_utenti() {
 	m.unlock();
 }
 
-//ritorna il nome di un utente dato un MAC address
 string Sync_mappa::get_nome(string MAC) {
 	m.lock();
 	auto user = utenti.find(MAC);
-	string nome = user->second.get_nome();
+	string nome;
+	if (user == utenti.end()) {
+		nome = "";
+		m.unlock();
+		return nome;
+	}
+	nome = user->second.get_nome();
 	nome.append(" ").append(user->second.get_cognome());
 	m.unlock();
 	return nome;
 }
-
-//ritorna un utente dato un MAC address
-Utente* Sync_mappa::get_utente(string MAC) {
-	m.lock();
-	auto user = utenti.find(MAC);
-	m.unlock();
-	return &(user->second);
-}
-
 
 vector<Utente*> Sync_mappa::estrai_utente(string utente) {
 	vector<Utente*> v;
@@ -136,6 +132,7 @@ vector<Utente*> Sync_mappa::estrai_utente(string utente) {
 	m.unlock();
 	return v;
 }
+
 /*
 *	Questo metodo aggiunge entry al file black list che definisce quali
 *	MAC address bloccare
@@ -152,7 +149,6 @@ void Sync_mappa::blocco_utente(string MAC) {
 	f.close();
 }
 
-//Funzione inutilizzata (credo) vedere se si può eliminare
 void Sync_mappa::blocco(string utente) {
 
 	string MAC;
@@ -200,9 +196,6 @@ void Sync_mappa::blocco(string utente) {
 	return;
 }
 
-/*
-* metodo di eliminazione di un utente dalla black list
-*/
 void Sync_mappa::sblocco_utente(string MAC) {
 
 	lock_guard<mutex> lk(m_blacklist);
@@ -227,17 +220,32 @@ bool Sync_mappa::check_identity(string MAC) {
 	fstream f;
 	lock_guard<mutex> lk(m_blacklist);
 	f.open("black_list.txt");
-	if (f.is_open()) {
-		char* temp = new char[MAC.size()];
-		while (f.good()) {
-			f.getline(temp, 20);
-			if (!MAC.compare(temp)) // MAC bloccato
-				return true;
+
+	char* temp = new char[MAC.size()];
+	while (f.good()) {
+		f.getline(temp, 20);
+		if (!MAC.compare(temp)) { // MAC bloccato
+			return true;
+			break;
 		}
+
 	}
-	
 	return false;
 }
+
+
+
+//-----------------------------------------------------------------------------
+
+
+//ritorna un utente dato un MAC address
+Utente* Sync_mappa::get_utente(string MAC) {
+	m.lock();
+	auto user = utenti.find(MAC);
+	m.unlock();
+	return &(user->second);
+}
+
 
 
 //Funzione che ritorna la lista di utenti connessi in lista di stringhe
