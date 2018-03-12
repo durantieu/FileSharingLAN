@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PollingPipe.cs" />
     <Compile Include="Credenziali.cs" />
     <Compile Include="FileDialog.cs">
       <SubType>Form</SubType>

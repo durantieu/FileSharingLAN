@@ -173,13 +173,15 @@ namespace connNmSpace {
 		}	
 
 		broadcastIP = getBroadcastIP(ownIP);
+		ofstream of ("C:\\Users\\duran\\Desktop\\out.txt");
+		of << broadcastIP<< endl;
+		of.close();
 
 		//Struttura del sender
 		struct sockaddr_in Sender_addr;
 		Sender_addr.sin_family = AF_INET;
 		Sender_addr.sin_port = htons(PORTA_IN_ASCOLTO);
 		Sender_addr.sin_addr.s_addr = inet_addr(broadcastIP.c_str());
-
 		int i = 0;
 
 		while (1) {
@@ -842,7 +844,6 @@ const char* firstGetHomeDir() {
 
 bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter ){
 
-	ofstream fp("C:Users\\Mattia\\output.txt");
 	
 	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
 
