@@ -424,7 +424,7 @@ namespace connNmSpace {
 
 		newThread->detach();
 
-		////ritornare pipeID!!
+		//ritornare pipeID!!
 	}
 
 	//funzione per recuperare un utente dalla mappa dato il MAC address
@@ -615,11 +615,13 @@ namespace connNmSpace {
 			this->utente_attivo->set_nome(name);
 		}
 
-		ifstream readFile;
-		ofstream tmpFile;
+		
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
+
+		ifstream readFile(credPath);
+		ofstream tmpFile(tmpCredPath);
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 			while (!readFile.eof()) {
@@ -815,6 +817,21 @@ void cambiaCognome(connNmSpace::Connessione* conn, char* cognome) {
 
 const char* getHomeDir(connNmSpace::Connessione* conn) {
 	return connNmSpace::ConnWrapper::getHomeDir(conn);
+}
+
+const char* firstGetHomeDir() {
+	system("echo %USERPROFILE% >> homedir.txt");
+	ifstream fpp;
+	string path_tmp;
+	fpp.open("homedir.txt");
+	getline(fpp, path_tmp, ' ');
+	path_tmp.append("\\");
+	fpp.close();
+	system("del homedir.txt");
+
+	path_tmp.append("FileSharing\\");
+
+	return path_tmp.c_str();
 }
 
 

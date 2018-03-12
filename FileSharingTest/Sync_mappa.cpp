@@ -16,7 +16,9 @@ int Sync_mappa::cerca_e_inserisci(string chiave, string nome, string cognome, ti
 		u.set_percorso_foto(flag_foto); //in questo momento il valore può essere o 0=utente non ha foto / 1=utente ha la foto ma è da scaricare
 		u.set_ip(ip);
 		utenti.insert(pair<string, Utente>(chiave, u));
-		cout << "inserito " << nome << endl;
+
+		cout << "inserito " << nome << 
+			endl;
 		m.unlock();
 
 		return 1;

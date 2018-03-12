@@ -132,13 +132,13 @@ namespace PDSProjectGUI
             newPicBox.Location = new Point(riga+70, colonna+70);
             newPicBox.Size = new Size(120, 100);
 
-            Image im = Image.FromFile("C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg");
-            newPicBox.ImageLocation = "C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg";
+            //Image im = Image.FromFile("C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg");
+            //newPicBox.ImageLocation = "C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg";
 
 
             newPicBox.BorderStyle = BorderStyle.FixedSingle;
-            newPicBox.InitialImage = im;
-            newPicBox.Image = im;
+            //newPicBox.InitialImage = im;
+            //newPicBox.Image = im;
             newPicBox.SizeMode = PictureBoxSizeMode.StretchImage;
 
             // newPicBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
