@@ -19,7 +19,7 @@ namespace PDSProjectGUI
         private string home_dir;
 
         [DllImport("FileSharingTest.Dll")]
-        public static extern string firstgetHomeDir();
+        public static extern string firstGetHomeDir();
 
         public Credenziali(string name, string surname, string path_imm_profilo, string path_f_trans, bool visibile)
         {
@@ -28,7 +28,7 @@ namespace PDSProjectGUI
             cognome = surname;
             path_immagine_profilo = path_imm_profilo;
             path_file_transfer = path_f_trans;
-            home_dir = firstgetHomeDir();
+            
             if (visibile)
             {
                 visibility = "true";

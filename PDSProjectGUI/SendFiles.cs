@@ -58,7 +58,7 @@ namespace PDSProjectGUI
                 {
                     tmp[i] = Marshal.PtrToStringAnsi((IntPtr)utenti_info[i]);
 
-                    string[] tmp2 = tmp[i].Split('-');
+                    string[] tmp2 = tmp[i].Split('|');
 
                     utenti_online[i].MAC = tmp2[0];
                     utenti_online[i].Nome = tmp2[1];

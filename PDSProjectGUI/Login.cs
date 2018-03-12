@@ -12,23 +12,29 @@ using System.Runtime.InteropServices;
 
 namespace PDSProjectGUI
 {
-    public partial class Login : Form
+    public unsafe partial class  Login : Form
     {
         [DllImport("FileSharingTest.dll")]
-        public static extern string getHomeDir();
+        public static extern void firstGetHomeDir(out char** str);
 
         string nome;
         string cognome;
         string path_file_trans;
         string path_imm_profilo;
-        string home_dir;
+        unsafe char** home_dir;
         bool visibility;
         FolderBrowserDialog fbd = new FolderBrowserDialog();
         private Credenziali cred;
-
-        public Login()
+        string temp;
+        public unsafe Login()
         {
-            home_dir = getHomeDir();
+            
+
+            
+            firstGetHomeDir(out home_dir);
+            temp = Marshal.PtrToStringAnsi((IntPtr)home_dir);
+
+
             InitializeComponent();
         }
 
@@ -40,7 +46,7 @@ namespace PDSProjectGUI
         {
             string temp;
             string[] temp2;
-            StreamReader sr = new StreamReader(home_dir + "Credenziali.txt");
+            StreamReader sr = new StreamReader(/*home_dir +*/ "Credenziali.txt");
             while ((temp = sr.ReadLine() )!= null)
             {
                 temp2 = temp.Split('|');
@@ -133,5 +139,7 @@ namespace PDSProjectGUI
         {
             return nome + '|' + cognome + '|' + path_imm_profilo + '|' + path_file_trans + '|' + visibility + '|';
         }
+
+       
     }
 }

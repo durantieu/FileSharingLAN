@@ -819,7 +819,7 @@ const char* getHomeDir(connNmSpace::Connessione* conn) {
 	return connNmSpace::ConnWrapper::getHomeDir(conn);
 }
 
-const char* firstGetHomeDir() {
+void firstGetHomeDir(char** str) {
 	system("echo %USERPROFILE% >> homedir.txt");
 	ifstream fpp;
 	string path_tmp;
@@ -830,8 +830,10 @@ const char* firstGetHomeDir() {
 	system("del homedir.txt");
 
 	path_tmp.append("FileSharing\\");
-
-	return path_tmp.c_str();
+	
+	char* str2 = new char[1024];
+	strcpy(str2, path_tmp.c_str());
+	str = &str2;
 }
 
 

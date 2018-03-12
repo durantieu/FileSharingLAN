@@ -267,10 +267,10 @@ vector<char*>* Sync_mappa::getUtenti() {
 		else
 			bloccato = "bloccato";
 
-		tmp.assign(it->first).append("-").append(it->second.get_nome()).append("-").
-			append(it->second.get_cognome()).append("-").
-			append(*(it->second.get_fotopathPointer())).append("-").
-			append(bloccato).append("-");
+		tmp.assign(it->first).append("|").append(it->second.get_nome()).append("|").
+			append(it->second.get_cognome()).append("|").
+			append(*(it->second.get_fotopathPointer())).append("|").
+			append(bloccato).append("|");
 
 		char *cstr = new char[tmp.length() + 1];
 		strcpy(cstr, tmp.c_str());
