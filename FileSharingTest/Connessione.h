@@ -80,3 +80,4 @@ extern "C" __declspec(dllexport) void cambiaCognome(connNmSpace::Connessione* co
 extern "C" __declspec(dllexport) bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter);
 extern "C" __declspec(dllexport) bool deleteVector(ItemListHandle item);
 extern "C" __declspec(dllexport) const char* getHomeDir(connNmSpace::Connessione* conn);
+extern "C" __declspec(dllexport) const char* firstgetHomeDir();
