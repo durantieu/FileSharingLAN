@@ -161,7 +161,7 @@ void TCP_Server::operator()() {
 
 			if (tipo_file == 3) {
 
-				system("echo %USERPROFILE% >> homedir.txt");
+				system("echo %USERPROFILE% > homedir.txt");
 				ifstream fpp;
 				string path_tmp;
 				fpp.open("homedir.txt");
@@ -172,9 +172,11 @@ void TCP_Server::operator()() {
 				path_tmp.append("\\FileSharing\\Immagini_utenti\\");
 				string comando = "del ";
 				comando.append(path_tmp).append(nomeFoto);
+
 				system(comando.c_str());
 
 				path_tmp.append(nomeFoto).append(ext);
+
 				FILE* fp = fopen(path_tmp.c_str(), "wb");
 				if (fp == NULL) {
 					cout << "File non aperto" << endl;

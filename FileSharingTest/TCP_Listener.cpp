@@ -109,7 +109,7 @@ void TCP_Listener::operator()() {
 
 
 				//cout << "Sgancio client per accontentare richiesta foto" << endl;
-				TCP_Client* newClient = new TCP_Client("", *Client_IP, 3, MAC, mutShared, sharedFotoPath); //La task di questo Client è inviare una foto...prima contatterà il Listener dall'altra parte con valore=3 -> poi contatterà il server creato dal listener dall'altra parte
+				TCP_Client* newClient = new TCP_Client("", *Client_IP, 3, MAC, mutShared, sharedFotoPath, ""); //La task di questo Client è inviare una foto...prima contatterà il Listener dall'altra parte con valore=3 -> poi contatterà il server creato dal listener dall'altra parte
 				thread *newThread = new thread(*newClient);
 
 
