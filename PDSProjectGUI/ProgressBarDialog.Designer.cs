@@ -120,6 +120,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.progressBar1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ProgressBarDialog";
             this.Text = "ProgressBarDialog";
             this.ResumeLayout(false);

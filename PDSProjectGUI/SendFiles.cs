@@ -95,7 +95,7 @@ namespace PDSProjectGUI
         }
 
 
-        private Button CreateButton_Click(int i, int j/*, utente usr_corrente*/)
+        private Button CreateButton_Click(int i, int j, utente usr_corrente)
         { 
             Button button = new Button();
             
@@ -123,7 +123,7 @@ namespace PDSProjectGUI
 
             return button;
         }
-        private PictureBox create_picBox(int riga, int colonna/*, utente usr_corrente*/)
+        private PictureBox create_picBox(int riga, int colonna, utente usr_corrente)
         {
            
 
@@ -153,7 +153,7 @@ namespace PDSProjectGUI
             return newPicBox;
 
         }
-        private Label create_Label(int riga, int colonna/*, utente usr_corrente*/)
+        private Label create_Label(int riga, int colonna, utente usr_corrente)
         {
             Label newTextBox = new Label();
             newTextBox.Name = "TextBox" + counter_textBox;
@@ -176,9 +176,9 @@ namespace PDSProjectGUI
             int pos_riga_textBox = 0, pos_colonna_TextBox = 0;
 
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < size; i++)
             {
-                //utente_corrente = utenti_online[i];
+                utente_corrente = utenti_online[i];
 
                 if(pos_riga >= 500)
                 {
@@ -191,9 +191,9 @@ namespace PDSProjectGUI
                 }
 
 
-                Button newButton =CreateButton_Click(pos_riga, pos_colonna/*, utente_corrente*/);
-                PictureBox newPic=create_picBox(pos_riga_picBox, pos_colonna_picBox/*, utente_corrente*/);
-                Label newTextBox = create_Label(pos_riga_textBox, pos_colonna_TextBox/*, utente_corrente*/);
+                Button newButton =CreateButton_Click(pos_riga, pos_colonna, utente_corrente);
+                PictureBox newPic=create_picBox(pos_riga_picBox, pos_colonna_picBox, utente_corrente);
+                Label newTextBox = create_Label(pos_riga_textBox, pos_colonna_TextBox, utente_corrente);
 
                
                 this.Controls.Add(newButton);
