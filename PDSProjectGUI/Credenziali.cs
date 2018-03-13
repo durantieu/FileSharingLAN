@@ -18,12 +18,14 @@ namespace PDSProjectGUI
         private string path_file_transfer;
         private string home_dir;
 
-        [DllImport("FileSharingTest.Dll")]
-        public static extern string firstGetHomeDir();
+        [DllImport("FileSharingTest.Dll", CharSet=CharSet.Ansi)]
+        public static extern void firstGetHomeDir(StringBuilder str);
 
         public Credenziali(string name, string surname, string path_imm_profilo, string path_f_trans, bool visibile)
         {
-            
+            StringBuilder str = new StringBuilder();
+            firstGetHomeDir(str);
+            home_dir = str.ToString();
             nome = name;
             cognome = surname;
             path_immagine_profilo = path_imm_profilo;
@@ -42,8 +44,16 @@ namespace PDSProjectGUI
             StreamWriter sw = new StreamWriter(home_dir + "Credenziali.txt");
             int j = 0;
             foreach(string i in lines){
-                sw.WriteLine(i + tmp[j]);
-                j++;
+                if (i != "Visible")
+                {
+                    sw.WriteLine(i + tmp[j]);
+                    j++;
+                }
+                else
+                {
+                    sw.Write(i + tmp[j]);
+                    j++;
+                }
             }
             sw.Close();
 
@@ -78,7 +88,7 @@ namespace PDSProjectGUI
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "rename temp.txt Credenziali.txt";
+            startInfo.Arguments = "rename"+" "+home_dir+"temp.txt" +" "+ home_dir+"Credenziali.txt";
             process.StartInfo = startInfo;
             process.Start();
         }
@@ -86,11 +96,11 @@ namespace PDSProjectGUI
         public void change_cognome(string newCognome)
         {
             cognome = newCognome;
-            using (StreamReader sr = new StreamReader("Credenziali.txt"))
+            using (StreamReader sr = new StreamReader(home_dir + "Credenziali.txt"))
             {
                 string temp;
                 string[] temp2;
-                StreamWriter sw = new StreamWriter("temp.txt");
+                StreamWriter sw = new StreamWriter(home_dir + "temp.txt");
                 while ((temp = sr.ReadLine()) != null)
                 {
 
@@ -113,7 +123,7 @@ namespace PDSProjectGUI
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "rename temp.txt Credenziali.txt";
+            startInfo.Arguments = "rename" + " " + home_dir + "temp.txt" + " " + home_dir + "Credenziali.txt";
             process.StartInfo = startInfo;
             process.Start();
         }
@@ -123,11 +133,11 @@ namespace PDSProjectGUI
         {
             path_file_transfer = newPathFileTransfer;
 
-            using (StreamReader sr = new StreamReader("Credenziali.txt"))
+            using (StreamReader sr = new StreamReader(home_dir + "Credenziali.txt"))
             {
                 string temp;
                 string[] temp2;
-                StreamWriter sw = new StreamWriter("temp.txt");
+                StreamWriter sw = new StreamWriter(home_dir+"temp.txt");
                 while ((temp = sr.ReadLine()) != null)
                 {
 
@@ -150,7 +160,7 @@ namespace PDSProjectGUI
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "rename temp.txt Credenziali.txt";
+            startInfo.Arguments = "rename" + " " + home_dir + "temp.txt" + " " + home_dir + "Credenziali.txt";
             process.StartInfo = startInfo;
             process.Start();
 
@@ -160,11 +170,11 @@ namespace PDSProjectGUI
         public void change_path_immagine_profilo(string newPathImmagineProfilo)
         {
             path_immagine_profilo = newPathImmagineProfilo;
-            using (StreamReader sr = new StreamReader("Credenziali.txt"))
+            using (StreamReader sr = new StreamReader(home_dir + "Credenziali.txt"))
             {
                 string temp;
                 string[] temp2;
-                StreamWriter sw = new StreamWriter("temp.txt");
+                StreamWriter sw = new StreamWriter(home_dir+"temp.txt");
                 while ((temp = sr.ReadLine()) != null)
                 {
 
@@ -187,7 +197,7 @@ namespace PDSProjectGUI
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "rename temp.txt Credenziali.txt";
+            startInfo.Arguments = "rename" + " " + home_dir + "temp.txt" + " " + home_dir + "Credenziali.txt";
             process.StartInfo = startInfo;
             process.Start();
         }
@@ -196,11 +206,11 @@ namespace PDSProjectGUI
         public void change_visibility(string newVisibility)
         {
             visibility = newVisibility;
-            using (StreamReader sr = new StreamReader("Credenziali.txt"))
+            using (StreamReader sr = new StreamReader(home_dir + "Credenziali.txt"))
             {
                 string temp;
                 string[] temp2;
-                StreamWriter sw = new StreamWriter("temp.txt");
+                StreamWriter sw = new StreamWriter(home_dir+"temp.txt");
                 while ((temp = sr.ReadLine()) != null)
                 {
 
@@ -223,7 +233,7 @@ namespace PDSProjectGUI
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "rename temp.txt Credenziali.txt";
+            startInfo.Arguments = "rename" + " " + home_dir + "temp.txt" + " " + home_dir + "Credenziali.txt";
             process.StartInfo = startInfo;
             process.Start();
 
@@ -247,6 +257,10 @@ namespace PDSProjectGUI
         public string get_immagine_profilo()
         {
             return path_immagine_profilo;
+        }
+        public string get_visibility()
+        {
+            return visibility;
         }
 
     }

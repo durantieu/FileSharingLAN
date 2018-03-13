@@ -380,7 +380,7 @@ namespace connNmSpace {
 		fpp.close();
 		system("del homedir.txt");
 
-		path_tmp.append("FileSharing\\");
+		path_tmp.append("FileSharing");
 
 		this->homePath.assign(path_tmp);
 
@@ -506,18 +506,17 @@ namespace connNmSpace {
 
 	//cambia lo stato della visibilità, modificando anche il file credenziali.txt (da fare la funzione in Utente)
 	void Connessione::change_visibility(bool vs) {
-		if (vs == true) {
-			if (this->utente_attivo->get_visibility() == false) {
+		
+		
+		if (!this->utente_attivo->get_visibility()) {
 				this->be_visible();
-				ifstream readFile;
-				ofstream tmpFile;
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
 
-				readFile.open(credPath);
-				tmpFile.open(tmpCredPath);
-
+				ifstream readFile(credPath);
+				ofstream tmpFile(tmpCredPath);
+				
 				if (readFile.is_open() && tmpFile.is_open()) {
 					while (!readFile.eof()) {
 						readFile >> input;
@@ -525,33 +524,35 @@ namespace connNmSpace {
 						if (getline(input_stringstream, first, '|')) {
 							getline(input_stringstream, second);
 							if (first == "Visible") {
-								second = "false";
+								second = "true";
+								tmpFile << first << "|" << second;
+								break;
 							}
-							tmpFile << first << "|" << second;
+							
 							if (first != "Visible")
-								tmpFile << endl;
+								tmpFile << first << "|" << second << endl;
 						}
 					}
 				}
 
 				readFile.close();
 				tmpFile.close();
-				string com("del ");
-				com.append(credPath);
-				system(com.c_str());
-				com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
-				system(com.c_str());
+			//	string com("del ");
+			//	com.append(credPath);
+			//	system(com.c_str());
+			//	com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
+			//	system(com.c_str());
 				this->utente_attivo->set_visibility(true);
 			}
-		}
-		else {
+
 			if (this->utente_attivo->get_visibility() == true) {
 				this->be_invisible();
-				ifstream readFile;
-				ofstream tmpFile;
+				
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
+				ifstream readFile(credPath);
+				ofstream tmpFile(tmpCredPath);
 
 				if (readFile.is_open() && tmpFile.is_open()) {
 					while (!readFile.eof()) {
@@ -561,10 +562,12 @@ namespace connNmSpace {
 							getline(input_stringstream, second);
 							if (first == "Visible") {
 								second = "false";
+								tmpFile << first << "|" << second;
+								break;
 							}
-							tmpFile << first << "|" << second;
+							
 							if (first != "Visible")
-								tmpFile << endl;
+								tmpFile << first << "|" << second << endl;
 						}
 					}
 				}
@@ -574,11 +577,11 @@ namespace connNmSpace {
 				string com("del ");
 				com.append(credPath);
 				system(com.c_str());
-				com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 				system(com.c_str());
 				this->utente_attivo->set_visibility(false);
 			}
-		}
+		
 	}
 
 	//metodo per cambiare la default path dei files
@@ -620,7 +623,7 @@ namespace connNmSpace {
 		string com("del ");
 		com.append(credPath);
 		system(com.c_str());
-		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 		system(com.c_str());
 	}
 
@@ -654,6 +657,7 @@ namespace connNmSpace {
 					}
 					else {
 						tmpFile << first << "|" << second;
+						break;
 					}
 				}
 			}
@@ -664,7 +668,7 @@ namespace connNmSpace {
 		string com("del ");
 		com.append(credPath);
 		system(com.c_str());
-		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 		system(com.c_str());
 
 	}
@@ -709,7 +713,7 @@ namespace connNmSpace {
 		string com("del ");
 		com.append(credPath);
 		system(com.c_str());
-		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 		system(com.c_str());
 	}
 
@@ -751,7 +755,7 @@ namespace connNmSpace {
 		string com("del ");
 		com.append(credPath);
 		system(com.c_str());
-		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 		system(com.c_str());
 	}
 
