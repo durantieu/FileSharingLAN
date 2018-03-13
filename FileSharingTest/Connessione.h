@@ -5,6 +5,7 @@
 
 #define PORTA_IN_ASCOLTO 5200
 #define BUF_LENGTH 10000
+//#define BUFF_SIZE 1024
 
 namespace connNmSpace {
 
@@ -23,7 +24,8 @@ namespace connNmSpace {
 		static condition_variable cvar;
 		static mutex mut;
 		string homePath;
-		int pipeNum;
+		int pipeNumInvio;
+		int pipeNumRic;
 	public:
 		Connessione(string dati);
 		const char* getHomeDir();
@@ -35,7 +37,7 @@ namespace connNmSpace {
 		static string getMACaddress(void);
 		static void printMAC();
 		Utente* choose_user(string MAC);
-		void file_transfer(string path, SOCKADDR_IN ip_utente);
+		string file_transfer(string path, SOCKADDR_IN ip_utente);
 		void be_invisible();
 		void be_visible();
 		void change_visibility(bool vs);
@@ -57,7 +59,7 @@ namespace connNmSpace {
 		static void modPrivata(Connessione* conn);
 		static vector<char*>* getUtentiConnessi(Connessione* conn);
 		static void putInBlackList(Connessione* conn, char* MAC);
-		static void inviaFile(Connessione* conn, char* file, char* MAC);
+		static string inviaFile(Connessione* conn, char* file, char* MAC);
 		static void cambiaFilePath(Connessione* conn, char* path);
 		static void cambiaImmagine(Connessione* conn, char* path);
 		static void cambiaNome(Connessione* conn, char* nome);
@@ -72,7 +74,7 @@ extern "C" __declspec(dllexport) connNmSpace::Connessione* creaConnessione(char*
 extern "C" __declspec(dllexport) vector<char*>* getUtentiConnessi(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void modPrivata(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void putInBlackList(connNmSpace::Connessione* conn, char* MAC);
-extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC);
+extern "C" __declspec(dllexport) void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC, char* pipeID);
 extern "C" __declspec(dllexport) void cambiaFilePath(connNmSpace::Connessione* conn, char* path);
 extern "C" __declspec(dllexport) void cambiaImmagine(connNmSpace::Connessione* conn, char* path);
 extern "C" __declspec(dllexport) void cambiaNome(connNmSpace::Connessione* conn, char* nome);
@@ -80,4 +82,4 @@ extern "C" __declspec(dllexport) void cambiaCognome(connNmSpace::Connessione* co
 extern "C" __declspec(dllexport) bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char*** ItemsData, int* ItemsCounter);
 extern "C" __declspec(dllexport) bool deleteVector(ItemListHandle item);
 extern "C" __declspec(dllexport) const char* getHomeDir(connNmSpace::Connessione* conn);
-extern "C" __declspec(dllexport) void firstGetHomeDir(char** str);
+extern "C" __declspec(dllexport) void firstGetHomeDir(char* str);

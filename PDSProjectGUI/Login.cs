@@ -14,20 +14,25 @@ namespace PDSProjectGUI
 {
     public partial class Login : Form
     {
-        [DllImport("FileSharingTest.dll")]
-        public static extern void firstGetHomeDir(out char** str);
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern void firstGetHomeDir(StringBuilder str);
 
         string nome;
         string cognome;
         string path_file_trans;
         string path_imm_profilo;
+        string home_dir;
         bool visibility;
         FolderBrowserDialog fbd = new FolderBrowserDialog();
         private Credenziali cred;
 
         public Login()
         {
-           
+            StringBuilder str = new StringBuilder();
+            firstGetHomeDir(str);
+
+            home_dir = str.ToString();
+
             InitializeComponent();
         }
 
@@ -39,7 +44,7 @@ namespace PDSProjectGUI
         {
             string temp;
             string[] temp2;
-            StreamReader sr = new StreamReader(/*home_dir +*/ "Credenziali.txt");
+            StreamReader sr = new StreamReader(home_dir + "Credenziali.txt");
             while ((temp = sr.ReadLine() )!= null)
             {
                 temp2 = temp.Split('|');

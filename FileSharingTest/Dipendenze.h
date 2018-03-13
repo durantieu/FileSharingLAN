@@ -19,6 +19,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <deque>
+#include <conio.h>
+#include <tchar.h>
+
 #define TCP_LISTENER_PORT 50000
 #define TCP_SERVER_PORT 10000
 using namespace std;

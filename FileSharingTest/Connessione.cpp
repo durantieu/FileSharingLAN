@@ -6,7 +6,7 @@ namespace connNmSpace {
 	condition_variable Connessione::cvar;
 	mutex Connessione::mut;
 
-	//check whether a directory exists
+	//Controlla se una directory esiste
 	bool dirExists(const std::string& dirName_in)
 	{
 		DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
@@ -19,9 +19,23 @@ namespace connNmSpace {
 		return false;    // this is not a directory!
 	}
 
+	//Funzione di conversione da string a wstring
+	std::wstring s2ws(const std::string& s) {
+		int len;
+		int slength = (int)s.length() + 1;
+		len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+		wchar_t* buf = new wchar_t[len];
+		MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+		std::wstring r(buf);
+		delete[] buf;
+		return r;
+	}
+
+	//Costruttore dell'oggetto connessione
 	Connessione::Connessione(string dati) {
 		printMAC();
-		this->pipeNum = 0;
+		this->pipeNumInvio = 0;
+		this->pipeNumRic = 10000;
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
 		mutSharedPath = new mutex();
 
@@ -29,6 +43,7 @@ namespace connNmSpace {
 		this->connect();
 	}
 
+	//Funzione di stampa del MAC address su file
 	void Connessione::printMAC() {
 		system("getmac > mac.txt");
 	}
@@ -353,6 +368,9 @@ namespace connNmSpace {
 	*/
 	bool Connessione::start(string dati) {
 
+		/*---------------------------------------------
+		CREAZIONE DELL'ALBERO DEI DIRETTORI SE NON ESISTONO
+		*/
 		system("echo %USERPROFILE% >> homedir.txt");
 		ifstream fpp;
 		string path_tmp;
@@ -378,8 +396,14 @@ namespace connNmSpace {
 			system(com.c_str());
 		}
 
+		/*FINE DELLA CREAZIONE DELL'ALBERO DEI DIRETTORI
+		-----------------------------------------------------------
+		*/
+
 		string fileSharingPath;
 		fileSharingPath.assign(path_tmp).append("\\Credenziali.txt");
+
+
 
 		Utente *rawUser = static_cast<Utente*> (Utente::apri_utente(dati, fileSharingPath));
 
@@ -415,16 +439,53 @@ namespace connNmSpace {
 	/*
 	*Funzione per trasferire un file ad un utente
 	*/
-	void Connessione::file_transfer(string path, SOCKADDR_IN ip_utente) {
+	string Connessione::file_transfer(string path, SOCKADDR_IN ip_utente) {
+
+		/*--------------------------------------------------------
+		CREAZIONE DELLA PIPE*/
+
 		string pipeID("pipe");
-		pipeID.append(to_string(pipeNum));
-		pipeNum++;
-		TCP_Client* newClient = new TCP_Client(path, ip_utente, 1, getMACaddress(), NULL, NULL, pipeID);
+		pipeID.append(to_string(pipeNumInvio));
+		pipeNumInvio++;
+
+		HANDLE transferPipe;
+		string strPipeName("\\\\.\\pipe\\Pipe");
+		strPipeName.append(pipeID);
+
+		std::wstring stemp = s2ws(strPipeName);
+		LPCWSTR pipeName = stemp.c_str();
+
+		//creazione dell'oggetto pipe
+		transferPipe = CreateNamedPipe(
+			pipeName,				  // pipe name 
+			PIPE_ACCESS_DUPLEX,       // read/write access 
+			PIPE_TYPE_MESSAGE |       // message type pipe 
+			PIPE_READMODE_MESSAGE |   // message-read mode 
+			PIPE_NOWAIT,              // blocking mode 
+			PIPE_UNLIMITED_INSTANCES, // max. instances  
+			1024,                // output buffer size 
+			1024,                // input buffer size 
+			0,                        // client time-out 
+			NULL);                    // default security attribute 
+
+		//verifica di corretta apertura della pipe
+		if (transferPipe== INVALID_HANDLE_VALUE)
+		{
+			cout << "INVALID_HANDLE_VALUE" << GetLastError() << endl;
+			cin.get();
+			return "";
+		}
+		
+		/*FINE CREAZIONE DELLA PIPE
+		---------------------------------------------------------------
+		*/
+
+		TCP_Client* newClient = new TCP_Client(path, ip_utente, 1, getMACaddress(), NULL, NULL, transferPipe);
 		thread *newThread = new thread(*newClient);
 
 		newThread->detach();
 
-		//ritornare pipeID!!
+		return pipeID;
 	}
 
 	//funzione per recuperare un utente dalla mappa dato il MAC address
@@ -743,11 +804,11 @@ namespace connNmSpace {
 		conn->blocco_utente(mc);
 	}
 
-	void ConnWrapper::inviaFile(Connessione* conn, char* file, char* MAC) {
+	string ConnWrapper::inviaFile(Connessione* conn, char* file, char* MAC) {
 		string mc(MAC);
 		string fle(file);
 		Utente* user = conn->choose_user(mc);
-		conn->file_transfer(fle, user->get_ip());
+		return conn->file_transfer(fle, user->get_ip());
 	}
 
 	void ConnWrapper::cambiaFilePath(Connessione* conn, char* path) {
@@ -796,8 +857,11 @@ void putInBlackList(connNmSpace::Connessione* conn, char* MAC) {
 	connNmSpace::ConnWrapper::putInBlackList(conn, MAC);
 }
 
-void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC) {
-	connNmSpace::ConnWrapper::inviaFile(conn, file, MAC);
+void inviaFile(connNmSpace::Connessione* conn, char* file, char* MAC, char* pipeID) {
+	string pipe;
+	
+	pipe = connNmSpace::ConnWrapper::inviaFile(conn, file, MAC);
+	strcpy(pipeID, pipe.c_str());
 }
 
 void cambiaFilePath(connNmSpace::Connessione* conn, char* path) {
@@ -820,8 +884,8 @@ const char* getHomeDir(connNmSpace::Connessione* conn) {
 	return connNmSpace::ConnWrapper::getHomeDir(conn);
 }
 
-void firstGetHomeDir(char** str) {
-	system("echo %USERPROFILE% >> homedir.txt");
+void firstGetHomeDir(char* str) {
+	system("echo %USERPROFILE% > homedir.txt");
 	ifstream fpp;
 	string path_tmp;
 	fpp.open("homedir.txt");
@@ -832,14 +896,7 @@ void firstGetHomeDir(char** str) {
 
 	path_tmp.append("FileSharing\\");
 
-	char* str2 = new char[1024];
-	strcpy(str2, path_tmp.c_str());
-
-	str = &str2;
-
-	ofstream f("fuck.txt");
-	f << *str;
-	f.close();
+	strcpy(str, path_tmp.c_str());
 }
 
 
@@ -854,11 +911,6 @@ bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char**
 
 	
 	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
-
-	for each(auto u in *online_users) {
-		fp << u << endl; 
-
-	}
 	
 
 	hItems = reinterpret_cast<ItemListHandle>(online_users);
