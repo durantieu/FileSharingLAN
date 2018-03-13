@@ -528,11 +528,12 @@ namespace connNmSpace {
 			this->utente_attivo->set_filepath(path);
 		}
 
-		ifstream readFile;
-		ofstream tmpFile;
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
+
+		ifstream readFile(credPath);
+		ofstream tmpFile(tmpCredPath);
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 			while (!readFile.eof()) {
@@ -570,16 +571,15 @@ namespace connNmSpace {
 			this->utente_attivo->set_percorso_foto(foto_path);
 		}
 
-		ifstream readFile;
-		ofstream tmpFile;
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
 
+		ifstream readFile(credPath);
+		ofstream tmpFile(tmpCredPath);
+
 		if (readFile.is_open() && tmpFile.is_open()) {
 
-			
-			
 			while (!readFile.eof()) {
 				readFile >> input;
 				stringstream input_stringstream(input);
@@ -622,6 +622,7 @@ namespace connNmSpace {
 
 		ifstream readFile(credPath);
 		ofstream tmpFile(tmpCredPath);
+
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 			while (!readFile.eof()) {
@@ -819,7 +820,7 @@ const char* getHomeDir(connNmSpace::Connessione* conn) {
 	return connNmSpace::ConnWrapper::getHomeDir(conn);
 }
 
-const char* firstGetHomeDir() {
+void firstGetHomeDir(char** str) {
 	system("echo %USERPROFILE% >> homedir.txt");
 	ifstream fpp;
 	string path_tmp;
@@ -831,7 +832,14 @@ const char* firstGetHomeDir() {
 
 	path_tmp.append("FileSharing\\");
 
-	return path_tmp.c_str();
+	char* str2 = new char[1024];
+	strcpy(str2, path_tmp.c_str());
+
+	str = &str2;
+
+	ofstream f("fuck.txt");
+	f << *str;
+	f.close();
 }
 
 
@@ -846,11 +854,6 @@ bool MarshalVector(connNmSpace::Connessione* conn, ItemListHandle hItems, char**
 
 	
 	auto online_users = connNmSpace::ConnWrapper::getUtentiConnessi(conn);
-
-	for each(auto u in *online_users) {
-		fp << u << endl; 
-
-	}
 	
 
 	hItems = reinterpret_cast<ItemListHandle>(online_users);

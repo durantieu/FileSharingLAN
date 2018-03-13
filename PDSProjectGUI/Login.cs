@@ -8,23 +8,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.InteropServices;
 
 
 namespace PDSProjectGUI
 {
-    public partial class Login : Form
+    public unsafe partial class Login : Form
     {
         string nome;
         string cognome;
         string path_file_trans;
         string path_imm_profilo;
+        char** homeDir;
         bool visibility;
         FolderBrowserDialog fbd = new FolderBrowserDialog();
         private Credenziali cred;
 
-        public Login()
+        [DllImport("FileSharingTest.dll")]
+        public static extern void firstGetHomeDir(out char** str);
+        public unsafe Login()
         {
-           
+            firstGetHomeDir(out homeDir);
             InitializeComponent();
         }
 
