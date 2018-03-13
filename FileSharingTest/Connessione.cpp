@@ -635,7 +635,8 @@ namespace connNmSpace {
 			this->utente_attivo->set_percorso_foto(foto_path);
 		}
 
-		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		string input, first, second, credPath(homePath), tmpCredPath(
+		);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
 
@@ -657,8 +658,8 @@ namespace connNmSpace {
 					}
 					else {
 						tmpFile << first << "|" << second;
-						break;
 					}
+
 				}
 			}
 		}
@@ -668,7 +669,7 @@ namespace connNmSpace {
 		string com("del ");
 		com.append(credPath);
 		system(com.c_str());
-		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
+		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
 		system(com.c_str());
 
 	}
