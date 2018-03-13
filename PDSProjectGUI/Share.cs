@@ -54,7 +54,7 @@ namespace PDSProjectGUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Settings set = new Settings(connessione, this);
+            Settings set = new Settings(connessione, this, cred);
             set.Show();
 
 

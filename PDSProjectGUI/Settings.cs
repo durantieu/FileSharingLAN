@@ -30,21 +30,37 @@ namespace PDSProjectGUI
         bool visible = false;
         bool button2_changed = false;
         bool button3_changed = false;
+        bool vis_changed = false;
         FolderBrowserDialog browse_fileTransfer = new FolderBrowserDialog();
         OpenFileDialog browse_immagineProfilo = new OpenFileDialog();
         IntPtr connessione;
+        Credenziali credentials;
         private Share s = null;
-        public Settings(IntPtr Connection, Share callingForm)
+        public Settings(IntPtr Connection, Share callingForm, Credenziali cred)
         {
-            InitializeComponent();
             //prelevare e inizializzare il valore di Visible dal file credenziali
             s = callingForm;
             connessione = Connection;
+            credentials = cred;
+            if(cred.get_visibility() == "true")
+            {
+                visible = true;
+            }
+            else
+            {
+                visible = false;
+            }
+
+            InitializeComponent();
             set_private(visible);
+
+            
         }
+
         void set_private(bool visible)
         {
-            checkBox1.Checked = visible;
+            checkBox1.Checked = !visible;
+            
 
 
         }
@@ -78,11 +94,12 @@ namespace PDSProjectGUI
             if (checkBox1.Checked)
             {
                 visible = false;
-                
+                vis_changed = true;
             }
             else
             {
                 visible = true;
+                vis_changed = true;
             }
         }
 
@@ -147,7 +164,13 @@ namespace PDSProjectGUI
                 cambiaImmagine(connessione, path_immagineProfilo);
                 button3_changed = false;
             }
+            if (vis_changed)
+            {
 
+                modPrivata(connessione);
+                vis_changed = false;
+                
+            }
             //cambiaNome();
             //cambiaCognome();
 
