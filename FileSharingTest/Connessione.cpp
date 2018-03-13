@@ -537,15 +537,15 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-			//	string com("del ");
-			//	com.append(credPath);
-			//	system(com.c_str());
-			//	com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-			//	system(com.c_str());
+				string com("del ");
+				com.append(credPath);
+				system(com.c_str());
+				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
+				system(com.c_str());
 				this->utente_attivo->set_visibility(true);
 			}
 
-			if (this->utente_attivo->get_visibility() == true) {
+			else {
 				this->be_invisible();
 				
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
