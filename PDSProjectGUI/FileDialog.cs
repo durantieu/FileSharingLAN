@@ -57,7 +57,9 @@ namespace PDSProjectGUI
         {
             if (path.CompareTo("") != 0) {
                 this.Hide();
-                SendFiles sf = new SendFiles(path, Conn);
+               
+
+                SendFiles sf = new SendFiles(path, Conn, textBox1.Text);
                 sf.Show();
             }
             

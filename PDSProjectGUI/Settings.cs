@@ -25,6 +25,13 @@ namespace PDSProjectGUI
         [DllImport("FileSharingTest.dll")]
         public static extern void cambiaImmagine(IntPtr conn, string path);
 
+
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern void cambiaNome(IntPtr conn, string nome);
+
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern void cambiaCognome(IntPtr conn, string cognome);
+
         string path_fileTransfer;
         string path_immagineProfilo;
         bool visible = false;
@@ -171,8 +178,15 @@ namespace PDSProjectGUI
                 vis_changed = false;
                 
             }
-            //cambiaNome();
-            //cambiaCognome();
+            if(textBox1.Text != "")
+            {
+                cambiaNome(connessione, textBox1.Text);
+            }
+            if(textBox2.Text != "")
+            {
+                cambiaCognome(connessione, textBox2.Text);
+            }
+
 
 
             s.update_credentials(this);

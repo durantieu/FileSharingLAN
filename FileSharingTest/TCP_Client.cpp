@@ -23,11 +23,12 @@ TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mut
 }
 
 void TCP_Client::operator()() {
-
+	
 	//Attesa della GUI sull'altro lato della pipe
-	bool fConnected = ConnectNamedPipe(pipeHandle, NULL) ?
-		TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
-
+	
+	
+	
+	
 	//1) send to tcp listener -> notifica dell'invio di un file
 	WSADATA wsadata;
 

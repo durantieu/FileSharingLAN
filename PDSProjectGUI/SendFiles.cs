@@ -17,7 +17,7 @@ namespace PDSProjectGUI
         public string MAC;
         public string Nome;
         public string Cognome;
-        public string path_foto;
+        public string ha_la_foto;
         public string bloccato;
     }
 
@@ -31,21 +31,30 @@ namespace PDSProjectGUI
         int counter_button = 0;
         int counter_picBox = 0;
         int counter_textBox = 0;
+        string home_dir;
 
         [DllImport("FileSharingTest.dll")]
         public static extern void inviaFile(IntPtr conn, string file, string MAC);
 
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern void firstGetHomeDir(StringBuilder str);
+
         unsafe char** utenti_info;
         unsafe int size;
+        IntPtr conn;
+        string path_file_to_be_sent;
 
-        public unsafe SendFiles(string pt, IntPtr connection)
+        public unsafe SendFiles(string pt, IntPtr connection, string path)
         {
             string[] tmp;
-           
+            StringBuilder str = new StringBuilder();
+            firstGetHomeDir(str);
+            home_dir = str.ToString();
             path = pt;
             InitializeComponent();
-            MarshalVectorWrapper(connection, out utenti_info, out size);
-
+            conn = connection;
+            MarshalVectorWrapper(conn, out utenti_info, out size);
+            path_file_to_be_sent = path;
             if (size != 0)
             {
                 utenti_online = new utente[size];
@@ -63,7 +72,7 @@ namespace PDSProjectGUI
                     utenti_online[i].MAC = tmp2[0];
                     utenti_online[i].Nome = tmp2[1];
                     utenti_online[i].Cognome = tmp2[2];
-                    utenti_online[i].path_foto = tmp2[3];
+                    utenti_online[i].ha_la_foto = tmp2[3];
                     utenti_online[i].bloccato = tmp2[4];
 
                 }
@@ -85,8 +94,8 @@ namespace PDSProjectGUI
                     //dovrò chiamare il lancio di un client per l'invio di un file verso l'utente identificato da questo bottone
 
 
-                    //inviaFile();
-                    ProgressBarDialog pbd = new ProgressBarDialog();
+                    
+                    ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path_file_to_be_sent);
                     pbd.Show();
 
                     break;
@@ -132,8 +141,17 @@ namespace PDSProjectGUI
             newPicBox.Location = new Point(riga+70, colonna+70);
             newPicBox.Size = new Size(120, 100);
 
-            //Image im = Image.FromFile("C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg");
-            //newPicBox.ImageLocation = "C:\\Users\\duran\\Documents\\Immagini_utenti\\immagine_vuota.jpg";
+            
+           if(utenti_online[counter_picBox].ha_la_foto != "2") {
+                Image im = Image.FromFile(home_dir + "\\immagine_vuota.jpg");
+                newPicBox.ImageLocation = home_dir + "\\immagine_vuota.jpg";
+            }
+            else
+            {
+                Image im = Image.FromFile(home_dir + "immagini_utenti\\" + utenti_online[counter_picBox].MAC + ".jpg");
+                newPicBox.ImageLocation = home_dir + "immagini_utenti\\" + utenti_online[counter_picBox].MAC + ".jpg";
+            }
+            
 
 
             newPicBox.BorderStyle = BorderStyle.FixedSingle;
@@ -151,7 +169,6 @@ namespace PDSProjectGUI
             //newPicBox.Show();
 
             return newPicBox;
-
         }
         private Label create_Label(int riga, int colonna, utente usr_corrente)
         {
@@ -159,9 +176,9 @@ namespace PDSProjectGUI
             newTextBox.Name = "TextBox" + counter_textBox;
             newTextBox.Location = new Point(riga+80 ,colonna+210);
             newTextBox.ForeColor = Color.FromArgb(0, 53, 118);
-            newTextBox.Text = "ciao";//usr_corrente.Nome + " " + usr_corrente.Cognome;
+            newTextBox.Text =  usr_corrente.Nome +" "+ usr_corrente.Cognome;
 
-            newTextBox.Font = new Font("Segoe UI", 14, FontStyle.Regular);
+            newTextBox.Font = new Font("Segoe UI", 9, FontStyle.Regular);
             newTextBox.TextAlign = ContentAlignment.TopCenter;
             counter_textBox++;
 

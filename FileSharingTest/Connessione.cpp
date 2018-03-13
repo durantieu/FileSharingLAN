@@ -446,10 +446,11 @@ namespace connNmSpace {
 
 		string pipeID("pipe");
 		pipeID.append(to_string(pipeNumInvio));
-		pipeNumInvio = (pipeNumInvio + 1)%100000;
+		
+		
 
 		HANDLE transferPipe;
-		string strPipeName("\\\\.\\pipe\\Pipe");
+		string strPipeName("\\\\.\\pipe\\");
 		strPipeName.append(pipeID);
 
 		std::wstring stemp = s2ws(strPipeName);
@@ -476,6 +477,11 @@ namespace connNmSpace {
 			return "";
 		}
 		
+		
+		ConnectNamedPipe(transferPipe, NULL);
+
+		pipeNumInvio = (pipeNumInvio + 1) % 100000;
+	
 		/*FINE CREAZIONE DELLA PIPE
 		---------------------------------------------------------------
 		*/
@@ -544,7 +550,6 @@ namespace connNmSpace {
 				system(com.c_str());
 				this->utente_attivo->set_visibility(true);
 			}
-
 			else {
 				this->be_invisible();
 				
@@ -703,6 +708,7 @@ namespace connNmSpace {
 					}
 					else {
 						tmpFile << first << "|" << second;
+						break;
 					}
 				}
 			}
@@ -725,11 +731,12 @@ namespace connNmSpace {
 			this->utente_attivo->set_nome(surname);
 		}
 
-		ifstream readFile;
-		ofstream tmpFile;
+		
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
+		ifstream readFile(credPath);
+		ofstream tmpFile(tmpCredPath);
 
 		if (readFile.is_open() && tmpFile.is_open()) {
 			while (!readFile.eof()) {
@@ -745,6 +752,7 @@ namespace connNmSpace {
 					}
 					else {
 						tmpFile << first << "|" << second;
+						break;
 					}
 				}
 			}
