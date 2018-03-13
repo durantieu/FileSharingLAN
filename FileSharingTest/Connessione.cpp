@@ -547,8 +547,7 @@ namespace connNmSpace {
 		else {
 			if (this->utente_attivo->get_visibility() == true) {
 				this->be_invisible();
-				ifstream readFile;
-				ofstream tmpFile;
+				
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
@@ -632,7 +631,8 @@ namespace connNmSpace {
 			this->utente_attivo->set_percorso_foto(foto_path);
 		}
 
-		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		string input, first, second, credPath(homePath), tmpCredPath(
+		);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
 
@@ -654,7 +654,10 @@ namespace connNmSpace {
 					}
 					else {
 						tmpFile << first << "|" << second;
+						break;
+
 					}
+
 				}
 			}
 		}
@@ -665,6 +668,7 @@ namespace connNmSpace {
 		com.append(credPath);
 		system(com.c_str());
 		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+
 		system(com.c_str());
 
 	}
