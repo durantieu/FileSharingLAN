@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace PDSProjectGUI
 {
-    public unsafe partial class  Login : Form
+    public partial class Login : Form
     {
         [DllImport("FileSharingTest.dll")]
         public static extern void firstGetHomeDir(out char** str);
@@ -21,20 +21,13 @@ namespace PDSProjectGUI
         string cognome;
         string path_file_trans;
         string path_imm_profilo;
-        unsafe char** home_dir;
         bool visibility;
         FolderBrowserDialog fbd = new FolderBrowserDialog();
         private Credenziali cred;
-        string temp;
-        public unsafe Login()
+
+        public Login()
         {
-            
-
-            
-            firstGetHomeDir(out home_dir);
-            temp = Marshal.PtrToStringAnsi((IntPtr)home_dir);
-
-
+           
             InitializeComponent();
         }
 
