@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.InteropServices;
+
 namespace PDSProjectGUI
 {
     public class Credenziali
@@ -14,7 +16,10 @@ namespace PDSProjectGUI
         private string cognome;
         private string path_immagine_profilo;
         private string path_file_transfer;
-        
+        private string home_dir;
+
+        [DllImport("FileSharingTest.Dll")]
+        public static extern string firstGetHomeDir();
 
         public Credenziali(string name, string surname, string path_imm_profilo, string path_f_trans, bool visibile)
         {
@@ -23,7 +28,7 @@ namespace PDSProjectGUI
             cognome = surname;
             path_immagine_profilo = path_imm_profilo;
             path_file_transfer = path_f_trans;
-
+            
             if (visibile)
             {
                 visibility = "true";
@@ -34,7 +39,7 @@ namespace PDSProjectGUI
             }
             string[] lines = { "Nome|", "Cognome|", "Path_immagine_profilo|", "Path_file_transfer|", "Visible|" };
             string[] tmp = { nome, cognome, path_immagine_profilo, path_file_transfer, visibility};
-            StreamWriter sw = new StreamWriter("Credenziali.txt");
+            StreamWriter sw = new StreamWriter(home_dir + "Credenziali.txt");
             int j = 0;
             foreach(string i in lines){
                 sw.WriteLine(i + tmp[j]);
@@ -46,7 +51,7 @@ namespace PDSProjectGUI
         public void change_nome(string newNome)
         {
             nome = newNome;
-            using (StreamReader sr = new StreamReader("Credenziali.txt"))
+            using (StreamReader sr = new StreamReader(home_dir + "Credenziali.txt"))
             {
                 string temp;
                 string[] temp2;
