@@ -35,7 +35,7 @@ namespace connNmSpace {
 	Connessione::Connessione(string dati) {
 		printMAC();
 		this->pipeNumInvio = 0;
-		this->pipeNumRic = 10000;
+		this->pipeNumRic = 100001;
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
 		mutSharedPath = new mutex();
 
@@ -446,7 +446,7 @@ namespace connNmSpace {
 
 		string pipeID("pipe");
 		pipeID.append(to_string(pipeNumInvio));
-		pipeNumInvio++;
+		pipeNumInvio = (pipeNumInvio + 1)%100000;
 
 		HANDLE transferPipe;
 		string strPipeName("\\\\.\\pipe\\Pipe");
@@ -780,9 +780,9 @@ namespace connNmSpace {
 	}
 
 	/*
-	*
+	*------------------------------------------------------
 	*Funzioni della classe wrapper di Connessione
-	*
+	*------------------------------------------------------
 	*/
 	Connessione* ConnWrapper::creaConnessione(string dati) {
 		return new Connessione(dati);
