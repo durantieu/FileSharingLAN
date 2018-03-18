@@ -506,8 +506,7 @@ namespace connNmSpace {
 
 	//cambia lo stato della visibilità, modificando anche il file credenziali.txt (da fare la funzione in Utente)
 	void Connessione::change_visibility(bool vs) {
-		
-		
+			
 		if (!this->utente_attivo->get_visibility()) {
 				this->be_visible();
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
@@ -518,6 +517,7 @@ namespace connNmSpace {
 				ofstream tmpFile(tmpCredPath);
 				
 				if (readFile.is_open() && tmpFile.is_open()) {
+
 					while (!readFile.eof()) {
 						readFile >> input;
 						stringstream input_stringstream(input);
@@ -537,15 +537,15 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-			//	string com("del ");
-			//	com.append(credPath);
-			//	system(com.c_str());
-			//	com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-			//	system(com.c_str());
+				string com("del ");
+				com.append(credPath);
+				system(com.c_str());
+				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
+				system(com.c_str());
 				this->utente_attivo->set_visibility(true);
-			}
-
-			if (this->utente_attivo->get_visibility() == true) {
+		}
+		else
+			{
 				this->be_invisible();
 				
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
@@ -595,7 +595,6 @@ namespace connNmSpace {
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
-
 		ifstream readFile(credPath);
 		ofstream tmpFile(tmpCredPath);
 
@@ -635,16 +634,13 @@ namespace connNmSpace {
 			this->utente_attivo->set_percorso_foto(foto_path);
 		}
 
-		string input, first, second, credPath(homePath), tmpCredPath(
-		);
+		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
-
 		ifstream readFile(credPath);
 		ofstream tmpFile(tmpCredPath);
 
 		if (readFile.is_open() && tmpFile.is_open()) {
-
 			while (!readFile.eof()) {
 				readFile >> input;
 				stringstream input_stringstream(input);
@@ -658,6 +654,7 @@ namespace connNmSpace {
 					}
 					else {
 						tmpFile << first << "|" << second;
+						break;
 					}
 
 				}
@@ -669,7 +666,7 @@ namespace connNmSpace {
 		string com("del ");
 		com.append(credPath);
 		system(com.c_str());
-		com.assign("rename ").append(tmpCredPath).append(" ").append(credPath);
+		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 		system(com.c_str());
 
 	}
