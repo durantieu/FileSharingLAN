@@ -512,8 +512,7 @@ namespace connNmSpace {
 
 	//cambia lo stato della visibilità, modificando anche il file credenziali.txt (da fare la funzione in Utente)
 	void Connessione::change_visibility(bool vs) {
-		
-		
+			
 		if (!this->utente_attivo->get_visibility()) {
 				this->be_visible();
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
@@ -524,6 +523,7 @@ namespace connNmSpace {
 				ofstream tmpFile(tmpCredPath);
 				
 				if (readFile.is_open() && tmpFile.is_open()) {
+
 					while (!readFile.eof()) {
 						readFile >> input;
 						stringstream input_stringstream(input);
@@ -600,7 +600,6 @@ namespace connNmSpace {
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
-
 		ifstream readFile(credPath);
 		ofstream tmpFile(tmpCredPath);
 
@@ -643,12 +642,10 @@ namespace connNmSpace {
 		string input, first, second, credPath(homePath), tmpCredPath(homePath);
 		credPath.append("\\Credenziali.txt");
 		tmpCredPath.append("\\tmpCred.txt");
-
 		ifstream readFile(credPath);
 		ofstream tmpFile(tmpCredPath);
 
 		if (readFile.is_open() && tmpFile.is_open()) {
-
 			while (!readFile.eof()) {
 				readFile >> input;
 				stringstream input_stringstream(input);
@@ -664,6 +661,7 @@ namespace connNmSpace {
 						tmpFile << first << "|" << second;
 						break;
 					}
+
 				}
 			}
 		}
