@@ -42,9 +42,9 @@ namespace PDSProjectGUI
         unsafe char** utenti_info;
         unsafe int size;
         IntPtr conn;
-        string path_file_to_be_sent;
+        
 
-        public unsafe SendFiles(string pt, IntPtr connection, string path)
+        public unsafe SendFiles(string pt, IntPtr connection, string nome_file)
         {
             string[] tmp;
             StringBuilder str = new StringBuilder();
@@ -54,7 +54,7 @@ namespace PDSProjectGUI
             InitializeComponent();
             conn = connection;
             MarshalVectorWrapper(conn, out utenti_info, out size);
-            path_file_to_be_sent = path;
+            
             if (size != 0)
             {
                 utenti_online = new utente[size];
@@ -95,7 +95,7 @@ namespace PDSProjectGUI
 
 
                     
-                    ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path_file_to_be_sent);
+                    ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path);
                     pbd.Show();
 
                     break;
@@ -112,7 +112,7 @@ namespace PDSProjectGUI
             // Posiziono il bottone
             button.Name = "Butt" + counter_button;
             //button.Text = "Invia a "; //aggiungere nome e cognome utente
-            button.BackgroundImage = System.Drawing.Image.FromFile("C:\\Users\\duran\\Desktop\\Immagini interfaccia progetto PDS\\Invia50x40.png");
+            button.BackgroundImage = System.Drawing.Image.FromFile(home_dir + "Invia50x40.png");
             button.ForeColor = Color.Black;
             button.BackColor = Color.White;
             button.BackgroundImageLayout = ImageLayout.Center;

@@ -16,23 +16,31 @@ namespace PDSProjectGUI
     {
         [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
         public static extern void inviaFile(IntPtr connessione, string file, string MAC, StringBuilder str);
-
+        private string nome_file;
         IntPtr connessione;
-        string pipeID;
-        NamedPipeClientStream pipe;
+        PollingPipe p;
 
         public ProgressBarDialog(IntPtr connection, utente usr, string path)
         {
-            
+            InitializeComponent();
             StringBuilder str = new StringBuilder();
             connessione = connection;
             inviaFile(connessione, path, usr.MAC, str);
-            pipeID = str.ToString();
-            pipe = new NamedPipeClientStream(pipeID);
-            pipe.Connect();
+            progressBar1.Maximum = 100;
+            progressBar1.Minimum = 0;
+            p = new PollingPipe(this, str.ToString(), 3); // 3 = pipe comunicazione GUI-Client
+            
+            nome_file = path;
+            label3.Text = nome_file;
+            label4.Text = usr.Nome + " " + usr.Cognome;
+            
 
-            InitializeComponent();
+        }
+        
+        public void modify_progress_bar(string value)
+        {
 
+            progressBar1.Value = Int32.Parse(value);
         }
 
         private void button1_Click(object sender, EventArgs e)
