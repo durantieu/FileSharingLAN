@@ -65,7 +65,7 @@ namespace PDSProjectGUI
 
         [STAThread]
         static void Main()
-        {
+      {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Login l = new Login();

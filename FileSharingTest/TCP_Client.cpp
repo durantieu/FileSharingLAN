@@ -24,7 +24,6 @@ TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mut
 
 void TCP_Client::operator()() {	
 	
-	
 	//1) send to tcp listener -> notifica dell'invio di un file
 	WSADATA wsadata;
 
@@ -245,7 +244,10 @@ void TCP_Client::operator()() {
 		int dati_rimasti = atoi(temp.size.c_str());
 		int size_file = atoi(temp.size.c_str());;
 		int letto, inviati;
+		float percentuale = 0;
+		int percentualePrec = 0;
 		char* send_buf = new char[BUF_LEN];
+
 		while (dati_rimasti > 0) {
 			letto = fread(send_buf, sizeof(char), 50, fin);
 			if (letto < 0) {
@@ -255,9 +257,31 @@ void TCP_Client::operator()() {
 				printf("--ERROR WHILE SENDING FILE--\n--ABORTING CLIENT--\n");
 				return;
 			}
+
 			dati_rimasti -= inviati;
+
+			// dati verso pipe per 1 file:
+			
+			percentuale = (((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
+
+			if ((int)percentuale != percentualePrec) {				
+				string buffer("|");
+				buffer.append(to_string((int)percentuale)).append("|");
+				WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+
+				percentualePrec = percentuale;
+			}
+
+			
+			//------
+
+			
 		}
-		//cout << "file inviato" << endl;
+
+		string buffer("|");
+		buffer.append("100").append("|");
+		WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+
 		fclose(fin);
 		free(send_buf);
 
