@@ -82,7 +82,7 @@ int Sync_mappa::scorri_e_aggiorna() {
 *Funzione per inviare la foto
 */
 void Sync_mappa::scarica_foto(SOCKADDR_IN ip) {
-	TCP_Client* newClient = new TCP_Client("", ip, 2, MAC, NULL, NULL, "");
+	TCP_Client* newClient = new TCP_Client("", ip, 2, MAC, NULL, NULL, nullptr);
 	thread* newThread = new thread(*newClient);
 
 	newThread->detach();
