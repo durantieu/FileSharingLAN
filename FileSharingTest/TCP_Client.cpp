@@ -267,12 +267,25 @@ void TCP_Client::operator()() {
 			if (is_foto == 1) {
 				percentuale = (((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
 
+				char* bufPipe = new char[1024];
 				if ((int)percentuale != percentualePrec) {
 					string buffer("|");
 					buffer.append(to_string((int)percentuale)).append("|");
 					WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
-
 					percentualePrec = percentuale;
+
+					ReadFile(this->pipeHandle, bufPipe, buffer.length(), 0, NULL);
+					string strBufPipe(bufPipe);
+
+					if (strBufPipe.find('X') != std::string::npos) {
+						::CloseHandle(this->pipeHandle);
+						fclose(fin);
+						string com("del ");
+						com.append(percorso_assoluto);
+						system(com.c_str());
+
+						return;
+					}
 				}
 			}			
 		}

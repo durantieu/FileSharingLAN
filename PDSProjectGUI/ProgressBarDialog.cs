@@ -56,8 +56,7 @@ namespace PDSProjectGUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //Terminate the transfer by calling DLL function
-
+            
             this.Close();
         }
       
