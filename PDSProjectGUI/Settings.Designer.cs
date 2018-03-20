@@ -46,12 +46,14 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.button6 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(233)))), ((int)(((byte)(235)))), ((int)(((byte)(238)))));
+            this.panel1.Controls.Add(this.button6);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label6);
@@ -134,9 +136,9 @@
             // 
             this.button1.Location = new System.Drawing.Point(316, 55);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(286, 36);
+            this.button1.Size = new System.Drawing.Size(134, 36);
             this.button1.TabIndex = 8;
-            this.button1.Text = "Apri";
+            this.button1.Text = "Blocca";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // label4
@@ -219,6 +221,16 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(468, 55);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(134, 36);
+            this.button6.TabIndex = 15;
+            this.button6.Text = "Sblocca";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,5 +264,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button6;
     }
 }

@@ -44,6 +44,9 @@ namespace PDSProjectGUI
             Region rg = new Region(gp);
             pictureBox2.Region = rg;
 
+
+            //Sincronizzazione pipe principale
+
         }
 
         private void button2_Click(object sender, EventArgs e)

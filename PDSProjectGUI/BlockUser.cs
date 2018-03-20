@@ -12,22 +12,11 @@ using Microsoft.Win32.SafeHandles;
 
 namespace PDSProjectGUI
 {
-    public struct utente
+    public partial class BlockUser : Form
     {
-        public string MAC;
-        public string Nome;
-        public string Cognome;
-        public string ha_la_foto;
-        public string bloccato;
-    }
-
-
-    public partial class SendFiles : Form
-    {
-       
         utente[] utenti_online;
         string path;
-        int numero_utenti_in_rete=0;
+        int numero_utenti_in_rete = 0;
         int counter_button = 0;
         int counter_picBox = 0;
         int counter_textBox = 0;
@@ -42,19 +31,19 @@ namespace PDSProjectGUI
         unsafe char** utenti_info;
         unsafe int size;
         IntPtr conn;
-        
 
-        public unsafe SendFiles(string pt, IntPtr connection, string nome_file)
+        public unsafe BlockUser(IntPtr connection)
         {
+            InitializeComponent();
             string[] tmp;
             StringBuilder str = new StringBuilder();
             firstGetHomeDir(str);
             home_dir = str.ToString();
-            path = pt;
-            InitializeComponent();
+            
+           
             conn = connection;
             MarshalVectorWrapper(conn, out utenti_info, out size);
-            
+
             if (size != 0)
             {
                 utenti_online = new utente[size];
@@ -78,7 +67,6 @@ namespace PDSProjectGUI
                 }
             }
             //acchiappo il numero di utenti in rete  e lo assegno a numero_utenti_in_rete
-
         }
 
 
@@ -90,58 +78,54 @@ namespace PDSProjectGUI
             {
                 if (btn.Name == ("Butt" + i))
                 {
-                    //qui scrivo le funzioni che devono essere richiamate quando scelgo un utente a cui inviare ()
-                    //dovrò chiamare il lancio di un client per l'invio di un file verso l'utente identificato da questo bottone
-
-
-                    
-                    ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path);
-                    pbd.Show();
+                    //qui chiamo il metodo per aggiungere in blackList
 
                     break;
                 }
             }
         }
 
-
         private Button CreateButton_Click(int i, int j, utente usr_corrente)
-        { 
+        {
             Button button = new Button();
-            
-            
+
+
             // Posiziono il bottone
             button.Name = "Butt" + counter_button;
-            button.BackgroundImage = System.Drawing.Image.FromFile(home_dir + "Invia50x40.png");
+            button.BackgroundImage = System.Drawing.Image.FromFile(home_dir + "blocca.png");
             button.ForeColor = Color.Black;
             button.BackColor = Color.White;
             button.BackgroundImageLayout = ImageLayout.Center;
             button.FlatStyle = FlatStyle.Flat;
             button.FlatAppearance.BorderSize = 1;
+            button.ForeColor = Color.Red;
+            button.BackgroundImageLayout = ImageLayout.Center;
 
-            
-            button.Location = new Point(i+80, j+170);
+            button.Location = new Point(i + 80, j + 170);
             button.Size = new Size(100, 40);
-           
-           
+
+
             // incremento l'identificatore.
             counter_button++;
-           
-           //aggiungo l'evento Click al nuovo bottone
+
+            //aggiungo l'evento Click al nuovo bottone
             button.Click += new EventHandler(NewButton_Click);
 
             return button;
         }
+
         private PictureBox create_picBox(int riga, int colonna, utente usr_corrente)
         {
-           
+
 
             PictureBox newPicBox = new PictureBox();
-            newPicBox.Name = "PicBox"+counter_picBox;
-            newPicBox.Location = new Point(riga+70, colonna+70);
+            newPicBox.Name = "PicBox" + counter_picBox;
+            newPicBox.Location = new Point(riga + 70, colonna + 70);
             newPicBox.Size = new Size(120, 100);
 
-            
-           if(utenti_online[counter_picBox].ha_la_foto != "2") {
+
+            if (utenti_online[counter_picBox].ha_la_foto != "2")
+            {
                 Image im = Image.FromFile(home_dir + "\\immagine_vuota.jpg");
                 newPicBox.ImageLocation = home_dir + "\\immagine_vuota.jpg";
             }
@@ -150,7 +134,7 @@ namespace PDSProjectGUI
                 Image im = Image.FromFile(home_dir + "immagini_utenti\\" + utenti_online[counter_picBox].MAC + ".jpg");
                 newPicBox.ImageLocation = home_dir + "immagini_utenti\\" + utenti_online[counter_picBox].MAC + ".jpg";
             }
-            
+
 
 
             newPicBox.BorderStyle = BorderStyle.FixedSingle;
@@ -173,9 +157,9 @@ namespace PDSProjectGUI
         {
             Label newTextBox = new Label();
             newTextBox.Name = "TextBox" + counter_textBox;
-            newTextBox.Location = new Point(riga+80 ,colonna+210);
+            newTextBox.Location = new Point(riga + 80, colonna + 210);
             newTextBox.ForeColor = Color.FromArgb(0, 53, 118);
-            newTextBox.Text =  usr_corrente.Nome +" "+ usr_corrente.Cognome;
+            newTextBox.Text = usr_corrente.Nome + " " + usr_corrente.Cognome;
 
             newTextBox.Font = new Font("Segoe UI", 9, FontStyle.Regular);
             newTextBox.TextAlign = ContentAlignment.TopCenter;
@@ -183,12 +167,11 @@ namespace PDSProjectGUI
 
             return newTextBox;
         }
-
         private void disegna_utenti() //qui metto un ciclo dove, in base al valore numero utenti in rete provo a creare dei box dinamicamente e posizionarli all'interno del form.l
         {
             utente utente_corrente;
-            int pos_riga=0, pos_colonna=0;
-            int pos_riga_picBox=0, pos_colonna_picBox = 0;
+            int pos_riga = 0, pos_colonna = 0;
+            int pos_riga_picBox = 0, pos_colonna_picBox = 0;
             int pos_riga_textBox = 0, pos_colonna_TextBox = 0;
 
 
@@ -196,7 +179,7 @@ namespace PDSProjectGUI
             {
                 utente_corrente = utenti_online[i];
 
-                if(pos_riga >= 500)
+                if (pos_riga >= 500)
                 {
                     pos_riga = 0;
                     pos_colonna = 200;
@@ -207,11 +190,11 @@ namespace PDSProjectGUI
                 }
 
 
-                Button newButton =CreateButton_Click(pos_riga, pos_colonna, utente_corrente);
-                PictureBox newPic=create_picBox(pos_riga_picBox, pos_colonna_picBox, utente_corrente);
+                Button newButton = CreateButton_Click(pos_riga, pos_colonna, utente_corrente);
+                PictureBox newPic = create_picBox(pos_riga_picBox, pos_colonna_picBox, utente_corrente);
                 Label newTextBox = create_Label(pos_riga_textBox, pos_colonna_TextBox, utente_corrente);
 
-               
+
                 this.Controls.Add(newButton);
                 this.Controls.Add(newPic);
                 this.Controls.Add(newTextBox);
@@ -225,67 +208,53 @@ namespace PDSProjectGUI
 
         }
 
-        private void SendFiles_Load(object sender, EventArgs e)
+        private void BlockUser_Load()
         {
             disegna_utenti();
         }
 
 
 
-
-
-
-        //---------------------------------------------------------------------------------------//
-
-        //---------------------------------------------------------------//
-
-        //------------------------------------------------------------------//
-
-#region wrapper
+        #region wrapper
         [DllImport("FileSharingTest.dll")]
-        public static unsafe extern bool MarshalVector(IntPtr conn, out  ItemsSafeHandle hItems, out char** ItemsData, out int ItemsCounter);
+        public static unsafe extern bool MarshalVector(IntPtr conn, out ItemsSafeHandle hItems, out char** ItemsData, out int ItemsCounter);
 
         [DllImport("FileSharingTest.dll")]
         public static extern bool deleteVector(IntPtr item);
 
         public class ItemsSafeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-                public ItemsSafeHandle() : base(true)
-                {
+            public ItemsSafeHandle() : base(true)
+            {
 
-                }
+            }
 
-                protected override bool ReleaseHandle()
-                {
-                    return deleteVector(handle);
-                }
+            protected override bool ReleaseHandle()
+            {
+                return deleteVector(handle);
+            }
 
 
         }
-        static unsafe ItemsSafeHandle MarshalVectorWrapper( IntPtr conn, out  char** items, out  int itemsCount){
+        static unsafe ItemsSafeHandle MarshalVectorWrapper(IntPtr conn, out char** items, out int itemsCount)
+        {
 
-                    ItemsSafeHandle itemsHandle;
+            ItemsSafeHandle itemsHandle;
 
-                    if (!MarshalVector(conn, out itemsHandle, out  items, out  itemsCount))
-                    {
-                        throw new InvalidOperationException();
-                    }
+            if (!MarshalVector(conn, out itemsHandle, out items, out itemsCount))
+            {
+                throw new InvalidOperationException();
+            }
 
-                    return itemsHandle;
+            return itemsHandle;
 
         }
 
 
-#endregion 
-
-
-
-
-
+        #endregion
     }
 
 
+
+
 }
-
-
-

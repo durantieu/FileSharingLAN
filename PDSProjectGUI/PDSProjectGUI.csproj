@@ -64,6 +64,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BlockUser.Designer.cs">
+      <DependentUpon>BlockUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IncomingConnection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IncomingConnection.Designer.cs">
+      <DependentUpon>IncomingConnection.cs</DependentUpon>
+    </Compile>
     <Compile Include="PollingPipe.cs" />
     <Compile Include="Credenziali.cs" />
     <Compile Include="FileDialog.cs">
@@ -110,6 +122,9 @@
     </Compile>
     <EmbeddedResource Include="FileDialog.resx">
       <DependentUpon>FileDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IncomingConnection.resx">
+      <DependentUpon>IncomingConnection.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>

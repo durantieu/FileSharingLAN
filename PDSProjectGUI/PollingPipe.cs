@@ -124,7 +124,7 @@ namespace PDSProjectGUI
                 //file.WriteLine("BuffString: " + buff_string);
                 //file.WriteLine("max: " + max);
 
-                    //leggere dalla pipe lo stato di avanzamento del trasferimento
+                //leggere dalla pipe lo stato di avanzamento del trasferimento
 
                  pbd.Invoke(barraDel, new object[] { maxStr });
         
