@@ -73,7 +73,8 @@ namespace PDSProjectGUI
         }
         private void button1_Click(object sender, EventArgs e)
         {
-
+            BlockUser bU = new BlockUser(connessione);
+            bU.Show();
         }
 
         private void button2_Click(object sender, EventArgs e) //scegli cartella dove salvare i file
@@ -192,6 +193,11 @@ namespace PDSProjectGUI
             s.update_credentials(this);
 
             
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            //Lancia il Form di Sblocca Utenti
         }
     }
 }
