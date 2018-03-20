@@ -112,7 +112,8 @@ namespace PDSProjectGUI
             // Posiziono il bottone
             button.Name = "Butt" + counter_button;
             //button.Text = "Invia a "; //aggiungere nome e cognome utente
-            button.BackgroundImage = System.Drawing.Image.FromFile("C:\\Users\\duran\\Desktop\\Immagini interfaccia progetto PDS\\Invia50x40.png");
+
+            button.BackgroundImage = System.Drawing.Image.FromFile(home_dir + "Invia50x40.png");
             button.ForeColor = Color.Black;
             button.BackColor = Color.White;
             button.BackgroundImageLayout = ImageLayout.Center;

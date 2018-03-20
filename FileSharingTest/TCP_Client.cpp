@@ -22,15 +22,12 @@ TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mut
 	this->pipeHandle = pipe;
 }
 
-void TCP_Client::operator()() {
-	
-	//Attesa della GUI sull'altro lato della pipe
-	
-	
+void TCP_Client::operator()() {	
 	
 	
 	//1) send to tcp listener -> notifica dell'invio di un file
 	WSADATA wsadata;
+
 
 	size_t iResult;
 	SOCKET sock;
