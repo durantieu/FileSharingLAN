@@ -90,25 +90,45 @@ namespace PDSProjectGUI
         {
             byte[] buffer = new byte[1024];
             string buff_string;
-            //insert here the pipe polling
-            while (true)
+            string tmp;
+            string[] substrings;
+            int max = 0;
+            string maxStr = "";
+
+            using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(@"C:\Users\Mattia\Desktop\logCS.txt", true))
+
+                //insert here the pipe polling
+                while (true)
             {
+                pipe.Read(buffer, 0, 1024);
+                buff_string = System.Text.Encoding.UTF8.GetString(buffer);
 
-                //read the pipe (should be blocking)
-
-                do {
-                    pipe.Read(buffer, 0, 1024);
-                    buff_string = System.Text.Encoding.UTF8.GetString(buffer);
-                    buff_string = buff_string.Replace("\0", string.Empty);
-
-                } while (buff_string == "0");
+                tmp = buff_string.Replace("\0", string.Empty);
+                substrings = tmp.Split(new string[] { "|" }, StringSplitOptions.None);
+                foreach(string i in substrings){
+                    if(i != "")
+                    {
+                        int x = Int32.Parse(i);
+                        if(x > max)
+                        {
+                            max = x;
+                            maxStr = i;
+                        }
+                    }
                     
+                }
                 
+                
+                file.WriteLine("BuffString: " + buff_string);
+                file.WriteLine("max: " + max);
+
                 //leggere dalla pipe lo stato di avanzamento del trasferimento
-                
-                pbd.modify_progress_bar(buff_string);
-                if(buff_string == "100")
+
+                pbd.modify_progress_bar(maxStr);
+                if (maxStr == "100")
                 {
+                    file.WriteLine("Finito");
                     break;
                 }
             }

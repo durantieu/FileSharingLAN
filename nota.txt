@@ -6,19 +6,11 @@ strana tra i due linguaggi
 */
 
 /*
-*Non ho utilizzato una struct di stringhe per semplificare il 
-marshalling dei dati; la stringa nella lista degli utenti ha
-la forma nome-cognome-path-blacklist (o sostituendo - con $ o altre porcate)
-*/
-
-/*
-Verificare se la funzione Sync_mappa::blocco serve ancora (non credo)
-*/
-
-/*
-Cambiare i percorsi statici di credenzali in tutto il foglio Utente.cpp
-*/
-
+in righe 131-140 di TCP_Server.cpp ho commentato le righe di accettazione
+del file perchè davano problemi
+con il menu principale (troppe cin insieme sbarellavano); quella parte di stampa a video
+è da sostituire con pipe che notifica a C# che tizio vuole
+inviare roba (C# aprirà un popup?)
 /*
 Struttura dei dati all'atto della creazione dell'utente corrente:
 nome-cognome-fotoPath-filePath-visible

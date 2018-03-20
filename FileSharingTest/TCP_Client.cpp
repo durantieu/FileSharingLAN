@@ -243,9 +243,10 @@ void TCP_Client::operator()() {
 		int dati_rimasti = atoi(temp.size.c_str());
 		int size_file = atoi(temp.size.c_str());;
 		int letto, inviati;
-		float percentuale;
+		float percentuale = 0;
+		int percentualePrec = 0;
 		char* send_buf = new char[BUF_LEN];
-		ofstream f("C:\\Users\\duran\\Desktop\\log.txt");
+
 		while (dati_rimasti > 0) {
 			letto = fread(send_buf, sizeof(char), 50, fin);
 			if (letto < 0) {
@@ -260,18 +261,26 @@ void TCP_Client::operator()() {
 
 			// dati verso pipe per 1 file:
 			
+			percentuale = (((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
 
-			percentuale =(((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
-			string buffer = to_string((int)percentuale);
-			buffer.append("\0");
-			f << to_string(size_file)<<" "<<to_string(dati_rimasti)<<" " << to_string(percentuale) << endl;
-			WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+			if ((int)percentuale != percentualePrec) {				
+				string buffer("|");
+				buffer.append(to_string((int)percentuale)).append("|");
+				WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+
+				percentualePrec = percentuale;
+			}
+
+			
 			//------
 
 			
 		}
-		f.close();
-		//cout << "file inviato" << endl;
+
+		string buffer("|");
+		buffer.append("100").append("|");
+		WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+
 		fclose(fin);
 		free(send_buf);
 
