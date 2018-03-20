@@ -14,10 +14,12 @@ namespace PDSProjectGUI
         ProgressBarDialog pbd;
         string pipeID;
         NamedPipeClientStream pipe;
+        ProgressBarDialog.delegateUpdateProgressBar barraDel;
 
-        public PollingPipe(ProgressBarDialog calling_form, string nome_pipe, int type)
+        public PollingPipe(ProgressBarDialog.delegateUpdateProgressBar barra, ProgressBarDialog calling_form, string nome_pipe, int type)
         {
             pbd = calling_form;
+            barraDel = barra;
             //Create here the pipe and hook it with c++s one
             pipeID = nome_pipe;
             pipe = new NamedPipeClientStream(pipeID);
@@ -95,8 +97,8 @@ namespace PDSProjectGUI
             int max = 0;
             string maxStr = "";
 
-            using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter(@"C:\Users\Mattia\Desktop\logCS.txt", true))
+            //using (System.IO.StreamWriter file =
+            //new System.IO.StreamWriter(@"C:\Users\Mattia\Desktop\logCS.txt", true))
 
                 //insert here the pipe polling
                 while (true)
@@ -119,16 +121,17 @@ namespace PDSProjectGUI
                     
                 }
                 
-                
-                file.WriteLine("BuffString: " + buff_string);
-                file.WriteLine("max: " + max);
+                //
+                //file.WriteLine("BuffString: " + buff_string);
+                //file.WriteLine("max: " + max);
 
-                //leggere dalla pipe lo stato di avanzamento del trasferimento
+                    //leggere dalla pipe lo stato di avanzamento del trasferimento
 
-                pbd.modify_progress_bar(maxStr);
+                 pbd.Invoke(barraDel, new object[] { maxStr });
+        
                 if (maxStr == "100")
                 {
-                    file.WriteLine("Finito");
+                    //file.WriteLine("Finito");
                     break;
                 }
             }
