@@ -132,9 +132,12 @@ namespace PDSProjectGUI
                 {
                     //file.WriteLine("Finito");
                     break;
+                    
                 }
             }
-            
+
+            pipe.Close();
+
         }
     }
 }
