@@ -38,7 +38,7 @@ namespace PDSProjectGUI
 
             progressBar1.Maximum = 100;
             progressBar1.Minimum = 0;
-            progressBar1.MarqueeAnimationSpeed = 50;
+            progressBar1.MarqueeAnimationSpeed = 0;
 
             p = new PollingPipe(updateProgressBar, this, str.ToString(), 3); // 3 = pipe comunicazione GUI-Client
             

@@ -100,8 +100,7 @@ namespace PDSProjectGUI
             //using (System.IO.StreamWriter file =
             //new System.IO.StreamWriter(@"C:\Users\Mattia\Desktop\logCS.txt", true))
 
-                //insert here the pipe polling
-                while (true)
+            while (true)
             {
                 pipe.Read(buffer, 0, 1024);
                 buff_string = System.Text.Encoding.UTF8.GetString(buffer);

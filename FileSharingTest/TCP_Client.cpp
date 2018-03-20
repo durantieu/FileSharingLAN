@@ -284,7 +284,7 @@ void TCP_Client::operator()() {
 
 		fclose(fin);
 		free(send_buf);
-
+		::CloseHandle(this->pipeHandle);
 		path_set.pop_front();
 
 		char rbuf[2];
