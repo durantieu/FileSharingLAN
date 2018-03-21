@@ -512,32 +512,36 @@ namespace connNmSpace {
 
 	//cambia lo stato della visibilità, modificando anche il file credenziali.txt (da fare la funzione in Utente)
 	void Connessione::change_visibility(bool vs) {
+
+		//ofstream fstr("C:\\Users\\Mattia\\Desktop\\logDll.txt");
 			
 		if (!this->utente_attivo->get_visibility()) {
-				this->be_visible();
-				string input, first, second, credPath(homePath), tmpCredPath(homePath);
-				credPath.append("\\Credenziali.txt");
-				tmpCredPath.append("\\tmpCred.txt");
 
-				ifstream readFile(credPath);
-				ofstream tmpFile(tmpCredPath);
-				
-				if (readFile.is_open() && tmpFile.is_open()) {
+			//fstr << "invisibile -> visibile" << endl;
 
-					while (!readFile.eof()) {
-						readFile >> input;
-						stringstream input_stringstream(input);
-						if (getline(input_stringstream, first, '|')) {
-							getline(input_stringstream, second);
-							if (first == "Visible") {
-								second = "true";
-								tmpFile << first << "|" << second;
-								break;
-							}
-							
-							if (first != "Visible")
-								tmpFile << first << "|" << second << endl;
+			this->be_visible();
+			string input, first, second, credPath(homePath), tmpCredPath(homePath);
+			credPath.append("\\Credenziali.txt");
+			tmpCredPath.append("\\tmpCred.txt");
+
+			ifstream readFile(credPath);
+			ofstream tmpFile(tmpCredPath);
+
+			if (readFile.is_open() && tmpFile.is_open()) {
+
+				while (!readFile.eof()) {
+					readFile >> input;
+					stringstream input_stringstream(input);
+					if (getline(input_stringstream, first, '|')) {
+						getline(input_stringstream, second);
+						if (first == "Visible") {
+							second = "true";
+							tmpFile << first << "|" << second;
+							break;
 						}
+
+						if (first != "Visible")
+							tmpFile << first << "|" << second << endl;
 					}
 				}
 
@@ -550,43 +554,47 @@ namespace connNmSpace {
 				system(com.c_str());
 				this->utente_attivo->set_visibility(true);
 			}
-			else {
-				this->be_invisible();
-				
-				string input, first, second, credPath(homePath), tmpCredPath(homePath);
-				credPath.append("\\Credenziali.txt");
-				tmpCredPath.append("\\tmpCred.txt");
-				ifstream readFile(credPath);
-				ofstream tmpFile(tmpCredPath);
+		}
+		else {
+			this->be_invisible();
 
-				if (readFile.is_open() && tmpFile.is_open()) {
-					while (!readFile.eof()) {
-						readFile >> input;
-						stringstream input_stringstream(input);
-						if (getline(input_stringstream, first, '|')) {
-							getline(input_stringstream, second);
-							if (first == "Visible") {
-								second = "false";
-								tmpFile << first << "|" << second;
-								break;
-							}
-							
-							if (first != "Visible")
-								tmpFile << first << "|" << second << endl;
+			//fstr << "visibile -> invisibile" << endl;
+				
+			string input, first, second, credPath(homePath), tmpCredPath(homePath);
+			credPath.append("\\Credenziali.txt");
+			tmpCredPath.append("\\tmpCred.txt");
+			ifstream readFile(credPath);
+			ofstream tmpFile(tmpCredPath);
+
+			if (readFile.is_open() && tmpFile.is_open()) {
+				while (!readFile.eof()) {
+					readFile >> input;
+					stringstream input_stringstream(input);
+					if (getline(input_stringstream, first, '|')) {
+						getline(input_stringstream, second);
+						if (first == "Visible") {
+							second = "false";
+							tmpFile << first << "|" << second;
+							break;
 						}
+							
+						if (first != "Visible")
+							tmpFile << first << "|" << second << endl;
 					}
 				}
-
-				readFile.close();
-				tmpFile.close();
-				string com("del ");
-				com.append(credPath);
-				system(com.c_str());
-				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-				system(com.c_str());
-				this->utente_attivo->set_visibility(false);
 			}
-		
+
+			readFile.close();
+			tmpFile.close();			
+			string com("del ");
+			com.append(credPath);
+			system(com.c_str());
+			com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
+			system(com.c_str());
+			this->utente_attivo->set_visibility(false);
+		}	
+
+		//fstr.close();
 	}
 
 	//metodo per cambiare la default path dei files

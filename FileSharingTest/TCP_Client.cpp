@@ -248,7 +248,7 @@ void TCP_Client::operator()() {
 		int percentualePrec = 0;
 		char* send_buf = new char[BUF_LEN];
 
-		ofstream fl("C:\\Users\\Mattia\\Desktop\\" + temp.nome_file + ".txt");
+		//ofstream fl("C:\\Users\\Mattia\\Desktop\\" + temp.nome_file + ".txt");
 
 		while (dati_rimasti > 0) {
 			letto = fread(send_buf, sizeof(char), 50, fin);
@@ -261,7 +261,7 @@ void TCP_Client::operator()() {
 			}
 
 			dati_rimasti -= inviati;
-			fl << size_file - dati_rimasti << endl;
+			//fl << size_file - dati_rimasti << endl;
 
 			// dati verso pipe per 1 file:
 			if (is_foto == 1) {
@@ -287,10 +287,10 @@ void TCP_Client::operator()() {
 						return;
 					}
 				}
-			}			
+			}	
 		}
-		fl << "finito";
-		fl.close();
+		//fl << "finito";
+		//fl.close();
 
 		if (is_foto == 1) {
 			string buffer("|");
