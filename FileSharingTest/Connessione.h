@@ -23,6 +23,8 @@ namespace connNmSpace {
 		mutex *mutSharedPath;
 		static condition_variable cvar;
 		static mutex mut;
+		static mutex mut_on_exit;
+		static bool exit_discoverer;
 		string homePath;
 		int pipeNumInvio;
 		int pipeNumRic;

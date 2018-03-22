@@ -45,6 +45,7 @@ namespace PDSProjectGUI
         private Share s = null;
         public Settings(IntPtr Connection, Share callingForm, Credenziali cred)
         {
+            InitializeComponent();
             //prelevare e inizializzare il valore di Visible dal file credenziali
             s = callingForm;
             connessione = Connection;
@@ -57,11 +58,10 @@ namespace PDSProjectGUI
             {
                 visible = false;
             }
-
-            InitializeComponent();
+            
+            
             set_private(visible);
 
-            
         }
 
         void set_private(bool visible)
@@ -99,12 +99,12 @@ namespace PDSProjectGUI
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (checkBox1.Checked && visible == true)
             {
                 visible = false;
                 vis_changed = true;
             }
-            else
+            if(!checkBox1.Checked && visible == false)
             {
                 visible = true;
                 vis_changed = true;
@@ -144,8 +144,6 @@ namespace PDSProjectGUI
         {
 
         }
-
-       
 
         public void credential_changed()
         {

@@ -92,8 +92,6 @@ namespace PDSProjectGUI
                 {
                     //qui scrivo le funzioni che devono essere richiamate quando scelgo un utente a cui inviare ()
                     //dovrò chiamare il lancio di un client per l'invio di un file verso l'utente identificato da questo bottone
-
-
                     
                     ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path);
                     pbd.Show();

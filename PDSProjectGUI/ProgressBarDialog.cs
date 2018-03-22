@@ -34,8 +34,9 @@ namespace PDSProjectGUI
 
             StringBuilder str = new StringBuilder();
             connessione = connection;
-            inviaFile(connessione, path, usr.MAC, str);
 
+
+            inviaFile(connessione, path, usr.MAC, str);
             progressBar1.Maximum = 100;
             progressBar1.Minimum = 0;
             progressBar1.MarqueeAnimationSpeed = 0;

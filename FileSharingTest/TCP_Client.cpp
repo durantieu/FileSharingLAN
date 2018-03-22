@@ -26,11 +26,8 @@ void TCP_Client::operator()() {
 	
 	//1) send to tcp listener -> notifica dell'invio di un file
 	WSADATA wsadata;
-
-
 	size_t iResult;
 	SOCKET sock;
-
 	SOCKADDR_IN /*client_addr,*/ server_addr;
 
 	//short port;
@@ -261,30 +258,35 @@ void TCP_Client::operator()() {
 			dati_rimasti -= inviati;
 
 			// dati verso pipe per 1 file:
-			
-			percentuale = (((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
+			if (is_foto == 1) {
+				percentuale = (((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
 
-			if ((int)percentuale != percentualePrec) {				
-				string buffer("|");
-				buffer.append(to_string((int)percentuale)).append("|");
-				WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+				if ((int)percentuale != percentualePrec) {
+					string buffer("|");
+					buffer.append(to_string((int)percentuale)).append("|");
+					WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
 
-				percentualePrec = percentuale;
+					percentualePrec = percentuale;
+				}
 			}
+			
 
 			
 			//------
 
 			
 		}
-
-		string buffer("|");
-		buffer.append("100").append("|");
-		WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+		if(is_foto == 1) {
+			string buffer("|");
+			buffer.append("100").append("|");
+			WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL); 
+			::CloseHandle(this->pipeHandle);
+		}
+		
 
 		fclose(fin);
 		free(send_buf);
-		::CloseHandle(this->pipeHandle);
+		
 		path_set.pop_front();
 
 		char rbuf[2];

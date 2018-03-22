@@ -27,7 +27,6 @@ namespace PDSProjectGUI
             get;
             set;
         }
-
         public Share(Login l)
         {
 
@@ -48,13 +47,11 @@ namespace PDSProjectGUI
             //Sincronizzazione pipe principale
 
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             FileDialog fd = new FileDialog(connessione);
             fd.Show();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             Settings set = new Settings(connessione, this, cred);
@@ -91,7 +88,6 @@ namespace PDSProjectGUI
             }
             
         }
-
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
 

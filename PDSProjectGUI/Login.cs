@@ -30,12 +30,10 @@ namespace PDSProjectGUI
         {
             StringBuilder str = new StringBuilder();
             firstGetHomeDir(str);
-
             home_dir = str.ToString();
 
             InitializeComponent();
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -108,7 +106,6 @@ namespace PDSProjectGUI
         {
             this.Close();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             
@@ -117,7 +114,6 @@ namespace PDSProjectGUI
                 textBox3.Text = fbd.SelectedPath;
             }
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -128,7 +124,6 @@ namespace PDSProjectGUI
 
             }
         }
-
         private void Login_Load(object sender, EventArgs e)
         {
 

@@ -5,6 +5,8 @@ namespace connNmSpace {
 
 	condition_variable Connessione::cvar;
 	mutex Connessione::mut;
+	mutex Connessione::mut_on_exit;
+	bool Connessione::exit_discoverer;
 
 	//Controlla se una directory esiste
 	bool dirExists(const std::string& dirName_in)
@@ -38,7 +40,7 @@ namespace connNmSpace {
 		this->pipeNumRic = 100001;
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
 		mutSharedPath = new mutex();
-
+		exit_discoverer = false;
 		this->start(dati);
 		this->connect();
 	}
@@ -200,6 +202,16 @@ namespace connNmSpace {
 		int i = 0;
 
 		while (1) {
+
+			{
+				lock_guard<mutex> lg(mut_on_exit);
+				if (exit_discoverer) {
+					exit_discoverer = false;
+					return;
+				}
+			}
+			
+
 
 			outputStr.assign(MAC).append(" ").append(nome).append(" ")\
 				.append(cognome).append(" ");
@@ -502,19 +514,28 @@ namespace connNmSpace {
 
 	//killa il thread discoverer rendendo invisibili sulla rete
 	void Connessione::be_invisible() {
-		TerminateThread(discoverer->native_handle(), NULL);
+		//TerminateThread(discoverer->native_handle(), NULL); -> non funzionava, ho messo un'uscita strutturata
+		lock_guard<mutex> lg(mut_on_exit);
+		exit_discoverer = true;
 	}
 
 	//lancia il thread discoverer rendendo visibili sulla rete
 	void Connessione::be_visible() {
 		this->discoverer = new thread(Connessione::discoverer_function, this);
+		
+		//non si dovrebbe fare una detach()?
+		this->discoverer->detach();
 	}
 
 	//cambia lo stato della visibilità, modificando anche il file credenziali.txt (da fare la funzione in Utente)
 	void Connessione::change_visibility(bool vs) {
 			
 		if (!this->utente_attivo->get_visibility()) {
+
 				this->be_visible();
+				ofstream f("C:\\Users\\duran\\Desktop\\log1.txt");
+				f << "now you are visible :"<<" visibility:"<< to_string(this->utente_attivo->get_visibility()) << endl;
+				f.close();
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
@@ -536,23 +557,44 @@ namespace connNmSpace {
 							}
 							
 							if (first != "Visible")
-								tmpFile << first << "|" << second << endl;
+								tmpFile << first << "|" << second  << endl;
 						}
 					}
 				}
 
 				readFile.close();
 				tmpFile.close();
+
+				/*
 				string com("del ");
 				com.append(credPath);
 				system(com.c_str());
 				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 				system(com.c_str());
-				this->utente_attivo->set_visibility(true);
+				*/
+				if (!remove(credPath.c_str())) {
+					if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
+						ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+						f << "i-->v succesful" << endl;
+						f.close();
+					}
+					
+				}
+				
+
+				{
+					lock_guard<mutex> lg(*mutSharedPath);
+					this->utente_attivo->set_visibility(true);
+				}
 			}
 			else {
+
 				this->be_invisible();
-				
+
+				ofstream f("C:\\Users\\duran\\Desktop\\log2.txt");
+				f << "now you are invisible :" << " visibility:" << to_string(this->utente_attivo->get_visibility()) << endl;
+				f.close();
+
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
@@ -579,12 +621,27 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
+				/*
 				string com("del ");
 				com.append(credPath);
 				system(com.c_str());
 				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
 				system(com.c_str());
-				this->utente_attivo->set_visibility(false);
+				*/
+				if (!remove(credPath.c_str())) {
+					if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
+						ofstream f("C:\\Users\\duran\\Desktop\\log_v_i.txt");
+						f << "v-->i succesful" << endl;
+						f.close();
+					}
+					
+				}
+
+
+				{
+					lock_guard<mutex> lg(*mutSharedPath);
+					this->utente_attivo->set_visibility(false);
+				}
 			}
 		
 	}
@@ -624,11 +681,15 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		string com("del ");
-		com.append(credPath);
-		system(com.c_str());
-		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-		system(com.c_str());
+
+		if (!remove(credPath.c_str())) {
+			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
+				ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				f << "i-->v succesful" << endl;
+				f.close();
+			}
+
+		}
 	}
 
 	//metodo per cambiare l'immagine profilo
@@ -668,11 +729,16 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		string com("del ");
-		com.append(credPath);
-		system(com.c_str());
-		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-		system(com.c_str());
+
+		
+
+		if (!remove(credPath.c_str())) {
+			rename(tmpCredPath.c_str(), credPath.c_str());
+			ofstream f("C:\\Users\\duran\\Desktop\\log.txt");
+			f << "op succesful" << endl;
+			f.close();
+		}
+
 
 	}
 
@@ -714,11 +780,15 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		string com("del ");
-		com.append(credPath);
-		system(com.c_str());
-		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-		system(com.c_str());
+
+		if (!remove(credPath.c_str())) {
+			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
+				ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				f << "i-->v succesful" << endl;
+				f.close();
+			}
+
+		}
 	}
 
 	//metodo per cambiare il cognome
@@ -758,12 +828,18 @@ namespace connNmSpace {
 
 		readFile.close();
 		tmpFile.close();
-		string com("del ");
-		com.append(credPath);
-		system(com.c_str());
-		com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-		system(com.c_str());
+
+
+		if (!remove(credPath.c_str())) {
+			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
+				ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				f << "i-->v succesful" << endl;
+				f.close();
+			}
+
+		}
 	}
+
 
 	//classe per il blocco-sblocco utente
 	void Connessione::blocco_utente(string MAC) {
@@ -852,7 +928,6 @@ connNmSpace::Connessione* creaConnessione(char* info) {
 	string dati(info);
 	return connNmSpace::ConnWrapper::creaConnessione(dati);
 }
-
 
 vector<char*>* getUtentiConnessi(connNmSpace::Connessione* conn) {
 	return  connNmSpace::ConnWrapper::getUtentiConnessi(conn);
