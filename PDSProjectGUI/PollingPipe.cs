@@ -120,8 +120,9 @@ namespace PDSProjectGUI
                     
                 }
                 
-               
                 
+                //file.WriteLine("BuffString: " + buff_string);
+                //file.WriteLine("max: " + max);
 
                 //leggere dalla pipe lo stato di avanzamento del trasferimento
 
@@ -131,9 +132,12 @@ namespace PDSProjectGUI
                 {
                     
                     break;
+                    
                 }
             }
-            
+
+            pipe.Close();
+
         }
     }
 }

@@ -245,6 +245,8 @@ void TCP_Client::operator()() {
 		int percentualePrec = 0;
 		char* send_buf = new char[BUF_LEN];
 
+		//ofstream fl("C:\\Users\\Mattia\\Desktop\\" + temp.nome_file + ".txt");
+
 		while (dati_rimasti > 0) {
 			letto = fread(send_buf, sizeof(char), 50, fin);
 			if (letto < 0) {
@@ -256,6 +258,7 @@ void TCP_Client::operator()() {
 			}
 
 			dati_rimasti -= inviati;
+			//fl << size_file - dati_rimasti << endl;
 
 			// dati verso pipe per 1 file:
 			if (is_foto == 1) {
@@ -275,6 +278,27 @@ void TCP_Client::operator()() {
 			//------
 
 			
+				char* bufPipe = new char[1024];
+				if ((int)percentuale != percentualePrec) {
+					string buffer("|");
+					buffer.append(to_string((int)percentuale)).append("|");
+					WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+					percentualePrec = percentuale;
+
+					ReadFile(this->pipeHandle, bufPipe, buffer.length(), 0, NULL);
+					string strBufPipe(bufPipe);
+
+					if (strBufPipe.find('X') != std::string::npos) {
+						::CloseHandle(this->pipeHandle);
+						fclose(fin);
+						string com("del ");
+						com.append(percorso_assoluto);
+						system(com.c_str());
+
+						return;
+					}
+				}
+			}	
 		}
 		if(is_foto == 1) {
 			string buffer("|");
