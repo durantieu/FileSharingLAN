@@ -1,66 +1,82 @@
 #include "Utente.h"
 
 void Utente::set_nome(string nome) {
+	lock_guard<mutex> lg(*mtx);
 	this->nome = nome;
 }
 
 void Utente::set_cognome(string cognome) {
+	lock_guard<mutex> lg(*mtx);
 	this->cognome = cognome;
 }
 
 void Utente::set_filepath(string path) {
+	lock_guard<mutex> lg(*mtx);
 	this->filepath = path;
 }
 
 void Utente::set_ip(SOCKADDR_IN ip_addr) {
+	lock_guard<mutex> lg(*mtx);
 	this->ip = ip_addr;
 }
 
 void Utente::set_percorso_foto(string percorso) {
+	lock_guard<mutex> lg(*mtx);
 	this->percorso_foto = percorso;
 }
 
 SOCKADDR_IN Utente::get_ip() {
+	lock_guard<mutex> lg(*mtx);
 	return this->ip;
 }
 
 string Utente::get_percorso_foto() {
+	lock_guard<mutex> lg(*mtx);
 	return this->percorso_foto;
 }
 
 string Utente::get_nome() {
+	lock_guard<mutex> lg(*mtx);
 	return this->nome;
 }
 
 string Utente::get_cognome() {
+	lock_guard<mutex> lg(*mtx);
 	return this->cognome;
 }
 
 void Utente::set_time_stamp(time_t time) {
+	lock_guard<mutex> lg(*mtx);
 	this->timestamp = time;
 }
 
 time_t Utente::get_time_stamp() {
+	lock_guard<mutex> lg(*mtx);
 	return this->timestamp;
 }
 
 string Utente::get_filepath() {
+	lock_guard<mutex> lg(*mtx);
 	return filepath;
 }
 
 string* Utente::get_filepathPointer() {
+	lock_guard<mutex> lg(*mtx);
 	return &this->filepath;
 }
 
 string* Utente::get_fotopathPointer() {
+	lock_guard<mutex> lg(*mtx);
 	return &this->percorso_foto;
 }
 
 void Utente::set_visibility(bool vs) {
+	lock_guard<mutex> lg(*mtx);
 	this->visible = vs;
 }
 
 bool Utente::get_visibility() {
+	lock_guard<mutex> lg(*mtx);
 	return this->visible;
 }
 

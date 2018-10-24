@@ -1,6 +1,45 @@
 #include "TCP_Listener.h"
 #include "TCP_Server.h"
 
+//costruttore di TCP_Listener
+TCP_Listener::TCP_Listener(Sync_mappa *m, string MAC, string* path, mutex* mut, string* path_picture) {
+	activePorts = new map<int, future<bool>>;
+	for (int i = 0; i < 50; i++)
+		actives[i] = false;
+	m1 = m;
+	this->MAC = MAC;
+	this->mutShared = mut;
+	this->sharedFilePath = path;
+	this->sharedFotoPath = path_picture;
+	this->pipeNumRic = 100001;
+
+	string strPipeName("\\\\.\\pipe\\mainPipe");
+
+	std::wstring stemp = s2ws(strPipeName);
+	LPCWSTR pipeName = stemp.c_str();
+
+	//creazione dell'oggetto pipe
+	mainPipe = CreateNamedPipe(
+		pipeName,				  // pipe name 
+		PIPE_ACCESS_DUPLEX,       // read/write access 
+		PIPE_TYPE_MESSAGE |       // message type pipe 
+		PIPE_READMODE_MESSAGE |   // message-read mode 
+		PIPE_WAIT,              // blocking mode 
+		PIPE_UNLIMITED_INSTANCES, // max. instances  
+		1024,                // output buffer size 
+		1024,                // input buffer size 
+		0,                        // client time-out 
+		NULL);                    // default security attribute 
+
+								  //verifica di corretta apertura della pipe
+	if (mainPipe == INVALID_HANDLE_VALUE)
+	{
+		cout << "INVALID_HANDLE_VALUE" << GetLastError() << endl;
+		cin.get();
+		return;
+	}
+}
+
 void TCP_Listener::operator()() {
 	//ciclo infinito in cui si mette in ricezione
 	//aspetta una richiesta di un Client -> Sgancia thread (TCP_server) per servire il Client facendo sapere al nuovo thread creato su quale porta avverrà la comunicazione
@@ -9,6 +48,8 @@ void TCP_Listener::operator()() {
 	//torna in ascolto di richieste pendenti
 
 	//Fare il popup di non ricezione
+
+	ofstream fileLog("C:\\Users\\Mattia\\Desktop\\logList.txt");
 
 	WSADATA wsaData;
 	int iResult;
@@ -22,6 +63,13 @@ void TCP_Listener::operator()() {
 	int iSendResult;
 	char* recvbuf = (char*)calloc(1024, sizeof(char));
 	int recvbuflen = DEFAULT_BUFLEN;
+
+	//Funzione bloccante! finchè il C# non si connette la dll rimane ferma
+	ConnectNamedPipe(mainPipe, NULL);
+
+	//-----------LOG-------------------
+	fileLog << "Pipe connessa" << endl;
+	//-----------LOG-------------------
 
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -85,6 +133,10 @@ void TCP_Listener::operator()() {
 		string value, identity; //identity is MAC
 		string nome;
 
+		//-----------LOG-------------------
+		fileLog << "Prima Recv: " << recvbuf << endl;
+		//-----------LOG-------------------
+
 		stringstream stream(recvbuf);
 
 		getline(stream, value, ' ');
@@ -120,28 +172,46 @@ void TCP_Listener::operator()() {
 				if (m1->check_identity(identity) && value != "3") {
 					cout << "Errore: Utente bloccato" << endl;
 					string ack;
-					ack.assign("0"); // Porta invalida -> chiusura di connesione!
+					ack.assign("0"); // Porta invalida -> chiusura di connessione!
 					send(ClientSocket, ack.c_str(), 1, 0);
 					closesocket(ClientSocket);
 					continue;
 				}
-				//qui aggiungere un canale di comunicazione con una pipe verso C# (interfaccia grafica) -> a seconda di cosa mi risponderà il C#
-				//invio ack negativo (diverso da 1) se l'utente ha declinato il file transfer
-				//invio ack (uguale a 1) se l'utente ha deciso di accettare il file tranfer
 
-
+			
 				int t_file_to_receive = atoi(recvbuf); // Se == 1 -> Il server riceverà un file, Se == 3 il Server riceverà una foto.
 				if (t_file_to_receive != 1 && t_file_to_receive != 3) {
 					cout << "Errore: Tipo file da ricevere non valido.\nValore Segnalato: " << t_file_to_receive << endl;
 				}
 				string portNumber = this->port_number_calculator();
 				if (this->TCP_throw_thread(portNumber, atoi(recvbuf), nome) == false) {
-					//Situazione da gestire
-					//Non è stato possibile creare un nuovo thread e lanciarlo con il TCP_server
-					//oppure problemi di sincronizzazione con la Promise
+					cout << "Impossibile lanciare nuovo TCP_Server" << endl;
 				}
 				else {
-					//Invio al Client della porta su cui il TCP_server è in attesa
+
+					//-----------LOG-------------------
+					fileLog << "Thread TCP_Server lanciato " << endl;
+					//-----------LOG-------------------
+
+					//Invio al Client della porta su cui il TCP_server è in attesa oppure il messaggio Connessione rifiutata
+					char* bufPipe = new char[1024];
+					if (value == "1") {
+						string buffer("|");
+						buffer.append(identity).append("||")
+							.append(m1->get_nome(identity)).append("||")
+							.append(to_string(pipeNumRic)).append("|");
+
+						pipeNumRic = (pipeNumRic + 1) % 200000;
+
+						//Comunico alla GUI che l'utente vuole inviare un file ed il nome della pipe da aprire
+						WriteFile(this->mainPipe, buffer.c_str(), buffer.length(), 0, NULL);
+						//Attendo la risposta dalla GUI
+						ReadFile(this->mainPipe, "OK", 2, 0, NULL);
+
+						//-----------LOG-------------------
+						fileLog << "Scrittura in Pipe Completata, attesa in read di pipe" << endl;
+						//-----------LOG-------------------
+					}
 
 					iSendResult = send(ClientSocket, portNumber.c_str(), 5, 0);
 					if (iSendResult == SOCKET_ERROR)
@@ -207,8 +277,8 @@ bool TCP_Listener::TCP_throw_thread(string port, int tipo_file, string nome) {
 
 	Porta* porta = new Porta(stoi(port), move(proStart), move(proExit));
 	HomePrinter* hp = new HomePrinter();
-
-	TCP_Server* newServer = new TCP_Server(move(porta), tipo_file, this->mutPorts, hp, sharedFilePath, mutShared, nome);
+	
+	TCP_Server* newServer = new TCP_Server(move(porta), tipo_file, this->mutPorts, hp, sharedFilePath, mutShared, nome, pipeNumRic);
 
 	thread *newThread = new thread(*newServer);
 
@@ -217,7 +287,6 @@ bool TCP_Listener::TCP_throw_thread(string port, int tipo_file, string nome) {
 	//se la promise è stata settata il TCP_listener fa la detach dal thread,
 	//altrimenti killa il thread server
 	if (val == future_status::ready) {
-		//cout << "Server thread lanciato e attivo" << endl;
 		newThread->detach();
 		return true;
 	}

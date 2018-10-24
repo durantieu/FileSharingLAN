@@ -14,4 +14,5 @@ public:
 	TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mutex* mt_path_foto, string* percorso_foto, HANDLE pipe);
 	void operator()();
 	deque<struct info> navigazione_fs(string root, int& flag_is_file); //esplorare file system quando bisogna inviare un albero di direttori
+	int calcoloTotalSize(deque<struct info> paths);
 };

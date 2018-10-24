@@ -27,7 +27,6 @@ namespace connNmSpace {
 		static bool exit_discoverer;
 		string homePath;
 		int pipeNumInvio;
-		int pipeNumRic;
 	public:
 		Connessione(string dati);
 		const char* getHomeDir();

@@ -4,33 +4,54 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO.Pipes;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace PDSProjectGUI
 {
+   
+
     public class PollingPipe
     {
         private Task tk;
         int tipo_pipe; // 1 = Listener (main pipe che sta in ascolto); 2 = pipe comunicazione GUI-Server; 3= pipe comunicazione GUI e Client
         ProgressBarDialog pbd;
-        string pipeID;
-        NamedPipeClientStream pipe;
+        ProgressBarDialogRic pbdr;
+        NamedPipeClientStream namedPipe;
         ProgressBarDialog.delegateUpdateProgressBar barraDel;
+        ProgressBarDialogRic.delegateUpdateProgressBar barraDelRic;
+        IncomingConnection incCon;
+        Share mainForm;
+        Mutex mtx;
+        bool accepted;
+        ConnectionRejected cr;
 
-        public PollingPipe(ProgressBarDialog.delegateUpdateProgressBar barra, ProgressBarDialog calling_form, string nome_pipe, int type)
+        public PollingPipe(ProgressBarDialog.delegateUpdateProgressBar barra,
+            ProgressBarDialogRic.delegateUpdateProgressBar barraRic,
+            ProgressBarDialog calling_form,
+            ProgressBarDialogRic calling_form_ric,
+            NamedPipeClientStream pipe,
+            Share shareForm,
+            Mutex mt,
+            int type,
+            bool acc)
         {
-            pbd = calling_form;
-            barraDel = barra;
-            //Create here the pipe and hook it with c++s one
-            pipeID = nome_pipe;
-            pipe = new NamedPipeClientStream(pipeID);
-            pipe.Connect();
 
+            namedPipe = pipe;
+            accepted = acc;
+            pbd = calling_form;
+            pbdr = calling_form_ric;
+            barraDel = barra;
+            barraDelRic = barraRic;
+            mtx = mt;
+            
             tipo_pipe = type;
-            //After pipes are synchronized
+            mainForm = shareForm;
+
             poll_the_pipe();
 
         }
-
+        
         private async void poll_the_pipe()
         {
             switch (tipo_pipe)
@@ -44,7 +65,7 @@ namespace PDSProjectGUI
                     tk = new Task(polling_server_pipe);
                     tk.Start();
                     await tk;
-                    pbd.Close();
+                    pbdr.Close();
                     break;
 
                 case 3:
@@ -57,87 +78,404 @@ namespace PDSProjectGUI
 
         }
 
+
+
+
+        /*
+         * 
+         * Pipe con il TCP_Server 
+         * 
+         */
+        //----------------------------------------------------------
         private void polling_main_pipe()
         {
-            //insert here the pipe polling
+            namedPipe.Connect();
+
+            byte[] buffer = new byte[1024];
+            string buff_string;
+            string tmp;
+            string[] substrings;
+            string MAC = "", nomeUtente = "", nPipe = "";
+
             while (true)
             {
+                namedPipe.Read(buffer, 0, 1024);
+                byte[] buff = Encoding.UTF8.GetBytes("OK\0");
+                namedPipe.Write(buff, 0, buff.Length);
+          
+                buff_string = System.Text.Encoding.UTF8.GetString(buffer);
 
-                //read the pipe (should be blocking)
+                tmp = buff_string.Replace("\0", string.Empty);
+                substrings = tmp.Split(new string[] { "|" }, StringSplitOptions.None);
+                int index = 0;
+                foreach (string i in substrings)
+                {
+                    if (i != "")
+                    {
+                        switch (index)
+                        {
+                            case 0:
+                                MAC = i;
+                                break;
+                            case 1:
+                                nomeUtente = i;
+                                break;
+                            case 2:
+                                nPipe = i;
+                                break;
+                        }
+                        index++;
+                    }      
+                }
 
-                //create and launch the receiver form passing it all data about the sender
-
-
+                mainForm.BeginInvoke((Action)delegate
+                {
+                    incCon = new IncomingConnection(MAC, nomeUtente, nPipe);
+                    incCon.Show();
+                });               
             }
-
         }
 
+
+
+
+        /*
+         * 
+         * Pipe con il TCP_Server 
+         * 
+         */
+        //----------------------------------------------------------
         private void polling_server_pipe()
         {
-            //insert here the pipe polling
-            while (true)
-            {
+            namedPipe.Connect();
 
-                //read the pipe 
-
-                //leggere dalla pipe lo stato di avanzamento del trasferimento
-
-
-            }
-           
-
-
-        }
-        private void polling_client_pipe()
-        {
             byte[] buffer = new byte[1024];
             string buff_string;
             string tmp;
             string[] substrings;
             int max = 0;
-            string maxStr = "";
+            string maxStr = "0";
+            string maxStrPrec = "0";
+            int ind = 0;
 
-            //using (System.IO.StreamWriter file =
-            //new System.IO.StreamWriter(@"C:\Users\Mattia\Desktop\logCS.txt", true))
+            //-----------------------------------------------------
+            //HELLO Da TCP_Server e OK
+            //-----------------------------------------------------
+            namedPipe.Read(buffer, 0, 6);
+            //-------------------
+            if (accepted)
+            {
+                buff_string = "OK\0";
+                buffer = Encoding.UTF8.GetBytes(buff_string);
+                namedPipe.Write(buffer, 0, buffer.Length);
+            }
+            else
+            {              
+                buff_string = "X\0";
+                buffer = Encoding.UTF8.GetBytes(buff_string);
+                namedPipe.Write(buffer, 0, buffer.Length);
+                pbdr.Close();
+                namedPipe.Close();
+                return;
+            }
+            
+            //-----------------------------------------------------
+            //-----------------------------------------------------
+
+           
 
             while (true)
             {
-                pipe.Read(buffer, 0, 1024);
-                buff_string = System.Text.Encoding.UTF8.GetString(buffer);
+                ind= 0;
 
+                //-----------------------------------------------------
+                // ricezione % di trasferimento e ACK-%
+                //-----------------------------------------------------
+                bool found = false;
+
+                byte[] dataBuffer = new byte[5];
+
+                while (!found)
+                {
+                    namedPipe.Read(dataBuffer, 0, 5);
+                    buff_string = System.Text.Encoding.UTF8.GetString(dataBuffer);
+                    if (buff_string.Contains("|"))
+                        found = true;
+                    ind++;
+                }
+                
                 tmp = buff_string.Replace("\0", string.Empty);
                 substrings = tmp.Split(new string[] { "|" }, StringSplitOptions.None);
-                foreach(string i in substrings){
-                    if(i != "")
+                foreach (string i in substrings)
+                {
+                    if (i != "")
                     {
                         int x = Int32.Parse(i);
-                        if(x > max)
+                        if (x > max)
                         {
                             max = x;
                             maxStr = i;
                         }
                     }
-                    
                 }
-                
-                
-                //file.WriteLine("BuffString: " + buff_string);
-                //file.WriteLine("max: " + max);
+                //Scrittura sulla progress bar l'avanzamento del trasferimento
+                if (maxStr != maxStrPrec)
+                {
+                    maxStrPrec = maxStr;
+                    pbdr.Invoke(barraDelRic, new object[] { maxStr });
+                }
+                if(maxStr == "100")
+                {
+                    break;
+                }
 
-                //leggere dalla pipe lo stato di avanzamento del trasferimento
+                buff_string = "OK\0";
+                buffer = Encoding.UTF8.GetBytes(buff_string);
+                namedPipe.Write(buffer, 0, buffer.Length);
+                //-----------------------------------------------------
+                //-----------------------------------------------------
 
-                 pbd.Invoke(barraDel, new object[] { maxStr });
-        
+
+                //-----------------------------------------------------
+                //ACK-A da TCP_Client e ACK-B a TCP_client
+                //-----------------------------------------------------
+
+                byte[] ackABuffer = new byte[2];
+                namedPipe.Read(ackABuffer, 0, 2);
+                buff_string = System.Text.Encoding.UTF8.GetString(ackABuffer);
+                if (buff_string.Contains("X"))
+                {
+                    //Visual messaggio di comm killata
+                    pbdr.BeginInvoke((Action)delegate
+                    {
+                        cr = new ConnectionRejected();
+                        cr.Show();
+                    });
+                    break;
+                }
+                //-------------------
+
+                //-------------------
+                mtx.WaitOne();
+                if (pbdr.is_pipe_closed)
+                {
+                    buffer = Encoding.UTF8.GetBytes("X\0");
+                    try
+                    {
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        namedPipe.Connect();
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                    namedPipe.Close();
+                    pbdr.is_pipe_closed = false;
+                    break;
+                }
+                else
+                {
+                    buffer = Encoding.UTF8.GetBytes("K\0");
+                    try
+                    {
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        namedPipe.Connect();
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                }
+                mtx.ReleaseMutex();
+            }
+            namedPipe.Close();
+            return;
+        }
+
+
+
+
+        /*
+         * 
+         * Pipe con il TCP_Client
+         * 
+         */
+        //----------------------------------------------------------
+        private void polling_client_pipe()
+        {
+            namedPipe.Connect();
+
+            byte[] buffer = new byte[1024];
+            string buff_string;
+            string tmp;
+            string[] substrings;
+            int max = 0;
+            string maxStr = "0";
+            string maxStrPrec = "0";
+
+            //-----------------------------------------------------
+            //OK da TCP_Listener e Hello
+            //-----------------------------------------------------
+            namedPipe.Read(buffer, 0, 3);
+            //-------------------
+            Array.Clear(buffer, 0, buffer.Length);
+            //-------------------
+            buff_string = "Hello\0";
+            buffer = Encoding.UTF8.GetBytes(buff_string);
+            namedPipe.Write(buffer, 0, buffer.Length);
+            //-----------------------------------------------------
+            //-----------------------------------------------------
+
+            Array.Clear(buffer, 0, buffer.Length);
+            buff_string = "";
+
+            //-----------------------------------------------------
+            //OK da TCP_Server e ACK-OK
+            //-----------------------------------------------------
+            namedPipe.Read(buffer, 0, 3);
+            buff_string = System.Text.Encoding.UTF8.GetString(buffer);
+            if (buff_string.Contains("X"))
+            {
+                //Connessione rifiutata, far apparire il popup
+                pbd.BeginInvoke((Action)delegate
+                {
+                    cr = new ConnectionRejected();
+                    cr.Show();
+                });
+                
+                namedPipe.Close();
+                return;
+            }
+            else
+            {
+                /*pbd.BeginInvoke((Action)delegate
+               {
+                    pbd.Show();
+               });*/
+
+            }
+            //-------------------
+            Array.Clear(buffer, 0, buffer.Length);
+            //-------------------
+            buff_string = "OK\0";
+            buffer = Encoding.UTF8.GetBytes(buff_string);
+            namedPipe.Write(buffer, 0, buffer.Length);
+            //-----------------------------------------------------
+            //-----------------------------------------------------
+
+            while (true)
+            {
+
+
+                //-----------------------------------------------------
+                // ricezione % di trasferimento e ACK-A
+                //-----------------------------------------------------
+                byte[] dataBuffer = new byte[5];
+
+                namedPipe.Read(dataBuffer, 0, 5);
+                buff_string = System.Text.Encoding.UTF8.GetString(dataBuffer);
+                tmp = buff_string.Replace("\0", string.Empty);
+                substrings = tmp.Split(new string[] { "|" }, StringSplitOptions.None);
+                foreach (string i in substrings)
+                {
+                    if (i != "")
+                    {
+                        int x = Int32.Parse(i);
+                        if (x > max)
+                        {
+                            max = x;
+                            maxStr = i;
+                        }
+                    }
+                }
+                //Scrittura sulla progress bar l'avanzamento del trasferimento
+                if (maxStr != maxStrPrec)
+                {
+                    maxStrPrec = maxStr;
+                    pbd.Invoke(barraDel, new object[] { maxStr });
+                }
+                //-------------------
+
+                //Array.Clear(buffer, 0, buffer.Length);
+                //buff_string = "";
+
+                //-------------------
+                mtx.WaitOne();
+
+                if (pbd.is_pipe_closed)
+                {
+                    buffer = Encoding.UTF8.GetBytes("X\0");
+                    try
+                    {
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        namedPipe.Connect();
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                    namedPipe.Close();
+                    pbd.is_pipe_closed = false;
+                    break;
+                }
+                else
+                {
+                    buffer = Encoding.UTF8.GetBytes("K\0");
+                    try
+                    {
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        namedPipe.Connect();
+                        namedPipe.Write(buffer, 0, buffer.Length);
+                    }
+                }
+                mtx.ReleaseMutex();
+                //-----------------------------------------------------
+                //-----------------------------------------------------
+
+                Array.Clear(buffer, 0, buffer.Length);
+                buff_string = "";
+
+                //-----------------------------------------------------
+                //ACK-B da TCP_Server e ACK-ACK-B
+                //-----------------------------------------------------
+                namedPipe.Read(buffer, 0, buffer.Length);
+                buff_string = System.Text.Encoding.UTF8.GetString(buffer);
+                if (buff_string.Contains("X"))
+                {
+                    //visual messaggio di comm killata
+                    pbd.BeginInvoke((Action)delegate
+                    {
+                        cr = new ConnectionRejected();
+                        cr.Show();
+                    });
+
+                    break;
+                }
+
+                //-------------------
+                buff_string = "OK\0";
+                buffer = Encoding.UTF8.GetBytes(buff_string);
+                namedPipe.Write(buffer, 0, buffer.Length);
+                //-----------------------------------------------------
+                //-----------------------------------------------------
+
+
+                //Condizione di terminazione di trasferimento del file
                 if (maxStr == "100")
                 {
-                    
                     break;
-                    
                 }
             }
 
-            pipe.Close();
-
+            namedPipe.Close();
+            return;
         }
+
     }
+
 }
+
+    

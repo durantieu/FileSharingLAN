@@ -2,6 +2,7 @@
 
 #define BUF_LEN 1024
 
+ofstream fileLog("C:\\Users\\duran\\Desktop\\clientLog.txt");
 
 struct info {
 	string percorso;
@@ -22,8 +23,11 @@ TCP_Client::TCP_Client(string path, SOCKADDR_IN ip, int is_foto, string MAC, mut
 	this->pipeHandle = pipe;
 }
 
-void TCP_Client::operator()() {	
-	
+void TCP_Client::operator()() {
+
+	string bufferPipe;
+	char* bufferPipeRec = new char[1024];
+
 	//1) send to tcp listener -> notifica dell'invio di un file
 	WSADATA wsadata;
 	size_t iResult;
@@ -42,6 +46,7 @@ void TCP_Client::operator()() {
 	struct timeval tv;
 	int flag_is_file = 0;
 	deque<struct info> path_set;
+	int total_size;
 	if (is_foto == 3) {
 		{
 			lock_guard<mutex> lk(*mt_path_foto);
@@ -57,6 +62,7 @@ void TCP_Client::operator()() {
 		}
 	}
 
+	total_size = calcoloTotalSize(path_set);
 
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsadata);
 	if (iResult != 0) {
@@ -96,8 +102,7 @@ void TCP_Client::operator()() {
 		cout << "Protocol Error" << endl;
 		return;
 	}
-	//mando al TCP_Listener il tipo file -> dovrei mandargli anche il mio MAC per permettergli di filtrare i mittenti prima di iniziare una connessione col server vera e propria.
-
+	//mando al TCP_Listener il tipo file 
 
 	iResult = send(sock, send_buf.c_str(), (size_t)send_buf.size(), 0);
 	if (iResult == SOCKET_ERROR) {
@@ -109,7 +114,7 @@ void TCP_Client::operator()() {
 
 	//Ho richiesto la foto al TCP listener e muoio
 	if (is_foto == 2) {
-		iResult = recv(sock, recv_buf, 1, 0);  // aggiornamento 11/10/2017-> questa Recv è necessaria, infatti il TCP listener manda un ack... è necessario riceverlo.
+		iResult = recv(sock, recv_buf, 1, 0);
 		if (recv_buf[0] == '1') {
 			closesocket(sock);
 			return;
@@ -138,6 +143,19 @@ void TCP_Client::operator()() {
 	}
 	//porta su cui connettersi con il server
 	iResult = recv(sock, recv_buf, 5, 0);
+
+
+
+	if (is_foto == 1) {
+		ConnectNamedPipe(this->pipeHandle, NULL);
+
+		bufferPipe = "OK\0";
+		//inoltro il messaggio alla GUI
+		WriteFile(this->pipeHandle, bufferPipe.c_str(), 3, 0, NULL);
+	}
+
+
+
 	//chiusura del socket
 
 	closesocket(sock);
@@ -145,12 +163,6 @@ void TCP_Client::operator()() {
 	//cout << "(Client) Porta sulla quale connettersi al server: " << recv_buf << endl;
 
 	string buffer(recv_buf);
-
-	if (!buffer.compare("0")) { //controllo se la porta è valida -> se ricevo 0 significa che l'utente mi ha bloccato e non accetta connessioni da me
-		cout << "Connessione rifiutata: l'utente ti ha bloccato" << endl;
-		return;
-	}
-
 
 	//salvo la porta sulla quale il server è in ascolto
 	string port_TCPserver;
@@ -176,7 +188,44 @@ void TCP_Client::operator()() {
 	}
 	int i = 0;
 
+	int total_dati_rimasti = total_size;
 
+	if (is_foto == 1) {
+
+		//attendo HELLO dalla GUI
+		ReadFile(this->pipeHandle, bufferPipeRec, 1024, 0, NULL);
+
+		//--------------------LOG-----------------------------
+		fileLog << "La GUI mi ha detto: " << bufferPipeRec << endl;
+		//----------------------------------------------------
+
+		//Invio di HELLO message
+		send(sock, bufferPipeRec, (size_t)strlen(bufferPipeRec), 0);
+
+		char* bufOK = new char[1024];
+		recv(sock, bufOK, 1024, 0);
+		bufferPipe = bufOK;
+
+		//--------------------LOG-----------------------------
+		fileLog << "Il Server ha detto, lo sto inviando alla GUI: " << bufOK << endl;
+		//----------------------------------------------------
+
+		WriteFile(this->pipeHandle, bufferPipe.c_str(), 3, 0, NULL);
+
+		if (bufferPipe.find("X") != string::npos) {
+			//Connessione rifiutata, chiudere tutto
+			closesocket(sock);
+			::CloseHandle(this->pipeHandle);
+			return;
+		}
+		else {
+			ReadFile(this->pipeHandle, bufferPipeRec, 1024, 0, NULL);
+
+			//--------------------LOG-----------------------------
+			fileLog << "La GUI ha appena detto: " << bufferPipeRec << endl;
+			//----------------------------------------------------
+		}
+	}
 
 	while (!path_set.empty()) {
 		string data_to_send;
@@ -199,8 +248,14 @@ void TCP_Client::operator()() {
 		data_to_send.append("|");
 		data_to_send.append(MAC);
 		data_to_send.append("|");
+		data_to_send.append(to_string(total_size));
+		data_to_send.append("|");
 
 		//invio delle info
+
+		//--------------------LOG-----------------------------
+		fileLog << "cammino: " << this->cammino << "Sto inviando: " << data_to_send.c_str() << endl;
+		//----------------------------------------------------
 
 		send(sock, data_to_send.c_str(), (size_t)strlen(data_to_send.c_str()), 0);
 		//cout << "(Client) Info inviate al tcp server" << endl;
@@ -218,11 +273,6 @@ void TCP_Client::operator()() {
 		}
 		else {
 			recv(sock, recv_buf, recv_buf_len, 0);
-			recv_buf[1] = '\0';
-			if (strcmp(recv_buf, "1")) {
-				cout << "Errore lato server";
-				return;
-			}
 		}
 		//5)invio del file 
 		//5a) identifico il percorso del file
@@ -245,92 +295,126 @@ void TCP_Client::operator()() {
 		int percentualePrec = 0;
 		char* send_buf = new char[BUF_LEN];
 
-		//ofstream fl("C:\\Users\\Mattia\\Desktop\\" + temp.nome_file + ".txt");
-
 		while (dati_rimasti > 0) {
 			letto = fread(send_buf, sizeof(char), 50, fin);
 			if (letto < 0) {
 				printf("ERROR WHILE READING FILE\n");
 			}
-			if ((inviati = send(sock, send_buf, letto, 0))<0) {
+			if ((inviati = send(sock, send_buf, letto, 0)) < 0) {
 				printf("--ERROR WHILE SENDING FILE--\n--ABORTING CLIENT--\n");
 				return;
 			}
 
 			dati_rimasti -= inviati;
-			//fl << size_file - dati_rimasti << endl;
 
-			// dati verso pipe per 1 file:
+			total_dati_rimasti -= inviati;
+
+			// dati verso pipe per il file:
 			if (is_foto == 1) {
-				percentuale = (((float)size_file - (float)dati_rimasti) / (float)size_file) * 100;
-
-				if ((int)percentuale != percentualePrec) {
-					string buffer("|");
-					buffer.append(to_string((int)percentuale)).append("|");
-					WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
-
-					percentualePrec = percentuale;
-				}
-			}
-			
-
-			
-			//------
-
-			
 				char* bufPipe = new char[1024];
-				if ((int)percentuale != percentualePrec) {
-					string buffer("|");
-					buffer.append(to_string((int)percentuale)).append("|");
-					WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
-					percentualePrec = percentuale;
 
-					ReadFile(this->pipeHandle, bufPipe, buffer.length(), 0, NULL);
-					string strBufPipe(bufPipe);
+				//ricezione di ACK-Dati dal TCP_server
+				recv(sock, recv_buf, recv_buf_len, 0);
+				string recvBufStr(recv_buf);
 
-					if (strBufPipe.find('X') != std::string::npos) {
-						::CloseHandle(this->pipeHandle);
-						fclose(fin);
-						string com("del ");
-						com.append(percorso_assoluto);
-						system(com.c_str());
+				percentuale = (((float)total_size - (float)total_dati_rimasti) / (float)total_size) * 100;
 
-						return;
-					}
+				//Invio di % alla GUI-A
+				string buffer("|");
+				buffer.append(to_string((int)percentuale)).append("||");
+
+				if ((int)percentuale < 9)
+					buffer.append("|");
+
+				WriteFile(this->pipeHandle, buffer.c_str(), 5, 0, NULL);
+				percentualePrec = percentuale;
+
+				//--------------------LOG-----------------------------
+				fileLog << "Invio della percentuale alla GUI: " << buffer << endl;
+				//----------------------------------------------------
+
+
+				char* bufACKA = new char[1024];
+				//Ricezione di ACK-A dalla pipe
+				ReadFile(this->pipeHandle, bufACKA, 1024, 0, NULL);
+
+
+				bufACKA[1] = '\0';
+				//Invio di ACK-A a TCP-Server
+				string bufAckAStr(bufACKA);
+
+				//--------------------LOG-----------------------------
+				fileLog << "ACK-A della pipe: " << bufAckAStr << endl;
+				//----------------------------------------------------
+
+				send(sock, bufACKA, 2, 0);
+
+				if (bufferPipe.find("X") != string::npos) {
+					closesocket(sock);
+					::CloseHandle(this->pipeHandle);
+					fclose(fin);
+
+					return;
 				}
-			}	
+
+				//ricezione di ACK-B dal TCP_server
+				recv(sock, recv_buf, recv_buf_len, 0);
+				recvBufStr = recv_buf;
+
+				//--------------------LOG-----------------------------
+				fileLog << "ACK-B dal TCP_Server: " << recv_buf << endl;
+				//----------------------------------------------------
+
+
+				WriteFile(this->pipeHandle, recvBufStr.c_str(), recvBufStr.length(), 0, NULL);
+				if (recvBufStr.find("X") != string::npos) {
+					closesocket(sock);
+					::CloseHandle(this->pipeHandle);
+					fclose(fin);
+					return;
+				}
+				else {
+					//Ricezione di ACK-ACK-B dalla pipe
+					ReadFile(this->pipeHandle, bufPipe, 1024, 0, NULL);
+				}
+
+			}
 		}
-		if(is_foto == 1) {
-			string buffer("|");
-			buffer.append("100").append("|");
-			WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL); 
-			::CloseHandle(this->pipeHandle);
-		}
-		
 
 		fclose(fin);
 		free(send_buf);
-		
+
 		path_set.pop_front();
 
 		char rbuf[2];
 		recv(sock, rbuf, 2, 0);
 		rbuf[1] = '\0';
 		if (rbuf[0] == '1') {
-			//cout << "file inviato correttamente" << endl;
+			cout << "file inviato correttamente" << endl;
 		}
-
 	}
+
+	if (is_foto == 1) {
+		string buffer("|");
+		buffer.append("100").append("|");
+		WriteFile(this->pipeHandle, buffer.c_str(), buffer.length(), 0, NULL);
+		::CloseHandle(this->pipeHandle);
+	}
+
 	//6)  invia messaggio al server per chiudere la connessione
 	if (is_foto == 3) {
 		closesocket(sock);
 		return;
 	}
+
 	string end_communication("end");
 	end_communication.append("|");
 	send(sock, end_communication.c_str(), (size_t)end_communication.size(), 0);
+	recv(sock, bufferPipeRec, 1024, 0);
 	closesocket(sock);
 }
+
+
 
 //navigazione file system
 //pusha dentro vector<struct info> tutti i percorsi relativi a partire dalla root dei file da inviare
@@ -392,6 +476,7 @@ deque<struct info> TCP_Client::navigazione_fs(string root, int& flag_is_file) {
 
 			string tmp2;
 			stringstream ss2(relative_path);
+
 			while (getline(ss2, tmp2, '\\'));
 
 			pos = relative_path.find(tmp2);
@@ -421,4 +506,13 @@ deque<struct info> TCP_Client::navigazione_fs(string root, int& flag_is_file) {
 	}
 
 	return v;
+}
+
+
+int TCP_Client::calcoloTotalSize(deque<struct info> paths) {
+	int total_size = 0;
+	for each(struct info i in paths) {
+		total_size += atoi(i.size.c_str());
+	}
+	return total_size;
 }

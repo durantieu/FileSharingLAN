@@ -21,7 +21,6 @@ namespace connNmSpace {
 		return false;    // this is not a directory!
 	}
 
-	//Funzione di conversione da string a wstring
 	std::wstring s2ws(const std::string& s) {
 		int len;
 		int slength = (int)s.length() + 1;
@@ -33,21 +32,20 @@ namespace connNmSpace {
 		return r;
 	}
 
+	//Funzione di stampa del MAC address su file
+	void Connessione::printMAC() {
+		system("getmac > mac.txt");
+	}
+
 	//Costruttore dell'oggetto connessione
 	Connessione::Connessione(string dati) {
 		printMAC();
 		this->pipeNumInvio = 0;
-		this->pipeNumRic = 100001;
 		this->sync_utenti = new Sync_mappa(this->getMACaddress());
 		mutSharedPath = new mutex();
 		exit_discoverer = false;
 		this->start(dati);
 		this->connect();
-	}
-
-	//Funzione di stampa del MAC address su file
-	void Connessione::printMAC() {
-		system("getmac > mac.txt");
 	}
 
 	/*
@@ -474,7 +472,7 @@ namespace connNmSpace {
 			PIPE_ACCESS_DUPLEX,       // read/write access 
 			PIPE_TYPE_MESSAGE |       // message type pipe 
 			PIPE_READMODE_MESSAGE |   // message-read mode 
-			PIPE_NOWAIT,              // blocking mode 
+			PIPE_WAIT,              // blocking mode 
 			PIPE_UNLIMITED_INSTANCES, // max. instances  
 			1024,                // output buffer size 
 			1024,                // input buffer size 
@@ -488,9 +486,6 @@ namespace connNmSpace {
 			cin.get();
 			return "";
 		}
-		
-		
-		ConnectNamedPipe(transferPipe, NULL);
 
 		pipeNumInvio = (pipeNumInvio + 1) % 100000;
 	
@@ -535,9 +530,10 @@ namespace connNmSpace {
 		if (!this->utente_attivo->get_visibility()) {
 
 				this->be_visible();
-				ofstream f("C:\\Users\\duran\\Desktop\\log1.txt");
+				/*ofstream f("C:\\Users\\duran\\Desktop\\log1.txt");
 				f << "now you are visible :"<<" visibility:"<< to_string(this->utente_attivo->get_visibility()) << endl;
 				f.close();
+				*/
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
@@ -576,9 +572,9 @@ namespace connNmSpace {
 				*/
 				if (!remove(credPath.c_str())) {
 					if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
-						ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+						/*ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
 						f << "i-->v succesful" << endl;
-						f.close();
+						f.close();*/
 					}
 					
 				}
@@ -592,11 +588,11 @@ namespace connNmSpace {
 			else {
 
 				this->be_invisible();
-
+				/*
 				ofstream f("C:\\Users\\duran\\Desktop\\log2.txt");
 				f << "now you are invisible :" << " visibility:" << to_string(this->utente_attivo->get_visibility()) << endl;
 				f.close();
-
+				*/
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
@@ -632,9 +628,9 @@ namespace connNmSpace {
 				*/
 				if (!remove(credPath.c_str())) {
 					if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
-						ofstream f("C:\\Users\\duran\\Desktop\\log_v_i.txt");
+						/*ofstream f("C:\\Users\\duran\\Desktop\\log_v_i.txt");
 						f << "v-->i succesful" << endl;
-						f.close();
+						f.close();*/
 					}
 					
 				}
@@ -686,9 +682,9 @@ namespace connNmSpace {
 
 		if (!remove(credPath.c_str())) {
 			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
-				ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				/*ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
 				f << "i-->v succesful" << endl;
-				f.close();
+				f.close();*/
 			}
 
 		}
@@ -736,9 +732,9 @@ namespace connNmSpace {
 
 		if (!remove(credPath.c_str())) {
 			rename(tmpCredPath.c_str(), credPath.c_str());
-			ofstream f("C:\\Users\\duran\\Desktop\\log.txt");
+			/*ofstream f("C:\\Users\\duran\\Desktop\\log.txt");
 			f << "op succesful" << endl;
-			f.close();
+			f.close();*/
 		}
 
 
@@ -785,9 +781,9 @@ namespace connNmSpace {
 
 		if (!remove(credPath.c_str())) {
 			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
-				ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				/*ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
 				f << "i-->v succesful" << endl;
-				f.close();
+				f.close();*/
 			}
 
 		}
@@ -834,9 +830,9 @@ namespace connNmSpace {
 
 		if (!remove(credPath.c_str())) {
 			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
-				ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				/*ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
 				f << "i-->v succesful" << endl;
-				f.close();
+				f.close();*/
 			}
 
 		}

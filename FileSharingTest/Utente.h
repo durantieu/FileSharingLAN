@@ -8,12 +8,13 @@ private:
 	string credPath;
 	time_t timestamp;
 	SOCKADDR_IN ip;
+	mutex* mtx;
 protected:
 	string percorso_foto; //0 = lui non ha caricato foto ; 1 = ha la foto ma da scaricare ; 2=foto da cambiare; other -> ho la foto di quell'utente
 	bool visible;
 	string filepath;
 public:
-	Utente() {};
+	Utente() { mtx = new mutex(); };
 	string get_nome();
 	string get_cognome();
 	time_t get_time_stamp();

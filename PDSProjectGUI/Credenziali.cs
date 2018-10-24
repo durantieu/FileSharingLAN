@@ -263,6 +263,9 @@ namespace PDSProjectGUI
         {
             return visibility;
         }
-
+        public void set_visibility(bool vis)
+        {
+            visibility = Convert.ToString(vis);
+        }
     }
 }
