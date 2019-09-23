@@ -12,16 +12,17 @@ namespace PDSProjectGUI
     {
         
         private string visibility;
+        private string accetta;
         private string nome;
         private string cognome;
         private string path_immagine_profilo;
         private string path_file_transfer;
         private string home_dir;
-
+        private bool accettaAutomat;
         [DllImport("FileSharingTest.Dll", CharSet=CharSet.Ansi)]
         public static extern void firstGetHomeDir(StringBuilder str);
 
-        public Credenziali(string name, string surname, string path_imm_profilo, string path_f_trans, bool visibile)
+        public Credenziali(string name, string surname, string path_imm_profilo, string path_f_trans, bool accettaAutomaticamente, bool visibile)
         {
             StringBuilder str = new StringBuilder();
             firstGetHomeDir(str);
@@ -30,6 +31,16 @@ namespace PDSProjectGUI
             cognome = surname;
             path_immagine_profilo = path_imm_profilo;
             path_file_transfer = path_f_trans;
+            accettaAutomat = accettaAutomaticamente;
+           
+            if (accettaAutomat)
+            {
+                accetta = "true";
+            }
+            else
+            {
+                accetta = "false";
+            }
             
             if (visibile)
             {
@@ -39,8 +50,8 @@ namespace PDSProjectGUI
             {
                 visibility = "false";
             }
-            string[] lines = { "Nome|", "Cognome|", "Path_immagine_profilo|", "Path_file_transfer|", "Visible|" };
-            string[] tmp = { nome, cognome, path_immagine_profilo, path_file_transfer, visibility};
+            string[] lines = { "Nome|", "Cognome|", "Path_immagine_profilo|", "Path_file_transfer|", "accettaAutomaticamente|", "Visible|" };
+            string[] tmp = { nome, cognome, path_immagine_profilo, path_file_transfer, accetta, visibility};
             StreamWriter sw = new StreamWriter(home_dir + "Credenziali.txt");
             int j = 0;
             foreach(string i in lines){
@@ -262,6 +273,10 @@ namespace PDSProjectGUI
         public string get_visibility()
         {
             return visibility;
+        }
+        public string get_accettaAutomaticamente()
+        {
+            return accetta;
         }
         public void set_visibility(bool vis)
         {

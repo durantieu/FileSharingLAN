@@ -49,8 +49,6 @@ void TCP_Listener::operator()() {
 
 	//Fare il popup di non ricezione
 
-	ofstream fileLog("C:\\Users\\Mattia\\Desktop\\logList.txt");
-
 	WSADATA wsaData;
 	int iResult;
 
@@ -66,10 +64,6 @@ void TCP_Listener::operator()() {
 
 	//Funzione bloccante! finchè il C# non si connette la dll rimane ferma
 	ConnectNamedPipe(mainPipe, NULL);
-
-	//-----------LOG-------------------
-	fileLog << "Pipe connessa" << endl;
-	//-----------LOG-------------------
 
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -133,10 +127,6 @@ void TCP_Listener::operator()() {
 		string value, identity; //identity is MAC
 		string nome;
 
-		//-----------LOG-------------------
-		fileLog << "Prima Recv: " << recvbuf << endl;
-		//-----------LOG-------------------
-
 		stringstream stream(recvbuf);
 
 		getline(stream, value, ' ');
@@ -189,10 +179,6 @@ void TCP_Listener::operator()() {
 				}
 				else {
 
-					//-----------LOG-------------------
-					fileLog << "Thread TCP_Server lanciato " << endl;
-					//-----------LOG-------------------
-
 					//Invio al Client della porta su cui il TCP_server è in attesa oppure il messaggio Connessione rifiutata
 					char* bufPipe = new char[1024];
 					if (value == "1") {
@@ -207,10 +193,6 @@ void TCP_Listener::operator()() {
 						WriteFile(this->mainPipe, buffer.c_str(), buffer.length(), 0, NULL);
 						//Attendo la risposta dalla GUI
 						ReadFile(this->mainPipe, "OK", 2, 0, NULL);
-
-						//-----------LOG-------------------
-						fileLog << "Scrittura in Pipe Completata, attesa in read di pipe" << endl;
-						//-----------LOG-------------------
 					}
 
 					iSendResult = send(ClientSocket, portNumber.c_str(), 5, 0);
@@ -292,7 +274,7 @@ bool TCP_Listener::TCP_throw_thread(string port, int tipo_file, string nome) {
 	}
 	else {
 		TerminateThread(newThread, NULL);
-		cout << "Impossibile lanciare il Server" << endl;
+		cout << "lanciare il Server" << endl;
 		return false;
 	}
 }

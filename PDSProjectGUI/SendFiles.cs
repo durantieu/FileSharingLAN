@@ -10,8 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace PDSProjectGUI
-{
+namespace PDSProjectGUI{
     public struct utente
     {
         public string MAC;
@@ -26,14 +25,15 @@ namespace PDSProjectGUI
     {
        
         utente[] utenti_online;
-        string path;
+        public string path;
         int numero_utenti_in_rete=0;
         int counter_button = 0;
         int counter_picBox = 0;
         int counter_textBox = 0;
         string home_dir;
+        Timer timer;
 
-        [DllImport("FileSharingTest.dll")]
+       [DllImport("FileSharingTest.dll")]
         public static extern void inviaFile(IntPtr conn, string file, string MAC);
 
         [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
@@ -41,11 +41,14 @@ namespace PDSProjectGUI
 
         unsafe char** utenti_info;
         unsafe int size;
-        IntPtr conn;
-        
-
-        public unsafe SendFiles(string pt, IntPtr connection, string nome_file)
+        public IntPtr conn;
+        public string nomeFile;
+        Share dad;
+        bool closeEverything;
+        public unsafe SendFiles(string pt, IntPtr connection, string nome_file, Share padre, bool isCallByDxButton)
         {
+            dad = padre;
+            nomeFile = nome_file;
             string[] tmp;
             StringBuilder str = new StringBuilder();
             firstGetHomeDir(str);
@@ -54,12 +57,13 @@ namespace PDSProjectGUI
             InitializeComponent();
             conn = connection;
             MarshalVectorWrapper(conn, out utenti_info, out size);
-            
+            closeEverything = isCallByDxButton;
+            this.FormClosing += new FormClosingEventHandler(SendFiles_FormClosing);
             if (size != 0)
             {
                 utenti_online = new utente[size];
                 tmp = new string[size];
-
+               
 
                 //Parse the info utenti got from DLL and save them into data structures
 
@@ -77,7 +81,14 @@ namespace PDSProjectGUI
 
                 }
             }
+            else
+            {
+               // label1.Text = "Non sono presenti utenti in rete";
+            }
             //acchiappo il numero di utenti in rete  e lo assegno a numero_utenti_in_rete
+            /*System.IO.StreamWriter myStream = new System.IO.StreamWriter("C:\\Users\\duran\\Desktop\\Miolog.txt");
+            myStream.Write("ok1");
+            myStream.Close();*/
 
         }
 
@@ -93,8 +104,7 @@ namespace PDSProjectGUI
                     //qui scrivo le funzioni che devono essere richiamate quando scelgo un utente a cui inviare ()
                     //dovrò chiamare il lancio di un client per l'invio di un file verso l'utente identificato da questo bottone
                     
-                    ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path);
-                    pbd.Show();
+                    ProgressBarDialog pbd = new ProgressBarDialog(conn, utenti_online[i], path, this, dad);
 
                     break;
                 }
@@ -145,8 +155,39 @@ namespace PDSProjectGUI
             }
             else
             {
-                Image im = Image.FromFile(home_dir + "immagini_utenti\\" + utenti_online[counter_picBox].MAC + ".jpg");
-                newPicBox.ImageLocation = home_dir + "immagini_utenti\\" + utenti_online[counter_picBox].MAC + ".jpg";
+                String extUpperCase = ".JPG";
+                String extLowerCase = ".jpg";
+                try
+                {
+                   // Image im = Image.FromFile(home_dir + "Immagini_utenti\\" + utenti_online[counter_picBox].MAC + extLowerCase );
+                    
+
+                    Image img;
+                    using (var bmpTemp = new Bitmap(home_dir + "Immagini_utenti\\" + utenti_online[counter_picBox].MAC + extLowerCase))
+                    {
+                        img = new Bitmap(bmpTemp);
+                        newPicBox.ImageLocation = home_dir + "Immagini_utenti\\" + utenti_online[counter_picBox].MAC + extLowerCase;
+                    }
+                }
+                catch(Exception e)
+                {
+                    try
+                    {
+                        // Image im = Image.FromFile(home_dir + "Immagini_utenti\\" + utenti_online[counter_picBox].MAC + extUpperCase );
+                        Image img;
+                        using (var bmpTemp = new Bitmap(home_dir + "Immagini_utenti\\" + utenti_online[counter_picBox].MAC + extUpperCase))
+                        {
+                            img = new Bitmap(bmpTemp);
+                            newPicBox.ImageLocation = home_dir + "Immagini_utenti\\" + utenti_online[counter_picBox].MAC + extUpperCase;
+                        }
+                        
+                    }
+                    catch (Exception exception)
+                    {
+                        this.Close();
+                    }
+                }
+                
             }
             
 
@@ -182,7 +223,7 @@ namespace PDSProjectGUI
             return newTextBox;
         }
 
-        private void disegna_utenti() //qui metto un ciclo dove, in base al valore numero utenti in rete provo a creare dei box dinamicamente e posizionarli all'interno del form.l
+        public void disegna_utenti() //qui metto un ciclo dove, in base al valore numero utenti in rete provo a creare dei box dinamicamente e posizionarli all'interno del form.l
         {
             utente utente_corrente;
             int pos_riga=0, pos_colonna=0;
@@ -225,13 +266,66 @@ namespace PDSProjectGUI
 
         private void SendFiles_Load(object sender, EventArgs e)
         {
+            timer = new Timer();
+            timer.Interval = (3 * 1000); // 10 secs
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Start();
+
             disegna_utenti();
         }
 
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            numero_utenti_in_rete = 0;
+            counter_button = 0;
+            counter_picBox = 0;
+            counter_textBox = 0;
+            refresh();
+        }
+
+        public unsafe void refresh()
+        {
+            MarshalVectorWrapper(conn, out utenti_info, out size);
+            label1.Text = "";
+            if (size != 0)
+            {
+                utenti_online = new utente[size];
+                string[] tmp = new string[size];
 
 
+                //Parse the info utenti got from DLL and save them into data structures
 
+                for (int i = 0; i < size; i++)
+                {
+                    tmp[i] = Marshal.PtrToStringAnsi((IntPtr)utenti_info[i]);
 
+                    string[] tmp2 = tmp[i].Split('|');
+
+                    utenti_online[i].MAC = tmp2[0];
+                    utenti_online[i].Nome = tmp2[1];
+                    utenti_online[i].Cognome = tmp2[2];
+                    utenti_online[i].ha_la_foto = tmp2[3];
+                    utenti_online[i].bloccato = tmp2[4];
+
+                }
+            }
+            else
+            {
+                label1.Text = "Non sono presenti utenti in rete";
+            }
+
+            disegna_utenti();
+        }
+
+        private void SendFiles_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            
+            if (closeEverything)
+            {
+                
+                dad.Close();
+            }
+        }
 
         //---------------------------------------------------------------------------------------//
 
@@ -239,7 +333,7 @@ namespace PDSProjectGUI
 
         //------------------------------------------------------------------//
 
-#region wrapper
+        #region wrapper
         [DllImport("FileSharingTest.dll")]
         public static unsafe extern bool MarshalVector(IntPtr conn, out  ItemsSafeHandle hItems, out char** ItemsData, out int ItemsCounter);
 

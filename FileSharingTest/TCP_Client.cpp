@@ -2,8 +2,6 @@
 
 #define BUF_LEN 1024
 
-ofstream fileLog("C:\\Users\\duran\\Desktop\\clientLog.txt");
-
 struct info {
 	string percorso;
 	string nome_file;
@@ -195,20 +193,12 @@ void TCP_Client::operator()() {
 		//attendo HELLO dalla GUI
 		ReadFile(this->pipeHandle, bufferPipeRec, 1024, 0, NULL);
 
-		//--------------------LOG-----------------------------
-		fileLog << "La GUI mi ha detto: " << bufferPipeRec << endl;
-		//----------------------------------------------------
-
 		//Invio di HELLO message
 		send(sock, bufferPipeRec, (size_t)strlen(bufferPipeRec), 0);
 
 		char* bufOK = new char[1024];
 		recv(sock, bufOK, 1024, 0);
 		bufferPipe = bufOK;
-
-		//--------------------LOG-----------------------------
-		fileLog << "Il Server ha detto, lo sto inviando alla GUI: " << bufOK << endl;
-		//----------------------------------------------------
 
 		WriteFile(this->pipeHandle, bufferPipe.c_str(), 3, 0, NULL);
 
@@ -220,10 +210,6 @@ void TCP_Client::operator()() {
 		}
 		else {
 			ReadFile(this->pipeHandle, bufferPipeRec, 1024, 0, NULL);
-
-			//--------------------LOG-----------------------------
-			fileLog << "La GUI ha appena detto: " << bufferPipeRec << endl;
-			//----------------------------------------------------
 		}
 	}
 
@@ -252,13 +238,7 @@ void TCP_Client::operator()() {
 		data_to_send.append("|");
 
 		//invio delle info
-
-		//--------------------LOG-----------------------------
-		fileLog << "cammino: " << this->cammino << "Sto inviando: " << data_to_send.c_str() << endl;
-		//----------------------------------------------------
-
 		send(sock, data_to_send.c_str(), (size_t)strlen(data_to_send.c_str()), 0);
-		//cout << "(Client) Info inviate al tcp server" << endl;
 		i++;
 
 		//4b) attesa ack
@@ -293,10 +273,10 @@ void TCP_Client::operator()() {
 		int letto, inviati;
 		float percentuale = 0;
 		int percentualePrec = 0;
-		char* send_buf = new char[BUF_LEN];
+		char* send_buf = new char[65536/*BUF_LEN*/];
 
 		while (dati_rimasti > 0) {
-			letto = fread(send_buf, sizeof(char), 50, fin);
+			letto = fread(send_buf, sizeof(char), 65000, fin);
 			if (letto < 0) {
 				printf("ERROR WHILE READING FILE\n");
 			}
@@ -329,23 +309,13 @@ void TCP_Client::operator()() {
 				WriteFile(this->pipeHandle, buffer.c_str(), 5, 0, NULL);
 				percentualePrec = percentuale;
 
-				//--------------------LOG-----------------------------
-				fileLog << "Invio della percentuale alla GUI: " << buffer << endl;
-				//----------------------------------------------------
-
-
 				char* bufACKA = new char[1024];
 				//Ricezione di ACK-A dalla pipe
 				ReadFile(this->pipeHandle, bufACKA, 1024, 0, NULL);
 
-
 				bufACKA[1] = '\0';
 				//Invio di ACK-A a TCP-Server
 				string bufAckAStr(bufACKA);
-
-				//--------------------LOG-----------------------------
-				fileLog << "ACK-A della pipe: " << bufAckAStr << endl;
-				//----------------------------------------------------
 
 				send(sock, bufACKA, 2, 0);
 
@@ -360,11 +330,6 @@ void TCP_Client::operator()() {
 				//ricezione di ACK-B dal TCP_server
 				recv(sock, recv_buf, recv_buf_len, 0);
 				recvBufStr = recv_buf;
-
-				//--------------------LOG-----------------------------
-				fileLog << "ACK-B dal TCP_Server: " << recv_buf << endl;
-				//----------------------------------------------------
-
 
 				WriteFile(this->pipeHandle, recvBufStr.c_str(), recvBufStr.length(), 0, NULL);
 				if (recvBufStr.find("X") != string::npos) {
@@ -416,7 +381,7 @@ void TCP_Client::operator()() {
 
 
 
-//navigazione file system
+//navigazione file 
 //pusha dentro vector<struct info> tutti i percorsi relativi a partire dalla root dei file da inviare
 deque<struct info> TCP_Client::navigazione_fs(string root, int& flag_is_file) {
 

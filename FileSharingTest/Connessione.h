@@ -46,12 +46,12 @@ namespace connNmSpace {
 		void change_surname(string surname);
 		void change_filepath(string path);
 		void change_immagine_profilo(string foto_path);
+		void change_accept(bool val);
 		void blocco_utente(string MAC);
 		bool getVisibilityUtenteAttivo();
 		vector<char*>* getUtentiConnessi();
 		static string getOwnIP();
-		static string getBroadcastIP(string ip);
-
+		static string getBroadcastIP(string ip);	
 	};
 	
 	class ConnWrapper {
@@ -66,6 +66,7 @@ namespace connNmSpace {
 		static void cambiaNome(Connessione* conn, char* nome);
 		static void cambiaCognome(Connessione* conn, char* cognome);
 		static const char* getHomeDir(connNmSpace::Connessione* conn);
+		static void cambiaAccettaDefault(connNmSpace::Connessione* conn, bool val);
 	};
 }
 
@@ -84,3 +85,4 @@ extern "C" __declspec(dllexport) bool MarshalVector(connNmSpace::Connessione* co
 extern "C" __declspec(dllexport) bool deleteVector(ItemListHandle item);
 extern "C" __declspec(dllexport) const char* getHomeDir(connNmSpace::Connessione* conn);
 extern "C" __declspec(dllexport) void firstGetHomeDir(char* str);
+extern "C" __declspec(dllexport) void cambiaAccettaDefault(connNmSpace::Connessione* conn, bool val);

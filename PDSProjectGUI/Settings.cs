@@ -32,12 +32,17 @@ namespace PDSProjectGUI
         [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
         public static extern void cambiaCognome(IntPtr conn, string cognome);
 
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern void cambiaAccettaDefault(IntPtr conn, Boolean val);
+
         string path_fileTransfer;
         string path_immagineProfilo;
         bool visible = false;
         bool button2_changed = false;
         bool button3_changed = false;
         bool vis_changed = false;
+        bool accettaAutomaticamente = false;
+        bool accettaAutomaticamenteChanged = false;
         FolderBrowserDialog browse_fileTransfer = new FolderBrowserDialog();
         OpenFileDialog browse_immagineProfilo = new OpenFileDialog();
         IntPtr connessione;
@@ -47,8 +52,7 @@ namespace PDSProjectGUI
         {
             InitializeComponent();
             //prelevare e inizializzare il valore di Visible dal file credenziali
-            s = callingForm;
-            connessione = Connection;
+            s = callingForm;           connessione = Connection;
             credentials = cred;
             if(cred.get_visibility() == "true")
             {
@@ -58,9 +62,18 @@ namespace PDSProjectGUI
             {
                 visible = false;
             }
+            if(cred.get_accettaAutomaticamente() == "true")
+            {
+                accettaAutomaticamente = true;
+            }
+            else
+            {
+                accettaAutomaticamente = false;
+            }
             
             
             set_private(visible);
+            set_accettaAutomaticamente(accettaAutomaticamente);
 
         }
 
@@ -68,8 +81,11 @@ namespace PDSProjectGUI
         {
             checkBox1.Checked = !visible;
             
+        }
 
-
+        void set_accettaAutomaticamente(bool accet)
+        {
+            checkBox2.Checked = accet;
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -186,6 +202,13 @@ namespace PDSProjectGUI
                 cambiaCognome(connessione, textBox2.Text);
             }
 
+            if (accettaAutomaticamenteChanged)
+            {
+               
+                 cambiaAccettaDefault(connessione, accettaAutomaticamente);
+                 accettaAutomaticamenteChanged = false;
+                  
+            }
 
 
             s.update_credentials(this);
@@ -196,6 +219,26 @@ namespace PDSProjectGUI
         private void button6_Click(object sender, EventArgs e)
         {
             //Lancia il Form di Sblocca Utenti
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox2.Checked)
+            {
+                accettaAutomaticamente = true;
+                accettaAutomaticamenteChanged = true;
+            }
+            if(!checkBox2.Checked)
+            {
+                accettaAutomaticamente = false;
+                accettaAutomaticamenteChanged = true;
+            }
+
         }
     }
 }

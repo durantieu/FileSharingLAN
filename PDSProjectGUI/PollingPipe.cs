@@ -99,40 +99,62 @@ namespace PDSProjectGUI
 
             while (true)
             {
+                
                 namedPipe.Read(buffer, 0, 1024);
-                byte[] buff = Encoding.UTF8.GetBytes("OK\0");
-                namedPipe.Write(buff, 0, buff.Length);
-          
-                buff_string = System.Text.Encoding.UTF8.GetString(buffer);
+                string visibility = mainForm.cred.get_visibility();
+                string accetta = mainForm.cred.get_accettaAutomaticamente();
+           
+                    byte[] buff = Encoding.UTF8.GetBytes("OK\0");
+                    namedPipe.Write(buff, 0, buff.Length);
 
-                tmp = buff_string.Replace("\0", string.Empty);
-                substrings = tmp.Split(new string[] { "|" }, StringSplitOptions.None);
-                int index = 0;
-                foreach (string i in substrings)
-                {
-                    if (i != "")
+                    buff_string = System.Text.Encoding.UTF8.GetString(buffer);
+
+                    tmp = buff_string.Replace("\0", string.Empty);
+                    substrings = tmp.Split(new string[] { "|" }, StringSplitOptions.None);
+                    int index = 0;
+                    foreach (string i in substrings)
                     {
-                        switch (index)
+                        if (i != "")
                         {
-                            case 0:
-                                MAC = i;
-                                break;
-                            case 1:
-                                nomeUtente = i;
-                                break;
-                            case 2:
-                                nPipe = i;
-                                break;
+                            switch (index)
+                            {
+                                case 0:
+                                    MAC = i;
+                                    break;
+                                case 1:
+                                    nomeUtente = i;
+                                    break;
+                                case 2:
+                                    nPipe = i;
+                                    break;
+                            }
+                            index++;
                         }
-                        index++;
-                    }      
-                }
+                    }
+                
 
-                mainForm.BeginInvoke((Action)delegate
-                {
-                    incCon = new IncomingConnection(MAC, nomeUtente, nPipe);
-                    incCon.Show();
-                });               
+                    mainForm.BeginInvoke((Action)delegate
+                    {
+                        if (visibility.CompareTo("true") == 0)
+                        {
+                            if(accetta.CompareTo("true") == 0)
+                            {
+                                incCon = new IncomingConnection(MAC, nomeUtente, nPipe, true, false); 
+                            }
+                            else
+                            {
+                                incCon = new IncomingConnection(MAC, nomeUtente, nPipe, false, false);
+                                incCon.Show();
+                            }   
+                        }
+                        else
+                        {
+                            incCon = new IncomingConnection(MAC, nomeUtente, nPipe, false, true);
+                        }   
+                    });
+                
+            
+                          
             }
         }
 
@@ -337,11 +359,21 @@ namespace PDSProjectGUI
             if (buff_string.Contains("X"))
             {
                 //Connessione rifiutata, far apparire il popup
-                pbd.BeginInvoke((Action)delegate
+                try
                 {
-                    cr = new ConnectionRejected();
-                    cr.Show();
-                });
+                    pbd.BeginInvoke((Action)delegate
+                    {
+
+                        cr = new ConnectionRejected();
+                        cr.Show();
+
+
+                    });
+                }catch(InvalidOperationException e)
+                {
+                   
+                }
+              
                 
                 namedPipe.Close();
                 return;
@@ -392,7 +424,14 @@ namespace PDSProjectGUI
                 if (maxStr != maxStrPrec)
                 {
                     maxStrPrec = maxStr;
-                    pbd.Invoke(barraDel, new object[] { maxStr });
+                    try
+                    {
+                        pbd.Invoke(barraDel, new object[] { maxStr });
+                    }catch(Exception generic)
+                    {
+
+                    }
+                   
                 }
                 //-------------------
 

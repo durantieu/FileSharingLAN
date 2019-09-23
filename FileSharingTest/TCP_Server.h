@@ -2,9 +2,10 @@
 
 #include "Dipendenze.h"
 #include "Porta.h"
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 65536
 
 std::wstring s2ws(const std::string& s);
+void lanciaBatch(wstring index, wstring params);
 
 class HomePrinter {
 private:
@@ -12,13 +13,17 @@ private:
 public:
 	string print() {
 		lock_guard<mutex> lg(mut);
-		system("echo \"\%USERPROFILE\%\" > tmp.txt");
-		ifstream fp("tmp.txt");
+		//system("echo \"\%USERPROFILE\%\" > homedir.txt");
+		wstring com = L"4";
+		lanciaBatch(com, L"");
+		ifstream fp("homedir.txt");
 		string pth;
 		getline(fp, pth, '\"');
 		getline(fp, pth, '\"');
 		fp.close();
-		system("del tmp.txt");
+		//system("del homedir.txt");
+		com = L"5";
+		lanciaBatch(com, L"");
 		return pth;
 	}
 };

@@ -18,6 +18,10 @@ namespace PDSProjectGUI
         [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
         public static extern void firstGetHomeDir(StringBuilder str);
 
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern IntPtr creaConnessione(string dati);
+
+
         static bool check_credentials()
         {
             bool incomplete_info = false;
@@ -64,20 +68,33 @@ namespace PDSProjectGUI
 
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
       {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             Login l = new Login();
-            if (check_credentials())
+            
+
+            if(args.Length > 0)
             {
                 l.fill_credentials();
-                Application.Run(new Share(l));
+                Application.Run(new Share(l, true, args[0]));
+                
             }
             else
             {
-                Application.Run(l);
+                if (check_credentials())
+                {
+                    l.fill_credentials();
+                    Application.Run(new Share(l, false, ""));
+                }
+                else
+                {
+                    Application.Run(l);
+                }
             }
+           
             
         }
     }

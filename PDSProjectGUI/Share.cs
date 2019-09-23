@@ -15,7 +15,8 @@ namespace PDSProjectGUI
 {
     public partial class Share : Form
     {
-        Credenziali cred;
+        private string homeDir;
+        public Credenziali cred;
         Login log;
         IntPtr connessione;
         bool cred_changed = false;
@@ -29,19 +30,29 @@ namespace PDSProjectGUI
         [DllImport("FileSharingTest.dll")]
         public static extern void modPrivata(IntPtr connessione);
 
+        [DllImport("FileSharingTest.dll", CharSet = CharSet.Ansi)]
+        public static extern void firstGetHomeDir(StringBuilder str);
+
         private System.Windows.Forms.ContextMenu contextMenu1;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
 
         private System.ComponentModel.IContainer components1;
         private SendFiles sf;
+        private bool hidden;
         public bool cred_change
         {
             get;
             set;
         }
-        public Share(Login l)
+        public Share(Login l, bool nascosto, string path)
         {
+
+
+            hidden = nascosto;
+            StringBuilder strBuilder = new StringBuilder();
+            firstGetHomeDir(strBuilder);
+            homeDir = strBuilder.ToString();
             closing = false;
             InitializeComponent();
             log = l;
@@ -94,12 +105,23 @@ namespace PDSProjectGUI
 
             notifyIcon1.ContextMenu = this.contextMenu1;
 
+            if (nascosto)
+            {
+               
+                Opacity = 0;
+                ShowInTaskbar = false;
+                
+                sf = new SendFiles(path, connessione, path, this, true);
+                sf.Show();
+                
+
+            }
 
 
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            FileDialog fd = new FileDialog(connessione);
+            FileDialog fd = new FileDialog(connessione, this);
             fd.Show();
         }
         private void button1_Click(object sender, EventArgs e)
@@ -124,37 +146,43 @@ namespace PDSProjectGUI
         }
         private void Share_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
+            if (!hidden)
             {
-                try
+                if (e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
                 {
-                    log.Close();
-
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
-            else
-            {
-                if (e.CloseReason == CloseReason.UserClosing)
-                {
-
-                    if (!closing)
+                    try
                     {
-                        this.Hide();
-                        e.Cancel = true;
-                        notifyIcon1.Visible = true;
-                        notifyIcon1.Text = "Inizia a condividere!";
-                        notifyIcon1.Icon = new Icon("C:\\Users\\duran\\FileSharing\\app-share-icon-1.ico");
-                        notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+                        log.Close();
+
                     }
+                    catch (NullReferenceException)
+                    {
 
-
-
+                    }
                 }
+                else
+                {
+                    if (e.CloseReason == CloseReason.UserClosing)
+                    {
+
+                        if (!closing)
+                        {
+
+                            this.Hide();
+                            e.Cancel = true;
+                            notifyIcon1.Visible = true;
+                            notifyIcon1.Text = "Inizia a condividere!";
+                            notifyIcon1.Icon = new Icon(homeDir + "\\app-share-icon-1.ico");
+                            notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+                        }
+
+
+
+                    }
+                }
+
             }
+
 
 
         }
@@ -201,7 +229,6 @@ namespace PDSProjectGUI
                 menuItem2.Checked = false;
             }
         }
-
 
     }
 }

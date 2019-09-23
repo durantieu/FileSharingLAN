@@ -14,6 +14,8 @@ public:
 	Sync_mappa(string MAC) {
 		this->MAC = MAC;
 	};
+	wstring string2wstring(string input);
+	void lanciaBatch(wstring index, wstring params);
 	//metodi di lettura e scrittura sincronizzati con il mutex
 	int cerca_e_inserisci(string chiave, string nome, string cognome, time_t timeStamp, string flag_foto, SOCKADDR_IN ip);
 	int scorri_e_aggiorna();

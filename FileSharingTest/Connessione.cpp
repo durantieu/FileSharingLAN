@@ -1,12 +1,43 @@
 #include "Connessione.h"
 
-
 namespace connNmSpace {
 
 	condition_variable Connessione::cvar;
 	mutex Connessione::mut;
 	mutex Connessione::mut_on_exit;
 	bool Connessione::exit_discoverer;
+
+	void lanciaBatch(wstring index, wstring params) {
+
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory(&pi, sizeof(pi));
+		//wstring tmp = L"..\\..\\..\\PDSProjectBatch.cmd ";
+		wstring tmp = L"C:\\Users\\duran\\source\\repos\\FileSharing\\PDSProjectBatch.cmd ";
+		tmp.append(index).append(params);
+
+		wchar_t* text = &tmp[0];
+
+		CreateProcess(
+			NULL
+			, text
+			, NULL
+			, NULL
+			, TRUE
+			, CREATE_NO_WINDOW
+			, NULL
+			, NULL
+			, &si
+			, &pi
+		);
+
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
 
 	//Controlla se una directory esiste
 	bool dirExists(const std::string& dirName_in)
@@ -34,7 +65,9 @@ namespace connNmSpace {
 
 	//Funzione di stampa del MAC address su file
 	void Connessione::printMAC() {
-		system("getmac > mac.txt");
+		//system("getmac > mac.txt");
+		wstring com = L"1";
+		lanciaBatch(com, L"");
 	}
 
 	//Costruttore dell'oggetto connessione
@@ -85,12 +118,16 @@ namespace connNmSpace {
 
 	//ritorna il proprio indirizzo IP
 	string Connessione::getOwnIP() {
-		system("ipconfig > ip.txt");
+
+		return "1192.168.43.163";
+		//system("ipconfig > ip.txt");
+		wstring com = L"2";
+		lanciaBatch(com, L"");
 
 		ifstream readFile;
 		string buf, first, second;
 		string mask("IPv4");
-		string mask2("LAN"), mask3("Ethernet"), mask4("Wi-Fi");
+		string mask2("LAN"), mask3("Ethernet Ethernet"), mask4("Wi-Fi");
 		string prefix("192.168");
 		bool LANFound = false;
 
@@ -106,12 +143,17 @@ namespace connNmSpace {
 				LANFound = true;
 			if (first.find(mask) != string::npos && LANFound == true && second.find(prefix) != string::npos) {
 				readFile.close();
-				system("del ip.txt");
+				//system("del ip.txt");
+				com = L"3";
+				lanciaBatch(com, L"");
+
 				return second;
 			}
 		}
 		readFile.close();
-		system("del ip.txt");
+		//system("del ip.txt");
+		com = L"3";
+		lanciaBatch(com, L"");
 		return "";
 	}
 
@@ -187,10 +229,11 @@ namespace connNmSpace {
 			return;
 		}	
 
-		broadcastIP = getBroadcastIP(ownIP);
-		ofstream of ("C:\\Users\\duran\\Desktop\\out.txt");
+		//broadcastIP = getBroadcastIP(ownIP);
+		broadcastIP = "192.168.43.255";
+		/*ofstream of ("C:\\Users\\duran\\Desktop\\out.txt");
 		of << broadcastIP<< endl;
-		of.close();
+		of.close();*/
 
 		//Struttura del sender
 		struct sockaddr_in Sender_addr;
@@ -381,29 +424,33 @@ namespace connNmSpace {
 		/*---------------------------------------------
 		CREAZIONE DELL'ALBERO DEI DIRETTORI SE NON ESISTONO
 		*/
-		system("echo %USERPROFILE% >> homedir.txt");
+		//system("echo %USERPROFILE% >> homedir.txt");
+		wstring com = L"4";
+		lanciaBatch(com, L"");
 		ifstream fpp;
 		string path_tmp;
 		fpp.open("homedir.txt");
 		getline(fpp, path_tmp, ' ');
 		path_tmp.append("\\");
 		fpp.close();
-		system("del homedir.txt");
+		//system("del homedir.txt");
+		com = L"5";
+		lanciaBatch(com, L"");
 
 		path_tmp.append("FileSharing");
 
 		this->homePath.assign(path_tmp);
 
 		if (!dirExists(path_tmp)) {
-			string com("mkdir ");
-			com.append(path_tmp);
-			system(com.c_str());
+			//creazione della cartella FileSharing
+			wstring com(L"9");
+			lanciaBatch(com, L"");
 		}
 		path_tmp.append("\\Immagini_utenti");
 		if (!dirExists(path_tmp)) {
-			string com("mkdir ");
-			com.append(path_tmp);
-			system(com.c_str());
+			//Creazione della cartella Immagini_utenti
+			wstring com(L"10");
+			lanciaBatch(com, L"");
 		}
 
 		/*FINE DELLA CREAZIONE DELL'ALBERO DEI DIRETTORI
@@ -563,18 +610,9 @@ namespace connNmSpace {
 				readFile.close();
 				tmpFile.close();
 
-				/*
-				string com("del ");
-				com.append(credPath);
-				system(com.c_str());
-				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-				system(com.c_str());
-				*/
 				if (!remove(credPath.c_str())) {
 					if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
-						/*ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
-						f << "i-->v succesful" << endl;
-						f.close();*/
+
 					}
 					
 				}
@@ -588,11 +626,7 @@ namespace connNmSpace {
 			else {
 
 				this->be_invisible();
-				/*
-				ofstream f("C:\\Users\\duran\\Desktop\\log2.txt");
-				f << "now you are invisible :" << " visibility:" << to_string(this->utente_attivo->get_visibility()) << endl;
-				f.close();
-				*/
+
 				string input, first, second, credPath(homePath), tmpCredPath(homePath);
 				credPath.append("\\Credenziali.txt");
 				tmpCredPath.append("\\tmpCred.txt");
@@ -619,13 +653,7 @@ namespace connNmSpace {
 
 				readFile.close();
 				tmpFile.close();
-				/*
-				string com("del ");
-				com.append(credPath);
-				system(com.c_str());
-				com.assign("ren ").append(tmpCredPath).append(" ").append("Credenziali.txt");
-				system(com.c_str());
-				*/
+
 				if (!remove(credPath.c_str())) {
 					if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
 						/*ofstream f("C:\\Users\\duran\\Desktop\\log_v_i.txt");
@@ -789,6 +817,57 @@ namespace connNmSpace {
 		}
 	}
 
+	//metodo per cambiare se il programma accetta automaticamente tutti i file 
+	void Connessione::change_accept(bool val) {
+		string valore;
+		if (val) {
+			valore = "true";
+		}
+		else {
+			valore = "false";
+		}
+
+		string input, first, second, credPath(homePath), tmpCredPath(homePath);
+		credPath.append("\\Credenziali.txt");
+		tmpCredPath.append("\\tmpCred.txt");
+
+		ifstream readFile(credPath);
+		ofstream tmpFile(tmpCredPath);
+
+
+		if (readFile.is_open() && tmpFile.is_open()) {
+			while (!readFile.eof()) {
+				readFile >> input;
+				stringstream input_stringstream(input);
+				if (getline(input_stringstream, first, '|')) {
+					getline(input_stringstream, second);
+					if (first == "accettaAutomaticamente") {
+						second = valore;
+					}
+					if (first != "Visible") {
+						tmpFile << first << "|" << second << endl;
+					}
+					else {
+						tmpFile << first << "|" << second;
+						break;
+					}
+				}
+			}
+		}
+
+		readFile.close();
+		tmpFile.close();
+
+		if (!remove(credPath.c_str())) {
+			if (!rename(tmpCredPath.c_str(), credPath.c_str())) {
+				/*ofstream f("C:\\Users\\duran\\Desktop\\log_i_v.txt");
+				f << "i-->v succesful" << endl;
+				f.close();*/
+			}
+
+		}
+	}
+
 	//metodo per cambiare il cognome
 	void Connessione::change_surname(string surname)
 	{
@@ -891,8 +970,12 @@ namespace connNmSpace {
 	string ConnWrapper::inviaFile(Connessione* conn, char* file, char* MAC) {
 		string mc(MAC);
 		string fle(file);
-		Utente* user = conn->choose_user(mc);
-		return conn->file_transfer(fle, user->get_ip());
+		Utente* user;
+		user = conn->choose_user(mc);
+		if(user == NULL)
+			return "-1";
+		else
+			return conn->file_transfer(fle, user->get_ip());
 	}
 
 	void ConnWrapper::cambiaFilePath(Connessione* conn, char* path) {
@@ -917,6 +1000,10 @@ namespace connNmSpace {
 
 	const char* ConnWrapper::getHomeDir(Connessione* conn) {
 		return conn->getHomeDir();
+	}
+
+	void ConnWrapper::cambiaAccettaDefault(connNmSpace::Connessione* conn, bool val) {
+		return conn->change_accept(val);
 	}
 
 }
@@ -967,15 +1054,23 @@ const char* getHomeDir(connNmSpace::Connessione* conn) {
 	return connNmSpace::ConnWrapper::getHomeDir(conn);
 }
 
+void cambiaAccettaDefault(connNmSpace::Connessione* conn, bool val) {
+	return connNmSpace::ConnWrapper::cambiaAccettaDefault(conn, val);
+}
+
 void firstGetHomeDir(char* str) {
-	system("echo %USERPROFILE% > homedir.txt");
+	//system("echo %USERPROFILE% > homedir.txt");
+	wstring com = L"4";
+	connNmSpace::lanciaBatch(com, L"");
 	ifstream fpp;
 	string path_tmp;
 	fpp.open("homedir.txt");
 	getline(fpp, path_tmp, ' ');
 	path_tmp.append("\\");
 	fpp.close();
-	system("del homedir.txt");
+	//system("del homedir.txt");
+	com = L"5";
+	connNmSpace::lanciaBatch(com, L"");
 
 	path_tmp.append("FileSharing\\");
 

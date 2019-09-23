@@ -21,7 +21,9 @@
 #include <deque>
 #include <conio.h>
 #include <tchar.h>
+#include <exception>
 
 #define TCP_LISTENER_PORT 50000
 #define TCP_SERVER_PORT 10000
 using namespace std;
+

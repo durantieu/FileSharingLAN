@@ -1,6 +1,47 @@
 #include "TCP_Server.h"
 
-ofstream ServerLog("C:\\Users\\duran\\Desktop\\logServ.txt");
+
+
+void lanciaBatch(wstring index, wstring params) {
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	wstring tmp = L"C:\\Users\\duran\\source\\repos\\FileSharing\\PDSProjectBatch.cmd ";
+	tmp.append(index).append(L" ").append(params);
+
+	wchar_t* text = &tmp[0];
+
+	CreateProcess(
+		NULL
+		, text
+		, NULL
+		, NULL
+		, TRUE
+		, CREATE_NO_WINDOW
+		, NULL
+		, NULL
+		, &si
+		, &pi
+	);
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+}
+
+wstring string2wstring(string input) {
+	char* charTmp = &input[0];
+	long cSize = strlen(charTmp) + 1;
+	wchar_t* wc = new wchar_t[cSize];
+	mbstowcs_s(NULL, wc, cSize, charTmp, cSize - 1);
+	wstring param(wc);
+
+	return param;
+}
 
 /*
 *Check if file exists on filesystem
@@ -130,18 +171,9 @@ void TCP_Server::operator()() {
 	//comunicazione al TCP_listener che il Server è in ascolto sulla porta stabilita
 	port->setPromiseStarted();
 
-	//-----------LOG-------------------
-	ServerLog << "Promise settata" << endl;
-	//-----------LOG-------------------
-
 	char* buffer = new char[1024];
 	string bufferStr;
 
-	/*
-											!!!ATTENZIONE!!!
-	!!!Attenzione a questa accept, prima era dopo il if tipofile == 1, da verificare il funzionamento!!!!
-											!!!ATTENZIONE!!!
-	*/
 	ClientSocket = accept(ListenSocket, NULL, NULL);
 	if (ClientSocket == INVALID_SOCKET) {
 		cout << "accept failed with error: " << WSAGetLastError() << endl;
@@ -160,10 +192,6 @@ void TCP_Server::operator()() {
 		//recv di Hello message
 		recv(ClientSocket, buffer, 1024, 0);
 
-		//-----------LOG-------------------
-		ServerLog << "Messaggio di HELLO dal client ricevuto" << endl;
-		//-----------LOG-------------------
-
 		//scrittura in pipe di Hello message
 		bufferStr = buffer;
 		WriteFile(this->pipe, bufferStr.c_str(), 6, 0, NULL);
@@ -172,10 +200,6 @@ void TCP_Server::operator()() {
 		//lettura dalla pipe di accettazione file
 		ReadFile(this->pipe, buffer, 1024, 0, NULL);
 		bufferStr = buffer;
-
-		//-----------LOG-------------------
-		ServerLog << "La GUI ha detto: " << bufferStr << endl;
-		//-----------LOG-------------------
 
 		//Invio al CLIENT del messaggio di accettazione da parte del server
 		send(ClientSocket, bufferStr.c_str(), 3, 0);
@@ -218,19 +242,11 @@ void TCP_Server::operator()() {
 			//Invio al CLIENT del messaggio ACK-INFO
 			send(ClientSocket, bufferStr.c_str(), bufferStr.length(), 0);
 
-			//-----------LOG-------------------
-			ServerLog << "Ricevute info sui files ed Inviato ACK sulle info: " << sockBuf << endl;
-			//-----------LOG-------------------
-
 			//estrapolazione dei parametri del file da acquisire
 			//sockBuf contiene le info del file
 			stringstream str(sockBuf);
 			string path, ext, size, nomefile, nomeFoto, total_sizeStr;
 			getline(str, path, '|');
-
-			//-----------LOG-------------------
-			ServerLog << "1: Separate le info sul file: " << path << endl;
-			//-----------LOG-------------------
 
 			if (path != "end") {
 				getline(str, nomefile, '|');
@@ -244,47 +260,33 @@ void TCP_Server::operator()() {
 				if (total_dati_rimasti == 0)
 					total_dati_rimasti = total_size;
 			}
-			//-----------LOG-------------------
-			ServerLog << "2: Separate le info sul file: " << path << endl;
-			//-----------LOG-------------------
-			
-
-			//-----------LOG-------------------
-			ServerLog << "3: Separate le info sul file: " << path  << endl;
-			//-----------LOG-------------------
 
 			string ack("1");
-			/*		
-			send(ClientSocket, ack.c_str(), 1, 0);
-
-			if (ClientSocket == INVALID_SOCKET) {
-				cout << "accept failed with error: " << WSAGetLastError() << endl;
-			}*/
-
 
 			if (tipo_file == 3) {
 
-				system("echo %USERPROFILE% > homedir.txt");
-				ifstream fpp;
-				string path_tmp;
-				fpp.open("homedir.txt");
-				getline(fpp, path_tmp, ' ');
+				//system(del nomeFoto);
+				string path_tmp("\\FileSharing\\Immagini_utenti\\");
+				nomeFoto;
+				wstring com = L"6", param(string2wstring(nomeFoto));
+				nomeFoto.append(ext);
+
+				lanciaBatch(com, param);
+
+				string rootPath;
+				lanciaBatch(L"4", L"");
+				ifstream fpp("homedir.txt");
+				getline(fpp, rootPath, ' ');
 				fpp.close();
-				system("del homedir.txt");
-
-				path_tmp.append("\\FileSharing\\Immagini_utenti\\");
-				string comando = "del ";
-				comando.append(path_tmp).append(nomeFoto);
-
-				system(comando.c_str());
-
-				path_tmp.append(nomeFoto).append(ext);
-
-				FILE* fp = fopen(path_tmp.c_str(), "wb");
+				lanciaBatch(L"5", L"");
+				rootPath.append(path_tmp).append(nomeFoto);
+				
+				FILE* fp = fopen(rootPath.c_str(), "wb+");
 				if (fp == NULL) {
 					cout << "File non aperto" << endl;
 					return;
 				}
+				rootPath.append(ext);
 
 				int dati_rimanenti = stoi(size);
 				int byte_letti;
@@ -306,17 +308,9 @@ void TCP_Server::operator()() {
 				return;
 			}
 
-			//-----------LOG-------------------
-			ServerLog << "Condizione pre-END" << endl;
-			//-----------LOG-------------------
-
 			//condizione di terminazione della ricezione dei files
 			if (path == "end") {
 				cout << "Files finiti" << endl;
-
-				//-----------LOG-------------------
-				ServerLog << "File inviato completamente" << endl;
-				//-----------LOG-------------------
 
 				if (tipo_file == 1) {
 					string buffer("|");
@@ -380,17 +374,13 @@ void TCP_Server::operator()() {
 				//apertura del file e controllo di correttezza
 				FILE* fp = fopen(camm.c_str(), "wb");
 				if (fp == NULL) {
-					cout << "Impossibile aprire il file" << endl;
+					cout << "Impossibile aprire il file, ciao" << endl;
 					return;
 				}
 
 				int dati_rimanenti = stoi(size);
 				int byte_letti;
 				char* bufPipe = new char[1024];
-
-				//-----------LOG-------------------
-				ServerLog << "Ingresso nel trasferimento" << endl;
-				//-----------LOG-------------------
 
 				do {
 					//ricevo i dati dal client e li scrivo sul file
@@ -411,17 +401,9 @@ void TCP_Server::operator()() {
 					bufferStr.append(to_string((int)percentuale)).append("|");
 					WriteFile(this->pipe, bufferStr.c_str(), 3, 0, NULL);
 					percentualePrec = percentuale;
-
-					//-----------LOG-------------------
-					ServerLog << "Percentuale di completamento: " << bufferStr << endl;
-					//-----------LOG-------------------
 					
 					//leggo dalla GUI ACK di dato
 					ReadFile(this->pipe, buffer, 3, 0, NULL);
-
-					//-----------LOG-------------------
-					ServerLog << "ACK di dato letta: " << buffer << endl;
-					//-----------LOG-------------------
 
 					//inoltro al server ACK di dato
 					bufferStr = buffer;
@@ -431,10 +413,6 @@ void TCP_Server::operator()() {
 					//ricezione di ACKA dal client
 					recv(ClientSocket, bufferAckA, 2, 0);
 					bufferStr = bufferAckA;
-
-					//-----------LOG-------------------
-					ServerLog << "ACK-A ricevuta: " << bufferStr << endl;
-					//-----------LOG-------------------
 
 					WriteFile(this->pipe, bufferStr.c_str(), bufferStr.length(), 0, NULL);
 					if (bufferStr.find("X") != string::npos) {
@@ -446,20 +424,14 @@ void TCP_Server::operator()() {
 						fclose(fp);
 
 						if (is_directory) {
-							string comando("rmdir /Q /S ");
-							comando.append(root);
-							system(comando.c_str());
-
-							//-----------LOG-------------------
-							ServerLog << "System di rollback: " << comando << endl;
-							//-----------LOG-------------------
+							//system(remove directory);
+							wstring com(L"7"), param(string2wstring(root));
+							lanciaBatch(com, param);
 						}
 						else {
-							string comando("del ");
-							comando.append(camm.c_str());
-							system(comando.c_str());
-
-							
+							//system(elimina il file);
+							wstring com(L"8"), param(string2wstring(camm));
+							lanciaBatch(com, param);
 						}
 
 						//killare la comunicazione
@@ -475,10 +447,6 @@ void TCP_Server::operator()() {
 					ReadFile(this->pipe, buffer, 1024, 0, NULL);
 					bufferStr = buffer;
 
-					//-----------LOG-------------------
-					ServerLog << "ACK-B ricevuta dalla GUI, la sto inviando al TCP_Client: " << buffer << endl;
-					//-----------LOG-------------------
-
 					//Invio di ACKB al client
 					send(ClientSocket, buffer, 2, 0);
 
@@ -491,22 +459,14 @@ void TCP_Server::operator()() {
 						fclose(fp);
 
 						if (is_directory) {
-							string comando("rmdir /Q /S ");
-							comando.append(root);
-							system(comando.c_str());
-
-							//-----------LOG-------------------
-							ServerLog << "System di rollback: " << comando << endl;
-							//-----------LOG-------------------
+							//system(remove directory);
+							wstring com(L"7"), param(string2wstring(root));
+							lanciaBatch(com, param);
 						}
 						else {
-							string comando("del ");
-							comando.append(camm.c_str());
-							system(comando.c_str());
-
-							//-----------LOG-------------------
-							ServerLog << "System di rollback: " << comando << endl;
-							//-----------LOG-------------------
+							//system(elimina il file);
+							wstring com(L"8"), param(string2wstring(camm));
+							lanciaBatch(com, param);
 						}
 
 						

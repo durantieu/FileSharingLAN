@@ -23,6 +23,7 @@ namespace PDSProjectGUI
         string path_imm_profilo;
         string home_dir;
         bool visibility;
+        bool accettaAutomaticamente;
         FolderBrowserDialog fbd = new FolderBrowserDialog();
         private Credenziali cred;
 
@@ -62,6 +63,17 @@ namespace PDSProjectGUI
                 {
                     path_file_trans = temp2[1];
                 }
+                if(temp2[0] == "accettaAutomaticamente")
+                {
+                    if(temp2[1] == "true")
+                    {
+                        accettaAutomaticamente = true;
+                    }
+                    else
+                    {
+                        accettaAutomaticamente = false;
+                    }
+                }
                 if(temp2[0] == "Visible")
                 {
                     if(temp2[1] == "true")
@@ -76,7 +88,7 @@ namespace PDSProjectGUI
                 }
             }
             sr.Close();
-            cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
+            cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, accettaAutomaticamente, visibility);
             
 
         }
@@ -91,9 +103,9 @@ namespace PDSProjectGUI
                 path_imm_profilo = textBox4.Text;
                 visibility = !checkBox1.Checked;
 
-                cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, visibility);
+                cred = new Credenziali(nome, cognome, path_imm_profilo, path_file_trans, accettaAutomaticamente, visibility);
 
-                Share f1 = new Share(this);
+                Share f1 = new Share(this, false, "");
                 f1.Show();
                 this.Hide();
             }

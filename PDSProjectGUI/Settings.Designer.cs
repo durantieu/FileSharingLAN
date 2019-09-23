@@ -31,39 +31,37 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.AccettaAutomaticamente = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button6 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.White;
-            this.panel1.Controls.Add(this.button6);
+            this.panel1.Controls.Add(this.checkBox2);
+            this.panel1.Controls.Add(this.AccettaAutomaticamente);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.button4);
-            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Controls.Add(this.button3);
@@ -72,15 +70,40 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(676, 380);
+            this.panel1.Size = new System.Drawing.Size(665, 416);
             this.panel1.TabIndex = 0;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(331, 74);
+            this.checkBox2.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(15, 14);
+            this.checkBox2.TabIndex = 16;
+            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
+            // AccettaAutomaticamente
+            // 
+            this.AccettaAutomaticamente.AutoSize = true;
+            this.AccettaAutomaticamente.Cursor = System.Windows.Forms.Cursors.Default;
+            this.AccettaAutomaticamente.Font = new System.Drawing.Font("Segoe UI", 14.25F);
+            this.AccettaAutomaticamente.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
+            this.AccettaAutomaticamente.Location = new System.Drawing.Point(12, 65);
+            this.AccettaAutomaticamente.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            this.AccettaAutomaticamente.Name = "AccettaAutomaticamente";
+            this.AccettaAutomaticamente.Size = new System.Drawing.Size(277, 25);
+            this.AccettaAutomaticamente.TabIndex = 15;
+            this.AccettaAutomaticamente.Text = "Accetta Automaticamente i files";
+            this.AccettaAutomaticamente.Click += new System.EventHandler(this.label2_Click);
             // 
             // textBox2
             // 
             this.textBox2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
-            this.textBox2.Location = new System.Drawing.Point(316, 277);
+            this.textBox2.Location = new System.Drawing.Point(316, 289);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(286, 22);
             this.textBox2.TabIndex = 14;
@@ -99,7 +122,7 @@
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
-            this.label6.Location = new System.Drawing.Point(12, 273);
+            this.label6.Location = new System.Drawing.Point(12, 282);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(163, 25);
             this.label6.TabIndex = 12;
@@ -110,7 +133,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
-            this.label5.Location = new System.Drawing.Point(12, 226);
+            this.label5.Location = new System.Drawing.Point(16, 230);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(129, 25);
             this.label5.TabIndex = 11;
@@ -122,7 +145,7 @@
             this.button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(28)))), ((int)(((byte)(36)))));
-            this.button5.Location = new System.Drawing.Point(379, 327);
+            this.button5.Location = new System.Drawing.Point(376, 348);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(223, 41);
             this.button5.TabIndex = 10;
@@ -136,24 +159,13 @@
             this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(173)))), ((int)(((byte)(74)))));
-            this.button4.Location = new System.Drawing.Point(32, 327);
+            this.button4.Location = new System.Drawing.Point(21, 348);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(223, 41);
             this.button4.TabIndex = 9;
             this.button4.Text = "Salva";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click_1);
-            // 
-            // button1
-            // 
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
-            this.button1.Location = new System.Drawing.Point(316, 55);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(134, 36);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Blocca";
-            this.button1.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -176,17 +188,6 @@
             this.label3.Size = new System.Drawing.Size(291, 26);
             this.label3.TabIndex = 6;
             this.label3.Text = "Scegli Cartella dove salvare i files";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
-            this.label2.Location = new System.Drawing.Point(12, 66);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 25);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Black List";
             // 
             // label1
             // 
@@ -240,23 +241,11 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button6
-            // 
-            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(53)))), ((int)(((byte)(118)))));
-            this.button6.Location = new System.Drawing.Point(468, 55);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(134, 36);
-            this.button6.TabIndex = 15;
-            this.button6.Text = "Sblocca";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(676, 380);
+            this.ClientSize = new System.Drawing.Size(665, 416);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Settings";
@@ -272,19 +261,18 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Label AccettaAutomaticamente;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }

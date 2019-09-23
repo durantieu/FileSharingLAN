@@ -1,5 +1,46 @@
 #include "Sync_Mappa.h"
 
+wstring Sync_mappa::string2wstring(string input) {
+	char* charTmp = &input[0];
+	long cSize = strlen(charTmp) + 1;
+	wchar_t* wc = new wchar_t[cSize];
+	mbstowcs_s(NULL, wc, cSize, charTmp, cSize - 1);
+	wstring param(wc);
+
+	return param;
+}
+
+void Sync_mappa::lanciaBatch(wstring index, wstring params) {
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	wstring tmp = L"C:\\Users\\duran\\source\\repos\\FileSharing\\PDSProjectBatch.cmd ";
+	tmp.append(index).append(params);
+
+	wchar_t* text = &tmp[0];
+
+	CreateProcess(
+		NULL
+		, text
+		, NULL
+		, NULL
+		, TRUE
+		, CREATE_NO_WINDOW
+		, NULL
+		, NULL
+		, &si
+		, &pi
+	);
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+}
+
 int Sync_mappa::cerca_e_inserisci(string chiave, string nome, string cognome, time_t timeStamp, string flag_foto, SOCKADDR_IN ip) {
 	map<string, Utente>::iterator it;
 
@@ -37,8 +78,13 @@ int Sync_mappa::cerca_e_inserisci(string chiave, string nome, string cognome, ti
 				string command;
 
 				if (it->second.get_percorso_foto().compare("1")) {
+					//system(elimina la foto);
 					command.append("del ").append(it->second.get_percorso_foto()); //esiste un percorso foto in mappa utenti
-					system(command.c_str());
+					
+
+					
+					wstring com(L"8"), param(string2wstring(it->second.get_percorso_foto()));
+					lanciaBatch(com, param);
 				}
 				//gestire con eccezione percorso non valido
 				it->second.set_percorso_foto("0");
@@ -245,7 +291,11 @@ Utente* Sync_mappa::get_utente(string MAC) {
 	m.lock();
 	auto user = utenti.find(MAC);
 	m.unlock();
-	return &(user->second);
+	
+	if (user != utenti.end())
+		return &(user->second);
+	else
+		return NULL;
 }
 
 
@@ -261,22 +311,26 @@ vector<char*>* Sync_mappa::getUtenti() {
 		string tmp;
 		string bloccato;
 
-		bool blocked = this->check_identity(it->first);
-		if (blocked == false)
-			bloccato = "libero";
-		else
-			bloccato = "bloccato";
+		try {
+			bool blocked = this->check_identity(it->first);
+			if (blocked == false)
+				bloccato = "libero";
+			else
+				bloccato = "bloccato";
 
-		tmp.assign(it->first).append("|").append(it->second.get_nome()).append("|").
-			append(it->second.get_cognome()).append("|").
-			append(*(it->second.get_fotopathPointer())).append("|").
-			append(bloccato).append("|");
+			tmp.assign(it->first).append("|").append(it->second.get_nome()).append("|").
+				append(it->second.get_cognome()).append("|").
+				append(*(it->second.get_fotopathPointer())).append("|").
+				append(bloccato).append("|");
 
-		char *cstr = new char[tmp.length() + 1];
-		strcpy(cstr, tmp.c_str());
+			char *cstr = new char[tmp.length() + 1];
+			strcpy(cstr, tmp.c_str());
 
-		listaUtenti->push_back(cstr);
-
+			listaUtenti->push_back(cstr);
+		}
+		catch (exception e) {
+			return NULL;
+		}
 	}
 
 

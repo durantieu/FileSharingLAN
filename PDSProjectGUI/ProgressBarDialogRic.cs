@@ -24,7 +24,7 @@ namespace PDSProjectGUI
         PollingPipe pp;
         NamedPipeClientStream serverPipe;
         bool acc;
-
+        DateTime prima;
         public ProgressBarDialogRic(string nomeUtente, string nPipe, bool accepted)
         {
             acc = accepted;
@@ -39,7 +39,7 @@ namespace PDSProjectGUI
             }
             
             label4.Text = nomeUtente;
-
+            prima = DateTime.Now;
             mut_pipe = new Mutex();
             is_pipe_closed = false;
 
@@ -60,6 +60,35 @@ namespace PDSProjectGUI
         public void modify_progress_bar(string value)
         {
             progressBar1.Value = Int32.Parse(value);
+
+            DateTime ora = DateTime.Now;
+            TimeSpan offsetTemp = ora - prima;
+
+            double diffOre = offsetTemp.TotalHours;
+            double diffMin = offsetTemp.TotalMinutes;
+            double diffSec = offsetTemp.TotalSeconds;
+
+            double valueDouble = Convert.ToDouble(value);
+
+            string oreStimate = Convert.ToString((int)((diffOre * (100 - valueDouble))));
+            string minutiStimati = Convert.ToString((int)((diffMin * (100 - valueDouble))) % 60);
+            string secondiStimati = Convert.ToString((int)(diffSec * (100 - valueDouble)) % 60);
+
+            string ValoreVisualizzato = value + "% -- ";
+
+            if (oreStimate != "0")
+            {
+                ValoreVisualizzato += oreStimate + " h, ";
+            }
+            if (minutiStimati != "0")
+            {
+                ValoreVisualizzato += minutiStimati + " m, ";
+            }
+            ValoreVisualizzato += secondiStimati + " s rimanenti";
+
+            label1.Text = ValoreVisualizzato;
+
+            prima = ora;
         }
 
         private void button1_Click(object sender, EventArgs e)
